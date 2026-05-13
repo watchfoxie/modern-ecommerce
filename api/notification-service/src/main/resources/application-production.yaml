@@ -1,0 +1,55 @@
+spring:
+  config:
+    import: optional:file:.env.production[.properties],optional:file:../.env.production[.properties],optional:file:../../.env.production[.properties]
+  application:
+    name: notification-service
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${NOTIFICATION_MAIL_USERNAME}
+    password: ${NOTIFICATION_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: ${NOTIFICATION_MAIL_CONNECTION_TIMEOUT:5000}
+          timeout: ${NOTIFICATION_MAIL_TIMEOUT:5000}
+          writetimeout: ${NOTIFICATION_MAIL_WRITE_TIMEOUT:5000}
+
+server:
+  port: ${NOTIFICATION_SERVICE_PORT:8087}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://service-registry:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

@@ -1,0 +1,34 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "userId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+  "orderNumber": "string",
+  "items": [
+    {
+      "productId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+      "name": "string",
+      "brand": "string",
+      "imageUrl": "string",
+      "quantity": "number",
+      "unitPrice": "number"
+    }
+  ],
+  "deliveryAddress": {
+    "street": "string",
+    "city": "string",
+    "district": "string",
+    "postalCode": "string",
+    "recipientName": "string",
+    "recipientPhone": "string"
+  },
+  "payment": {
+    "method": "string",
+    "status": "string",
+    "transactionId": "string"
+  },
+  "status": "string",
+  "totalAmount": "number",
+  "currency": "string",
+  "notes": "string",
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" }
+}

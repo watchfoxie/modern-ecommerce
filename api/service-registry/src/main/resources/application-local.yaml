@@ -1,0 +1,38 @@
+spring:
+  config:
+    import: optional:file:.env.local[.properties],optional:file:../.env.local[.properties],optional:file:../../.env.local[.properties]
+  application:
+    name: service-registry
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+
+server:
+  port: ${SERVICE_REGISTRY_PORT:8761}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+  server:
+    enable-self-preservation: true
+    wait-time-in-ms-when-sync-empty: 0

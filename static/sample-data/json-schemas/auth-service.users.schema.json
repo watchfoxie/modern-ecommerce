@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modern-ecommerce.local/schemas/auth-service.users.schema.json",
+  "title": "auth-service users document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "email",
+    "passwordHash",
+    "roleIds",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": { "$ref": "#/$defs/objectId" },
+    "email": { "type": "string", "format": "email" },
+    "passwordHash": { "type": "string", "minLength": 20 },
+    "roleIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/objectId" }
+    },
+    "status": { "type": "string", "enum": ["ACTIVE", "DISABLED", "LOCKED"] },
+    "refreshTokenHash": { "type": ["string", "null"] },
+    "refreshTokenExpiry": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+    "passwordResetToken": { "type": ["string", "null"] },
+    "passwordResetExpiry": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+    "createdAt": { "$ref": "#/$defs/date" },
+    "updatedAt": { "$ref": "#/$defs/date" },
+    "lastLoginAt": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$oid"],
+      "properties": {
+        "$oid": { "type": "string", "pattern": "^[a-fA-F0-9]{24}$" }
+      }
+    },
+    "date": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.env.local
+.env.production
+**/target
+**/.settings
+**/.project
+**/.classpath
+**/.factorypath
+**/node_modules
+**/dist
+**/*.tsbuildinfo
+.git

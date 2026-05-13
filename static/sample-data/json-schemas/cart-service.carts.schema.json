@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modern-ecommerce.local/schemas/cart-service.carts.schema.json",
+  "title": "cart-service carts document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["_id", "userId", "items", "createdAt", "updatedAt"],
+  "properties": {
+    "_id": { "$ref": "#/$defs/objectId" },
+    "userId": { "$ref": "#/$defs/objectId" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cartItem" }
+    },
+    "createdAt": { "$ref": "#/$defs/date" },
+    "updatedAt": { "$ref": "#/$defs/date" }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$oid"],
+      "properties": {
+        "$oid": { "type": "string", "pattern": "^[a-fA-F0-9]{24}$" }
+      }
+    },
+    "date": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": { "type": "string", "format": "date-time" }
+      }
+    },
+    "money": {
+      "anyOf": [
+        { "type": "number", "exclusiveMinimum": 0 },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["$numberDecimal"],
+          "properties": {
+            "$numberDecimal": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]{1,2})?$" }
+          }
+        }
+      ]
+    },
+    "cartItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["productId", "quantity", "priceAtAdd", "productSnapshot"],
+      "properties": {
+        "productId": { "$ref": "#/$defs/objectId" },
+        "quantity": { "type": "integer", "minimum": 1 },
+        "priceAtAdd": { "$ref": "#/$defs/money" },
+        "productSnapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "imageUrl", "categorySlug"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "imageUrl": { "type": "string", "minLength": 1 },
+            "categorySlug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modern-ecommerce.local/schemas/auth-service.roles.schema.json",
+  "title": "auth-service roles document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["_id", "name", "description", "createdAt"],
+  "properties": {
+    "_id": { "$ref": "#/$defs/objectId" },
+    "name": {
+      "type": "string",
+      "pattern": "^ROLE_[A-Z0-9_]+$"
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "createdAt": { "$ref": "#/$defs/date" }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$oid"],
+      "properties": {
+        "$oid": { "type": "string", "pattern": "^[a-fA-F0-9]{24}$" }
+      }
+    },
+    "date": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

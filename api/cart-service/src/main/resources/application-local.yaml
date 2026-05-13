@@ -1,0 +1,70 @@
+spring:
+  config:
+    import: optional:file:.env.local[.properties],optional:file:../.env.local[.properties],optional:file:../../.env.local[.properties]
+  application:
+    name: cart-service
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+  data:
+    mongodb:
+      uri: ${CART_MONGODB_URI}
+  mongodb:
+    uri: ${CART_MONGODB_URI}
+
+server:
+  port: ${CART_SERVICE_PORT:8085}
+
+info:
+  app:
+    name: ${spring.application.name}
+    port: ${server.port}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+    home-page-url: ${EUREKA_INSTANCE_HOME_PAGE_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/}
+    status-page-url: ${EUREKA_INSTANCE_STATUS_PAGE_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/actuator/info}
+    health-check-url: ${EUREKA_INSTANCE_HEALTH_CHECK_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/actuator/health/readiness}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+  packages-to-scan: md.services.cart_service
+  paths-to-match: /**

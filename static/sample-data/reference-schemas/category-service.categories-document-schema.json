@@ -1,0 +1,12 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "name": "string",
+  "slug": "string",
+  "parentId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+  "description": "string",
+  "imageUrl": "string",
+  "displayOrder": "number",
+  "isActive": "boolean",
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" }
+}

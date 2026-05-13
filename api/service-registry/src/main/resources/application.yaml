@@ -1,0 +1,13 @@
+spring:
+    lifecycle:
+        timeout-per-shutdown-phase: ${SERVICE_REGISTRY_SHUTDOWN_TIMEOUT:${GRACEFUL_SHUTDOWN_TIMEOUT:30s}}
+    profiles:
+        default: local
+
+server:
+    shutdown: graceful
+
+logging:
+    level:
+        com.netflix.eureka.cluster.PeerEurekaNode: ERROR
+        com.netflix.eureka.registry.AbstractInstanceRegistry: ERROR

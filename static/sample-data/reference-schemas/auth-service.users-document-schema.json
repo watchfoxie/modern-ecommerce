@@ -1,0 +1,14 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "email": "string",
+  "passwordHash": "string",
+  "roleIds": [
+    { "$oid": "string (UUID/Hex/Foreign Key)" }
+  ],
+  "status": "string",
+  "passwordResetToken": "string",
+  "passwordResetExpiry": { "$date": "string (ISO-8601 UTC)" },
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" },
+  "lastLoginAt": { "$date": "string (ISO-8601 UTC)" }
+}

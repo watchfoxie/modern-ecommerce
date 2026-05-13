@@ -1,0 +1,33 @@
+spring:
+    lifecycle:
+        timeout-per-shutdown-phase: ${API_GATEWAY_SHUTDOWN_TIMEOUT:${GRACEFUL_SHUTDOWN_TIMEOUT:30s}}
+    profiles:
+        default: local
+
+server:
+    shutdown: graceful
+
+info:
+    app:
+        name: api-gateway
+        version: ${APP_VERSION:0.0.1-SNAPSHOT}
+    config:
+        source: packaged application YAML plus optional .env imports
+
+management:
+    endpoint:
+        health:
+            probes:
+                enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: health,info,metrics,prometheus,loggers
+    info:
+        env:
+            enabled: true
+
+app:
+    eureka-observability:
+        initial-delay-ms: ${API_GATEWAY_EUREKA_LOG_INITIAL_DELAY_MS:30000}
+        log-interval-ms: ${API_GATEWAY_EUREKA_LOG_INTERVAL_MS:30000}

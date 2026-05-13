@@ -1,0 +1,83 @@
+# Modern Ecommerce root project .gitignore file
+
+## Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
+
+## Java Spring (Spring Boot, SpringSource) microservices
+
+api/**/HELP.md
+api/**/target/
+api/**/.mvn/wrapper/maven-wrapper.jar
+api/**/target/
+!api/**/src/main/**/target/
+!api/**/src/test/**/target/
+
+### Java: STS
+
+api/**/.apt_generated
+api/**/.classpath
+api/**/.factorypath
+api/**/.project
+api/**/.settings
+api/**/.springBeans
+api/**/.sts4-cache
+
+### Java: IntelliJ IDEA
+api/**/.idea
+api/**/*.iws
+api/**/*.iml
+api/**/*.ipr
+
+### Java: NetBeans
+api/**/nbproject/private/
+api/**/nbbuild/
+api/**/dist/
+api/**/nbdist/
+api/**/.nb-gradle/
+api/**/build/
+!api/**/src/main/**/build/
+!api/**/src/test/**/build/
+
+### Java: Message queues
+rabbitmq.conf
+
+### Java: VS Code
+api/**/.vscode/
+
+## Vite application
+
+### Vite: Logs
+web/logs
+web/*.log
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/pnpm-debug.log*
+web/lerna-debug.log*
+
+web/node_modules
+web/dist
+web/dist-ssr
+web/*.local
+
+### Vite: Editor directories and files
+web/.vscode/*
+web/!.vscode/extensions.json
+web/.idea
+web/.DS_Store
+web/*.suo
+web/*.ntvs*
+web/*.njsproj
+web/*.sln
+web/*.sw?
+
+### Misc
+docs/
+architecture_reference_hook.md
+project_architecture_reference.md
+user_implementation_plan.md

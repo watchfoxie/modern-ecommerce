@@ -1,0 +1,18 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "userId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+  "items": [
+    {
+      "productId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+      "quantity": "number",
+      "priceAtAdd": "number",
+      "productSnapshot": {
+        "name": "string",
+        "imageUrl": "string",
+        "categorySlug": "string"
+      }
+    }
+  ],
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" }
+}

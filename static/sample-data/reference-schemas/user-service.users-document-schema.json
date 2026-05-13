@@ -1,0 +1,25 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "authId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+  "email": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "phone": "string",
+  "birthDate": { "$date": "string (ISO-8601 UTC)" },
+  "addresses": [
+    {
+      "label": "string",
+      "street": "string",
+      "city": "string",
+      "district": "string",
+      "postalCode": "string",
+      "isDefault": "boolean"
+    }
+  ],
+  "preferences": {
+    "language": "string",
+    "currency": "string"
+  },
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" }
+}

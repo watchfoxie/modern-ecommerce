@@ -1,0 +1,6 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "name": "string",
+  "description": "string",
+  "createdAt": { "$date": "string (ISO-8601 UTC)" }
+}

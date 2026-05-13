@@ -1,0 +1,60 @@
+spring:
+  config:
+    import: optional:file:.env.production[.properties],optional:file:../.env.production[.properties],optional:file:../../.env.production[.properties]
+  application:
+    name: auth-service
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+  data:
+    mongodb:
+      uri: ${AUTH_MONGODB_URI}
+  mongodb:
+    uri: ${AUTH_MONGODB_URI}
+
+server:
+  port: ${AUTH_SERVICE_PORT:8081}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://service-registry:8761/eureka/}
+    fetch-registry: false
+    register-with-eureka: true
+  instance:
+    initial-status: STARTING
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+
+app:
+  startup:
+    mongo-verification:
+      enabled: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+app:
+  security:
+    jwt-signing-secret: ${JWT_SIGNING_SECRET}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN}
+    access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:30m}
+    refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:7d}
+    password-reset-ttl: ${PASSWORD_RESET_TOKEN_TTL:30m}

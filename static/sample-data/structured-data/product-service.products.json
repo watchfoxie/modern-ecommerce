@@ -1,0 +1,2927 @@
+[
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70304"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 17e",
+        "slug": "apple-iphone-17e",
+        "brand": "Apple",
+        "model": "iPhone 17e",
+        "country": "International",
+        "price": 12952.53,
+        "promotionalPrice": 12141.73,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-17e-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.1 inches, 1170x2532 pixels",
+            "processor": "Apple A19 Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+            "ram": "8 GB",
+            "storage": "256GB / 512GB NVMe",
+            "os": "iOS 26.3 (upgradable to 26.4)",
+            "battery": "Li-Ion 4005 mAh, 15W wireless MagSafe/Qi2",
+            "camera": "48 MP wide, OIS, 4K video",
+            "gpu": "Apple GPU (4-core graphics)",
+            "batteryLife": "15h30 active use, 45h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T19:50:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T19:50:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70305"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 17 Pro Max",
+        "slug": "apple-iphone-17-pro-max",
+        "brand": "Apple",
+        "model": "iPhone 17 Pro Max",
+        "country": "International",
+        "price": 27040.18,
+        "promotionalPrice": 22074.03,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-17-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, 1320x2868 pixels, 120Hz",
+            "processor": "Apple A19 Pro Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+            "ram": "12 GB",
+            "storage": "256GB / 512GB / 1TB / 2TB NVMe",
+            "os": "iOS 26 (upgradable to 26.4)",
+            "battery": "Li-Ion 4823 mAh (Nano SIM) / 5088 mAh (eSIM only), 25W PD3.2, 25W wireless MagSafe/Qi2",
+            "camera": "Triple 48 MP (wide, periscope telephoto, ultrawide) + TOF 3D LiDAR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "17h58 active use, 53h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T20:52:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T20:52:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70306"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 17 Pro",
+        "slug": "apple-iphone-17-pro",
+        "brand": "Apple",
+        "model": "iPhone 17 Pro",
+        "country": "International",
+        "price": 22347.47,
+        "promotionalPrice": 19925.41,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-17-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.3 inches, 1206x2622 pixels, 120Hz",
+            "processor": "Apple A19 Pro Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+            "ram": "12 GB",
+            "storage": "256GB / 512GB / 1TB NVMe",
+            "os": "iOS 26 (upgradable to 26.4)",
+            "battery": "Li-Ion 3998 mAh (Nano SIM) / 4252 mAh (eSIM only), 25W PD3.2, 25W wireless MagSafe/Qi2",
+            "camera": "Triple 48 MP (wide, periscope telephoto, ultrawide) + TOF 3D LiDAR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "15h23 active use, 47h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T20:56:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T20:56:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70307"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone Air",
+        "slug": "apple-iphone-air",
+        "brand": "Apple",
+        "model": "iPhone Air",
+        "country": "International",
+        "price": 14936.76,
+        "promotionalPrice": 13256.58,
+        "currency": "MDL",
+        "stock": 180,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-air-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.5 inches, 1260x2736 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A19 Pro Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+            "ram": "12 GB",
+            "storage": "256GB / 512GB / 1TB NVMe",
+            "os": "iOS 26 (upgradable to 26.4)",
+            "battery": "Li-Ion 3149 mAh, PD2.0 20W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "48 MP wide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "12h44 active use, 40h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T20:58:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T20:58:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70308"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 17",
+        "slug": "apple-iphone-17",
+        "brand": "Apple",
+        "model": "iPhone 17",
+        "country": "International",
+        "price": 14938.99,
+        "promotionalPrice": 14006.57,
+        "currency": "MDL",
+        "stock": 250,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-17-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.3 inches, 1206x2622 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A19 Hexa-core (2x4.26 GHz + 4x2.60 GHz)",
+            "ram": "8 GB",
+            "storage": "256GB / 512GB NVMe",
+            "os": "iOS 26 (upgradable to 26.4)",
+            "battery": "Li-Ion 3692 mAh, PD3.2 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Dual 48 MP (wide + ultrawide), OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "14h59 active use, 41h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T21:59:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T21:59:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70309"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 16e",
+        "slug": "apple-iphone-16e",
+        "brand": "Apple",
+        "model": "iPhone 16e",
+        "country": "International",
+        "price": 9121.5,
+        "promotionalPrice": 7844.49,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-16e-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.1 inches, 1170x2532 pixels, HDR10",
+            "processor": "Apple A18 Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+            "ram": "8 GB",
+            "storage": "128GB / 256GB / 512GB NVMe",
+            "os": "iOS 18.3.1 (upgradable to 26.4)",
+            "battery": "Li-Ion 4005 mAh, 50% in 30 min wired, 7.5W wireless Qi",
+            "camera": "48 MP wide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (4-core graphics)",
+            "batteryLife": "11h53 active use, 41h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:00:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:00:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030a"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 16 Pro Max",
+        "slug": "apple-iphone-16-pro-max",
+        "brand": "Apple",
+        "model": "iPhone 16 Pro Max",
+        "country": "International",
+        "price": 17026.8,
+        "promotionalPrice": 14381.56,
+        "currency": "MDL",
+        "stock": 220,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-16-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, 1320x2868 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A18 Pro Hexa-core (2x4.05 GHz + 4x2.42 GHz)",
+            "ram": "8 GB",
+            "storage": "256GB / 512GB / 1TB NVMe",
+            "os": "iOS 18 (upgradable to 26.4)",
+            "battery": "Li-Ion 4685 mAh, PD2.0 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Triple 48 MP (wide, periscope telephoto, ultrawide) + TOF 3D LiDAR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "17h18 active use, 48h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:10:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:10:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030b"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 16 Pro",
+        "slug": "apple-iphone-16-pro",
+        "brand": "Apple",
+        "model": "iPhone 16 Pro",
+        "country": "International",
+        "price": 14391.7,
+        "promotionalPrice": 12972.8,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-16-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.3 inches, 1206x2622 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A18 Pro Hexa-core (2x4.05 GHz + 4x2.42 GHz)",
+            "ram": "8 GB",
+            "storage": "128GB / 256GB / 512GB / 1TB NVMe",
+            "os": "iOS 18 (upgradable to 26.4)",
+            "battery": "Li-Ion 3582 mAh, PD2.0 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Triple 48 MP (wide, periscope telephoto, ultrawide) + TOF 3D LiDAR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "14h17 active use, 37h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:15:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:15:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030c"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 16 Plus",
+        "slug": "apple-iphone-16-plus",
+        "brand": "Apple",
+        "model": "iPhone 16 Plus",
+        "country": "International",
+        "price": 12060.65,
+        "promotionalPrice": 11123.16,
+        "currency": "MDL",
+        "stock": 180,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-16-plus-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, 1290x2796 pixels, HDR10, Dolby Vision",
+            "processor": "Apple A18 Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+            "ram": "8 GB",
+            "storage": "128GB / 256GB / 512GB NVMe",
+            "os": "iOS 18 (upgradable to 26.4)",
+            "battery": "Li-Ion 4674 mAh, PD2.0 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Dual 48 MP wide + 12 MP ultrawide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "18h49 active use, 48h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:20:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:20:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030d"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 16",
+        "slug": "apple-iphone-16",
+        "brand": "Apple",
+        "model": "iPhone 16",
+        "country": "International",
+        "price": 11655.05,
+        "promotionalPrice": 10540.4,
+        "currency": "MDL",
+        "stock": 250,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.1 inches, 1179x2556 pixels, HDR10, Dolby Vision",
+            "processor": "Apple A18 Hexa-core (2x4.04 GHz + 4x2.20 GHz)",
+            "ram": "8 GB",
+            "storage": "128GB / 256GB / 512GB NVMe",
+            "os": "iOS 18 (upgradable to 26.4)",
+            "battery": "Li-Ion 3561 mAh, PD2.0 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Dual 48 MP wide + 12 MP ultrawide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "15h42 active use, 37h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:25:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:25:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030e"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 15 Pro Max",
+        "slug": "apple-iphone-15-pro-max",
+        "brand": "Apple",
+        "model": "iPhone 15 Pro Max",
+        "country": "International",
+        "price": 29371.23,
+        "promotionalPrice": 26330.73,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-15-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, 1290x2796 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A17 Pro Hexa-core (2x3.78 GHz + 4x2.02 GHz)",
+            "ram": "8 GB",
+            "storage": "256GB / 512GB / 1TB NVMe",
+            "os": "iOS 17 (upgradable to iOS 18+)",
+            "battery": "Li-Ion 4441 mAh, PD2.0 25W, wireless MagSafe/Qi2 (15W China), 4.5W reverse wired",
+            "camera": "Triple 48 MP wide + 12 MP telephoto + 12 MP ultrawide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "16h active use, 50h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:30:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:30:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7030f"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 15 Pro",
+        "slug": "apple-iphone-15-pro",
+        "brand": "Apple",
+        "model": "iPhone 15 Pro",
+        "country": "International",
+        "price": 11513.56,
+        "promotionalPrice": 10540.4,
+        "currency": "MDL",
+        "stock": 280,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-15-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.1 inches, 1179x2556 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A17 Pro Hexa-core (2x3.78 GHz + 4x2.11 GHz)",
+            "ram": "8 GB",
+            "storage": "128GB / 256GB / 512GB / 1TB NVMe",
+            "os": "iOS 17 (upgradable to 26.4)",
+            "battery": "Li-Ion 3274 mAh, PD2.0 50% in 30 min, 15W wireless MagSafe/Qi2, 4.5W reverse wired",
+            "camera": "Triple 48 MP wide + 12 MP telephoto + 12 MP ultrawide + TOF 3D LiDAR, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (6-core graphics)",
+            "batteryLife": "12h58 active use, 86h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:35:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:35:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70310"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Apple iPhone 15 Plus",
+        "slug": "apple-iphone-15-plus",
+        "brand": "Apple",
+        "model": "iPhone 15 Plus",
+        "country": "International",
+        "price": 9101.23,
+        "promotionalPrice": 8107.8,
+        "currency": "MDL",
+        "stock": 260,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-15-plus-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, 1290x2796 pixels, HDR10, Dolby Vision",
+            "processor": "Apple A16 Bionic Hexa-core (2x3.46 GHz + 4x2.02 GHz)",
+            "ram": "6 GB",
+            "storage": "128GB / 256GB / 512GB NVMe",
+            "os": "iOS 17 (upgradable to 26.4)",
+            "battery": "Li-Ion 4383 mAh, PD2.0 50% in 30 min, 15W wireless MagSafe/Qi2, 4.5W reverse wired",
+            "camera": "Dual 48 MP wide + 12 MP ultrawide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "16h33 active use, 111h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:40:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:40:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70311"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Apple iPhone 15",
+        "slug": "apple-iphone-15",
+        "brand": "Apple",
+        "model": "iPhone 15",
+        "country": "International",
+        "price": 8332.59,
+        "promotionalPrice": 7702.4,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-15-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.1 inches, 1179x2556 pixels, HDR10, Dolby Vision",
+            "processor": "Apple A16 Bionic Hexa-core (2x3.46 GHz + 4x2.02 GHz)",
+            "ram": "6 GB",
+            "storage": "128GB / 256GB / 512GB NVMe",
+            "os": "iOS 17 (upgradable to 26.4)",
+            "battery": "Li-Ion 3349 mAh, PD2.0 50% in 30 min, 15W wireless MagSafe/Qi2, 4.5W reverse wired",
+            "camera": "Dual 48 MP wide + 12 MP ultrawide, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "13h20 active use, 98h endurance"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:45:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:45:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70312"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Apple iPhone 14 Pro Max",
+        "slug": "apple-iphone-14-pro-max",
+        "brand": "Apple",
+        "model": "iPhone 14 Pro Max",
+        "country": "International",
+        "price": 9425.35,
+        "promotionalPrice": 8411.85,
+        "currency": "MDL",
+        "stock": 280,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/apple/apple-iphone-14-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, 1290x2796 pixels, 120Hz, HDR10, Dolby Vision",
+            "processor": "Apple A16 Bionic Hexa-core (2x3.46 GHz + 4x2.02 GHz)",
+            "ram": "6 GB",
+            "storage": "128GB / 256GB / 512GB / 1TB NVMe",
+            "os": "iOS 16 (upgradable to 26.4)",
+            "battery": "Li-Ion 4323 mAh, PD2.0 50% in 30 min, 15W wireless MagSafe/Qi2",
+            "camera": "Triple 48 MP wide + 12 MP telephoto + 12 MP ultrawide + TOF 3D LiDAR, OIS, 4K Dolby Vision HDR",
+            "gpu": "Apple GPU (5-core graphics)",
+            "batteryLife": "121h endurance rating"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T23:50:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T23:50:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70313"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy A57",
+        "slug": "samsung-galaxy-a57",
+        "brand": "Samsung",
+        "model": "Galaxy A57 5G",
+        "country": "Global",
+        "price": 7885.03,
+        "promotionalPrice": 7276.93,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-a57-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Super AMOLED+, 120Hz, HDR10+",
+            "processor": "Exynos 1680 (4 nm), Octa-core (1x2.9 GHz Cortex-720 & 4x2.6 GHz Cortex-720 & 3x1.95 GHz Cortex-520)",
+            "ram": "8GB / 12GB",
+            "storage": "128GB / 256GB / 512GB, UFS 3.1",
+            "os": "Android 16, One UI 8.5",
+            "battery": "5000 mAh, 45W wired charging",
+            "camera": "Triple: 50 MP (wide) + 12 MP (ultrawide) + 5 MP (macro); Selfie: 12 MP",
+            "gpu": "Xclipse 550",
+            "batteryLife": "Active use score ~14h, endurance ~52h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:30:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:30:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70314"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S26 Ultra",
+        "slug": "samsung-galaxy-s26-ultra",
+        "brand": "Samsung",
+        "model": "Galaxy S26 Ultra 5G",
+        "country": "Global",
+        "price": 24132.75,
+        "promotionalPrice": 22407.75,
+        "currency": "MDL",
+        "stock": 75,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s26-ultra-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, Dynamic AMOLED 2X, 144Hz, HDR10+, QHD+",
+            "processor": "Qualcomm Snapdragon 8 Gen 5 (4 nm), Octa-core",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB, UFS 4.0",
+            "os": "Android 16, One UI 8.5",
+            "battery": "5500 mAh, 65W wired, 25W wireless",
+            "camera": "Quad: 200 MP (wide) + 48 MP (periscope telephoto) + 12 MP (ultrawide) + 10 MP (telephoto); Selfie: 12 MP",
+            "gpu": "Adreno 830",
+            "batteryLife": "Active use score ~16h, endurance ~60h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:32:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:32:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70315"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S26+",
+        "slug": "samsung-galaxy-s26-plus",
+        "brand": "Samsung",
+        "model": "Galaxy S26+ 5G",
+        "country": "Global",
+        "price": 20574.05,
+        "promotionalPrice": 18056.92,
+        "currency": "MDL",
+        "stock": 100,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s26-plus-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1440x3120 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite Gen 5 (3 nm, Octa-core) - US/CN; Exynos 2600 (2 nm, 10-core) - ROW",
+            "ram": "12GB",
+            "storage": "256GB / 512GB, UFS 4.X",
+            "os": "Android 16, One UI 8.5, up to 7 major upgrades",
+            "battery": "4900 mAh, 45W wired, 20W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 50 MP (wide) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Adreno 840 (US/CN) / Xclipse 960 (ROW)",
+            "batteryLife": "Active use ~16h25m, endurance ~55h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:33:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:33:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70316"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S26",
+        "slug": "samsung-galaxy-s26-5g",
+        "brand": "Samsung",
+        "model": "Galaxy S26 5G",
+        "country": "Global",
+        "price": 14999.8,
+        "promotionalPrice": 14533.39,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s26-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.3 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1080x2340 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite Gen 5 (3 nm, Octa-core, US/CN) / Exynos 2600 (2 nm, 10-core, ROW)",
+            "ram": "12GB",
+            "storage": "128GB / 256GB / 512GB, UFS 4.X",
+            "os": "Android 16, One UI 8.5, up to 7 major upgrades",
+            "battery": "4300 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 50 MP (wide) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Adreno 840 (US/CN) / Xclipse 960 (ROW)",
+            "batteryLife": "Active use ~15h20m, endurance ~51h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:34:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:34:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70317"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S25 FE",
+        "slug": "samsung-galaxy-s25-fe-5g",
+        "brand": "Samsung",
+        "model": "Galaxy S25 FE 5G",
+        "country": "Global",
+        "price": 9729.19,
+        "promotionalPrice": 8713.06,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s25-fe-01.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1080x2340 pixels",
+            "processor": "Exynos 2400 (4 nm), 10-core (1x3.2GHz Cortex-X4 & 2x2.9GHz Cortex-A720 & 3x2.6GHz Cortex-A720 & 4x1.95GHz Cortex-A520)",
+            "ram": "8GB",
+            "storage": "128GB / 256GB / 512GB, UFS 4.0",
+            "os": "Android 16, One UI 8, up to 7 major upgrades",
+            "battery": "4900 mAh, 45W wired, 15W wireless, reverse wireless",
+            "camera": "Triple: 50 MP (wide) + 8 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Xclipse 940",
+            "batteryLife": "Active use ~11h57m, endurance ~42h37m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:35:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:35:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70318"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy Z Fold7",
+        "slug": "samsung-galaxy-z-fold7",
+        "brand": "Samsung",
+        "model": "Galaxy Z Fold7 5G",
+        "country": "Global",
+        "price": 29594.2,
+        "promotionalPrice": 28357.73,
+        "currency": "MDL",
+        "stock": 50,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-z-fold7-1.png"
+        ],
+        "specs": {
+            "screenSize": "Main: 8.0 inches, Foldable Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1968x2184 pixels; Cover: 6.5 inches, Dynamic LTPO AMOLED 2X, 120Hz, 1080x2520 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite (3 nm), Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB, UFS 4.0",
+            "os": "Android 16, One UI 8, up to 7 major upgrades",
+            "battery": "4400 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 200 MP (wide) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 10 MP (ultrawide); Cover: 10 MP (wide)",
+            "gpu": "Adreno 830 (1200 MHz)",
+            "batteryLife": "Active use ~11h44m, endurance ~40h28m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:36:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:36:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70319"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy Z Flip7",
+        "slug": "samsung-galaxy-z-flip7",
+        "brand": "Samsung",
+        "model": "Galaxy Z Flip7 5G",
+        "country": "Global",
+        "price": 19317.11,
+        "promotionalPrice": 18242.8,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-z-flip7-01.png"
+        ],
+        "specs": {
+            "screenSize": "Main: 6.9 inches, Foldable Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1080x2520 pixels; Cover: 4.1 inches, Super AMOLED, 120Hz, 948x1048 pixels",
+            "processor": "Exynos 2500 (3 nm), 10-core (1x3.3GHz Cortex-X5 & 2x2.74GHz Cortex-A725 & 5x2.36GHz Cortex-A725 & 2x1.8GHz Cortex-A520)",
+            "ram": "12GB",
+            "storage": "256GB / 512GB, UFS 4.0",
+            "os": "Android 16, One UI 8, up to 7 major upgrades",
+            "battery": "4300 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Dual: 50 MP (wide, OIS) + 12 MP (ultrawide); Selfie: 10 MP",
+            "gpu": "Xclipse 950",
+            "batteryLife": "Active use ~11h52m, endurance ~42h04m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:37:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:37:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031a"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy Z Flip7 FE",
+        "slug": "samsung-galaxy-z-flip7-fe-5g",
+        "brand": "Samsung",
+        "model": "Galaxy Z Flip7 FE 5G",
+        "country": "Global",
+        "price": 15161.76,
+        "promotionalPrice": 14654.8,
+        "currency": "MDL",
+        "stock": 180,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-z-flip7-fe-1.png"
+        ],
+        "specs": {
+            "screenSize": "Main: 6.7 inches, Foldable Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1080x2640 pixels; Cover: 3.4 inches, Super AMOLED, 60Hz, 720x748 pixels",
+            "processor": "Exynos 2400 (4 nm), 10-core (1x3.2GHz Cortex-X4 & 2x2.9GHz Cortex-A720 & 3x2.6GHz Cortex-A720 & 4x1.95GHz Cortex-A520)",
+            "ram": "8GB",
+            "storage": "128GB / 256GB, UFS 4.0",
+            "os": "Android 16, One UI 8, up to 7 major upgrades",
+            "battery": "4000 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Dual: 50 MP (wide, OIS) + 12 MP (ultrawide); Selfie: 10 MP",
+            "gpu": "Xclipse 940",
+            "batteryLife": "Active use ~10h09m, endurance ~37h03m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:38:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:38:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031b"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S25 Edge",
+        "slug": "samsung-galaxy-s25-edge",
+        "brand": "Samsung",
+        "model": "Galaxy S25 Edge",
+        "country": "Global",
+        "price": 12161.8,
+        "promotionalPrice": 9761.02,
+        "currency": "MDL",
+        "stock": 100,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s25-edge-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, LTPO AMOLED 2X, 120Hz, HDR10+, 1440x3120 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite (3 nm), Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+            "ram": "12GB",
+            "storage": "256GB / 512GB, UFS 4.0",
+            "os": "Android 15, One UI 7, up to 7 major upgrades",
+            "battery": "3900 mAh, 25W wired, 15W wireless",
+            "camera": "Dual: 200 MP (wide, OIS) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Adreno 830 (1200 MHz)",
+            "batteryLife": "Active use ~12h06m, endurance ~40h05m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:39:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:39:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031c"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy A56",
+        "slug": "samsung-galaxy-a56",
+        "brand": "Samsung",
+        "model": "Galaxy A56",
+        "country": "Global",
+        "price": 5939.11,
+        "promotionalPrice": 5350.87,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-a56-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Super AMOLED, 120Hz, HDR10+, 1080x2340 pixels",
+            "processor": "Exynos 1580 (4 nm), Octa-core (1x2.9 GHz Cortex-A720 & 3x2.6 GHz Cortex-A720 & 4x1.9 GHz Cortex-A520)",
+            "ram": "6GB / 8GB / 12GB",
+            "storage": "128GB / 256GB, UFS 3.1",
+            "os": "Android 15, One UI 7, up to 6 major upgrades",
+            "battery": "5000 mAh, 45W wired charging",
+            "camera": "Triple: 50 MP (wide, OIS) + 12 MP (ultrawide) + 5 MP (macro); Selfie: 12 MP",
+            "gpu": "Xclipse 540",
+            "batteryLife": "Active use ~12h08m, endurance ~44h34m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:40:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:40:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031d"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S25 Ultra",
+        "slug": "samsung-galaxy-s25-ultra",
+        "brand": "Samsung",
+        "model": "Galaxy S25 Ultra 5G",
+        "country": "Global",
+        "price": 26330.73,
+        "promotionalPrice": 24303.73,
+        "currency": "MDL",
+        "stock": 80,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s25-ultra-sm-s938-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1440x3120 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite Gen 5 (3 nm, Octa-core) - US/CN; Exynos 2500 (3 nm, 10-core) - ROW",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB, UFS 4.0",
+            "os": "Android 16, One UI 8.5, up to 7 major upgrades",
+            "battery": "5500 mAh, 45W wired, 25W wireless, 4.5W reverse wireless",
+            "camera": "Quad: 200 MP (wide, OIS) + 50 MP (periscope telephoto, 5x optical zoom) + 12 MP (ultrawide) + 10 MP (telephoto, 3x optical zoom); Selfie: 12 MP",
+            "gpu": "Adreno 830 (US/CN) / Xclipse 950 (ROW)",
+            "batteryLife": "Active use ~17h, endurance ~65h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:41:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:41:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031e"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S25+",
+        "slug": "samsung-galaxy-s25-plus",
+        "brand": "Samsung",
+        "model": "Galaxy S25+ 5G",
+        "country": "Global",
+        "price": 15466.01,
+        "promotionalPrice": 9627.03,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s25-plus-sm-s936-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1440x3120 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite (3 nm), Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+            "ram": "12GB",
+            "storage": "256GB / 512GB, UFS 4.0",
+            "os": "Android 15, One UI 8, up to 7 major upgrades",
+            "battery": "4900 mAh, 45W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 50 MP (wide, OIS) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Adreno 830 (1200 MHz)",
+            "batteryLife": "Active use ~14h26m, endurance ~43h38m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:42:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:42:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7031f"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Samsung Galaxy S25",
+        "slug": "samsung-galaxy-s25",
+        "brand": "Samsung",
+        "model": "Galaxy S25 5G",
+        "country": "Global",
+        "price": 12161.8,
+        "promotionalPrice": 7072.2,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s25-sm-s931-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.2 inches, Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1080x2340 pixels",
+            "processor": "Qualcomm Snapdragon 8 Elite (3 nm), Octa-core (2x4.47 GHz Oryon V2 Phoenix L + 6x3.53 GHz Oryon V2 Phoenix M)",
+            "ram": "12GB",
+            "storage": "128GB / 256GB / 512GB, UFS 4.0",
+            "os": "Android 15, One UI 8, up to 7 major upgrades",
+            "battery": "4000 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 50 MP (wide, OIS) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 12 MP",
+            "gpu": "Adreno 830 (1200 MHz)",
+            "batteryLife": "Active use ~13h09m, endurance ~37h16m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:44:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:44:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70320"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Samsung Galaxy Z Fold Special Edition",
+        "slug": "samsung-galaxy-z-fold-special",
+        "brand": "Samsung",
+        "model": "Galaxy Z Fold SE",
+        "country": "Global",
+        "price": 37904.9,
+        "promotionalPrice": 36465.73,
+        "currency": "MDL",
+        "stock": 60,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-z-fold-special-edition-1.png"
+        ],
+        "specs": {
+            "screenSize": "Main: 8.0 inches, Foldable Dynamic LTPO AMOLED 2X, 120Hz, HDR10+, 1968x2184 pixels; Cover: 6.5 inches, Dynamic LTPO AMOLED 2X, 120Hz, 1080x2520 pixels",
+            "processor": "Qualcomm Snapdragon 8 Gen 3 (4 nm), Octa-core (1x3.39GHz Cortex-X4 & 3x3.1GHz Cortex-A720 & 2x2.9GHz Cortex-A720 & 2x2.2GHz Cortex-A520)",
+            "ram": "16GB",
+            "storage": "512GB, UFS 4.0",
+            "os": "Android 14, One UI 6.1.1, up to 7 major upgrades",
+            "battery": "4400 mAh, 25W wired, 15W wireless, 4.5W reverse wireless",
+            "camera": "Triple: 200 MP (wide, OIS) + 10 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 4 MP (under-display); Cover: 10 MP (wide)",
+            "gpu": "Adreno 750 (1 GHz)",
+            "batteryLife": "Active use ~12h, endurance ~45h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:45:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:45:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70321"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Samsung Galaxy S24 FE",
+        "slug": "samsung-galaxy-s24-fe",
+        "brand": "Samsung",
+        "model": "Galaxy S24 FE",
+        "country": "Global",
+        "price": 7337.74,
+        "promotionalPrice": 4558.72,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/samsung/samsung-galaxy-s24-fe-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, Dynamic AMOLED 2X, 120Hz, HDR10+, 1080x2340 pixels",
+            "processor": "Exynos 2400e (4 nm), 10-core (1x3.1 GHz + 2x2.9 GHz + 3x2.6 GHz + 4x1.95 GHz)",
+            "ram": "8GB",
+            "storage": "128GB / 256GB / 512GB, UFS 4.0",
+            "os": "Android 14, One UI 8.0, up to 7 major upgrades",
+            "battery": "4700 mAh, 25W wired, 15W wireless, reverse wireless",
+            "camera": "Triple: 50 MP (wide, OIS) + 8 MP (telephoto, 3x optical zoom) + 12 MP (ultrawide); Selfie: 10 MP",
+            "gpu": "Xclipse 940",
+            "batteryLife": "Active use ~11h48m, endurance ~42h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T07:46:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T07:46:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70322"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Pura 90 Pro Max",
+        "slug": "huawei-pura-90-pro-max",
+        "brand": "Huawei",
+        "model": "Pura 90 Pro Max",
+        "country": "China",
+        "price": 16418.7,
+        "promotionalPrice": 15182.23,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-pura90-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, 1308x2880 pixels, LTPO OLED, 120Hz",
+            "processor": "Kirin 9030S",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "HarmonyOS 6.1",
+            "battery": "Li-Po 6000 mAh, 100W wired, 80W wireless",
+            "camera": "Triple: 50MP wide + 200MP telephoto + 40MP ultrawide; Selfie: 13MP",
+            "gpu": "Mali-G78 (integrated with Kirin 9030S)",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:51:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:51:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70323"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Pura 90 Pro",
+        "slug": "huawei-pura-90-pro",
+        "brand": "Huawei",
+        "model": "Pura 90 Pro",
+        "country": "China",
+        "price": 19256.5,
+        "promotionalPrice": 18222.73,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-pura90-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.8 inches, LTPO OLED, 120Hz, 1260x2800 pixels",
+            "processor": "Kirin 9010",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "HarmonyOS 4.2",
+            "battery": "Li-Po 5200 mAh, 100W wired, 80W wireless",
+            "camera": "Triple: 50MP wide + 48MP telephoto + 40MP ultrawide; Selfie: 13MP",
+            "gpu": "Mali-G78 (integrated with Kirin 9010)",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:53:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:53:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70324"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Pura 90",
+        "slug": "huawei-pura-90",
+        "brand": "Huawei",
+        "model": "Pura 90",
+        "country": "China",
+        "price": 11959.3,
+        "promotionalPrice": 11128.23,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-pura90-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.8 inches, LTPO OLED, 120Hz, 1320x2856 pixels",
+            "processor": "Kirin 9010s (7 nm), Octa-core",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB",
+            "os": "HarmonyOS 6.1",
+            "battery": "Li-Po 6500 mAh, 100W wired, 50W wireless, reverse charging",
+            "camera": "Triple: 50MP wide + 50MP telephoto + 12.5MP ultrawide; Selfie: 50MP",
+            "gpu": "Mali-G78 (integrated with Kirin 9010s)",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:54:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:54:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70325"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Enjoy 90 Pro Max",
+        "slug": "huawei-enjoy-90-pro-max",
+        "brand": "Huawei",
+        "model": "Enjoy 90 Pro Max",
+        "country": "China",
+        "price": 4459.4,
+        "promotionalPrice": 4033.73,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-enjoy-90-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.84 inches, OLED, 1272x2756 pixels, 120Hz",
+            "processor": "Kirin 8000 (7 nm), Octa-core",
+            "ram": "8GB",
+            "storage": "128GB / 256GB / 512GB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Si/C Li-Ion 8500 mAh, 40W wired, 5W reverse wired",
+            "camera": "Main: 50MP wide, LED flash, HDR, panorama; Selfie: 8MP wide",
+            "gpu": "Mali-G610 MP4",
+            "batteryLife": "Up to 3 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:55:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:55:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70326"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Enjoy 90m Plus",
+        "slug": "huawei-enjoy-90m-plus",
+        "brand": "Huawei",
+        "model": "Enjoy 90m Plus",
+        "country": "China",
+        "price": 4459.4,
+        "promotionalPrice": 4033.73,
+        "currency": "MDL",
+        "stock": 250,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/enjoy-90m-plus-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.67 inches, IPS LCD, 120Hz, 720x1604 pixels",
+            "processor": "Kirin 8000 (7 nm), Octa-core",
+            "ram": "8GB",
+            "storage": "128GB / 256GB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Si/C Li-Ion 6620 mAh, 40W wired, 5W reverse wired",
+            "camera": "Main: 50MP wide, LED flash, HDR, panorama; Selfie: 8MP wide",
+            "gpu": "Mali-G610 MP4",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:56:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:56:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70327"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Enjoy 90 Plus",
+        "slug": "huawei-enjoy-90-plus",
+        "brand": "Huawei",
+        "model": "Enjoy 90 Plus",
+        "country": "China",
+        "price": 3851.3,
+        "promotionalPrice": 3628.33,
+        "currency": "MDL",
+        "stock": 280,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-enjoy-90-plus-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.67 inches, IPS LCD, 120Hz, 720x1604 pixels",
+            "processor": "Kirin 8000 (7 nm), Octa-core (1x2.4 GHz & 3x2.2 GHz & 4x1.84 GHz)",
+            "ram": "8GB",
+            "storage": "128GB / 256GB / 512GB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Si/C Li-Ion 6620 mAh, 40W wired, 5W reverse wired",
+            "camera": "Main: 50MP wide, LED flash, HDR, panorama; Selfie: 8MP wide",
+            "gpu": "Mali-G610 MP4",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:57:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:57:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70328"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Enjoy 90",
+        "slug": "huawei-enjoy-90",
+        "brand": "Huawei",
+        "model": "Enjoy 90",
+        "country": "China",
+        "price": 3243.2,
+        "promotionalPrice": 3020.23,
+        "currency": "MDL",
+        "stock": 350,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-enjoy-90-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.67 inches, IPS LCD, 120Hz, 720x1604 pixels",
+            "processor": "Kirin 8000A, Octa-core",
+            "ram": "8GB",
+            "storage": "128GB / 256GB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Si/C Li-Ion 6620 mAh, 40W wired, 5W reverse wired",
+            "camera": "Main: 50MP wide, LED flash, HDR, panorama; Selfie: 8MP wide",
+            "gpu": "Mali-G610 MP4",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:58:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:58:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70329"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Mate 80 Pro Max Wind",
+        "slug": "huawei-mate-80-pro-max-wind",
+        "brand": "Huawei",
+        "model": "Mate 80 Pro Max Wind",
+        "country": "China",
+        "price": 21688.9,
+        "promotionalPrice": 20249.73,
+        "currency": "MDL",
+        "stock": 100,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-mate-80-pro-max-wind-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, LTPO OLED, 120Hz, 1320x2848 pixels",
+            "processor": "Kirin 9030 Pro (6 nm), 9-core",
+            "ram": "16GB",
+            "storage": "512GB / 1TB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6000 mAh, 100W wired, 80W wireless, 20W reverse wireless, 18W reverse wired",
+            "camera": "Triple: 50MP wide + 50MP periscope telephoto + 40MP ultrawide; Selfie: 13MP ultrawide + TOF 3D",
+            "gpu": "Maleoon 935",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:59:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:59:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032a"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei nova 15 Ultra",
+        "slug": "huawei-nova-15-ultra",
+        "brand": "Huawei",
+        "model": "nova 15 Ultra",
+        "country": "China",
+        "price": 10540.4,
+        "promotionalPrice": 10114.73,
+        "currency": "MDL",
+        "stock": 180,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-nova15-ultra-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.84 inches, LTPO OLED, 120Hz, 1320x2856 pixels",
+            "processor": "Kirin 9010S",
+            "ram": "12GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6500 mAh, 100W wired, 50W wireless, 7.5W reverse wireless, 5W reverse wired",
+            "camera": "Triple: 50MP wide + 50MP periscope telephoto + 50MP ultrawide; Selfie: 50MP ultrawide",
+            "gpu": "Mali-G610",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:01:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:01:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032b"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei nova 15 Pro",
+        "slug": "huawei-nova-15-pro",
+        "brand": "Huawei",
+        "model": "nova 15 Pro",
+        "country": "China",
+        "price": 8716.1,
+        "promotionalPrice": 8087.73,
+        "currency": "MDL",
+        "stock": 220,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-nova15-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.84 inches, LTPO OLED, 120Hz, 1320x2856 pixels",
+            "processor": "Kirin 9010S",
+            "ram": "12GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6500 mAh, 100W wired, 5W reverse wired",
+            "camera": "Triple: 50MP wide + 12MP telephoto + 13MP ultrawide; Selfie: 50MP ultrawide",
+            "gpu": "Mali-G610",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:02:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:02:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032c"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei nova 15",
+        "slug": "huawei-nova-15",
+        "brand": "Huawei",
+        "model": "nova 15",
+        "country": "China",
+        "price": 6689.1,
+        "promotionalPrice": 6060.73,
+        "currency": "MDL",
+        "stock": 250,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-nova15-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.7 inches, LTPO OLED, 120Hz, 1084x2412 pixels",
+            "processor": "Kirin 8020",
+            "ram": "12GB",
+            "storage": "256GB / 512GB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6000 mAh, 100W wired, 5W reverse wired",
+            "camera": "Dual: 50MP wide + 12MP telephoto; Selfie: 50MP ultrawide",
+            "gpu": "Mali-G610",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:04:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:04:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032d"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Mate X7",
+        "slug": "huawei-mate-x7",
+        "brand": "Huawei",
+        "model": "Mate X7",
+        "country": "China",
+        "price": 32229.3,
+        "promotionalPrice": 30384.73,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-mate-x7-1.png"
+        ],
+        "specs": {
+            "screenSize": "8.0 inches, LTPO OLED, 120Hz, 2210x2416 pixels (main); 6.49 inches LTPO OLED, 120Hz, 1080x2444 pixels (cover)",
+            "processor": "Kirin 9030 Pro (6 nm), 9-core",
+            "ram": "12GB / 16GB / 20GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "EMUI 15 (International), HarmonyOS 6.0 (China)",
+            "battery": "Li-Po 5600 mAh (5525 mAh for 12GB RAM model), 66W wired, 50W wireless, 7.5W reverse wireless, 5W reverse wired",
+            "camera": "Triple: 50MP wide + 50MP periscope telephoto + 40MP ultrawide; Selfie: 8MP wide (main) + 8MP wide (cover)",
+            "gpu": "Maleoon 935",
+            "batteryLife": "Active use score ~11h 51m"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:05:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:05:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032e"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "categorySlug": "smartphones",
+        "name": "Huawei Mate 80 RS Ultimate",
+        "slug": "huawei-mate-80-rs-ultimate",
+        "brand": "Huawei",
+        "model": "Mate 80 RS Ultimate",
+        "country": "China",
+        "price": 29796.9,
+        "promotionalPrice": 28357.73,
+        "currency": "MDL",
+        "stock": 100,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-mate-80-rs-ultimate-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, Dual-layer LTPO OLED, 120Hz, 1320x2848 pixels",
+            "processor": "Kirin 9030 Pro (6 nm), 9-core",
+            "ram": "20GB",
+            "storage": "512GB / 1TB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6000 mAh, 100W wired, 80W wireless, 20W reverse wireless, 18W reverse wired",
+            "camera": "Quad: 50MP wide + 50MP periscope telephoto (4x zoom) + 50MP periscope telephoto (6.2x zoom) + 40MP ultrawide; Selfie: 13MP ultrawide + TOF 3D",
+            "gpu": "Maleoon 935",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:06:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:06:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7032f"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Huawei Mate 80 Pro Max",
+        "slug": "huawei-mate-80-pro-max",
+        "brand": "Huawei",
+        "model": "Mate 80 Pro Max",
+        "country": "China",
+        "price": 19864.6,
+        "promotionalPrice": 19236.23,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-mate-80-pro-max-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.9 inches, LTPO OLED, 120Hz, 1320x2848 pixels",
+            "processor": "Kirin 9030 Pro (6 nm), 9-core",
+            "ram": "16GB",
+            "storage": "512GB / 1TB",
+            "os": "HarmonyOS 6.0",
+            "battery": "Li-Po 6000 mAh, 100W wired, 80W wireless, 20W reverse wireless, 18W reverse wired",
+            "camera": "Quad: 50MP wide + 50MP periscope telephoto (4x zoom) + 50MP periscope telephoto (6.2x zoom) + 40MP ultrawide; Selfie: 13MP ultrawide + TOF 3D",
+            "gpu": "Maleoon 935",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:07:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:07:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70330"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Huawei Mate 80 Pro",
+        "slug": "huawei-mate-80-pro",
+        "brand": "Huawei",
+        "model": "Mate 80 Pro",
+        "country": "China",
+        "price": 18243,
+        "promotionalPrice": 17614.63,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/smartphones/huawei/huawei-mate-80-pro-1.png"
+        ],
+        "specs": {
+            "screenSize": "6.75 inches, LTPO OLED, 120Hz, 1280x2832 pixels",
+            "processor": "Kirin 9030 Pro (6 nm), 9-core",
+            "ram": "12GB / 16GB",
+            "storage": "256GB / 512GB / 1TB",
+            "os": "EMUI 15 (International), HarmonyOS 6.0 (China)",
+            "battery": "Li-Po 5750 mAh, 100W wired, 80W wireless, 20W reverse wireless, 18W reverse wired",
+            "camera": "Triple: 50MP wide + 48MP periscope telephoto + 40MP ultrawide; Selfie: 13MP ultrawide + TOF 3D",
+            "gpu": "Maleoon 935",
+            "batteryLife": "Up to 2 days typical use"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T11:08:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T11:08:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70331"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 16 (2026, M5 Pro)",
+        "slug": "apple-macbook-pro-16-2026-m5-pro",
+        "brand": "Apple",
+        "model": "MacBook Pro 16 2026 M5 Pro",
+        "country": "United States",
+        "price": 46557.75,
+        "promotionalPrice": 43107.75,
+        "currency": "MDL",
+        "stock": 120,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-16-2026-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.2 inch, 3456 x 2234, Mini-LED, 120Hz",
+            "processor": "Apple M5 Pro, 18-core CPU (6 super cores, 12 performance cores)",
+            "ram": "64 GB LPDDR5x-9600",
+            "storage": "4 TB PCIe 5.0 SSD",
+            "os": "macOS 15",
+            "battery": "99.6 Wh",
+            "camera": "12 MP webcam, Center Stage",
+            "gpu": "Apple M5 Pro 20-core GPU",
+            "batteryLife": "18.5 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:18:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:18:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70332"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 16 (2025, M5 Pro)",
+        "slug": "apple-macbook-pro-16-2025-m5-pro",
+        "brand": "Apple",
+        "model": "MacBook Pro 16 M5 Pro",
+        "country": "United States",
+        "price": 46557.75,
+        "promotionalPrice": 43107.75,
+        "currency": "MDL",
+        "stock": 150,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-16-2025-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.2 inch, 3456 x 2234, Mini-LED, 120Hz",
+            "processor": "Apple M5 Pro, 18-core CPU (6 performance + 12 efficiency)",
+            "ram": "64 GB LPDDR5X-9600",
+            "storage": "4 TB PCIe 5.0 SSD",
+            "os": "macOS 15",
+            "battery": "100 Wh Li-Po",
+            "camera": "1080p FaceTime HD",
+            "gpu": "Apple M5 Pro 20-core GPU",
+            "batteryLife": "18 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:21:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:21:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70333"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 16 (2024, M4 Pro)",
+        "slug": "apple-macbook-pro-16-2024-m4-pro",
+        "brand": "Apple",
+        "model": "MacBook Pro 16 M4 Pro",
+        "country": "United States",
+        "price": 43107.75,
+        "promotionalPrice": 41382.75,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-16-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.2 inch, 3456 x 2234, Mini-LED, 120Hz, matte option",
+            "processor": "Apple M4 Pro, 14-core CPU (10 performance + 4 efficiency)",
+            "ram": "48 GB LPDDR5x-8533",
+            "storage": "2 TB PCIe SSD",
+            "os": "macOS 15",
+            "battery": "100 Wh Li-Po",
+            "camera": "12 MP webcam, desktop view",
+            "gpu": "Apple M4 Pro 20-core GPU",
+            "batteryLife": "up to 18 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:23:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:23:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70334"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 14 (2026, M5 Max)",
+        "slug": "apple-macbook-pro-14-2026-m5-max",
+        "brand": "Apple",
+        "model": "MacBook Pro 14 M5 Max",
+        "country": "United States",
+        "price": 27582.75,
+        "promotionalPrice": 25857.75,
+        "currency": "MDL",
+        "stock": 180,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-14-2026-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch, Liquid Retina XDR, 3024 x 1964, 120Hz, optional nano-texture",
+            "processor": "Apple M5 Max, 16-core CPU",
+            "ram": "48 GB LPDDR5X (configurable up to 128 GB)",
+            "storage": "2 TB PCIe 5.0 SSD (configurable up to 8 TB)",
+            "os": "macOS 15",
+            "battery": "70 Wh Li-Po",
+            "camera": "1080p FaceTime HD",
+            "gpu": "Apple M5 Max, 30-core GPU",
+            "batteryLife": "up to 24 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:24:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:24:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70335"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 14 (2025, M5)",
+        "slug": "apple-macbook-pro-14-2025-m5",
+        "brand": "Apple",
+        "model": "MacBook Pro 14 M5",
+        "country": "United States",
+        "price": 55519.53,
+        "promotionalPrice": 52681.73,
+        "currency": "MDL",
+        "stock": 220,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-14-2025-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch, 3024 x 1964, Mini-LED, 120Hz",
+            "processor": "Apple M5, 10-core CPU (4 performance cores up to 4.6 GHz, 6 efficiency cores up to 3.0 GHz)",
+            "ram": "32 GB LPDDR5",
+            "storage": "1 TB PCIe SSD",
+            "os": "macOS 26 Tahoe",
+            "battery": "72.4 Wh Li-Ion",
+            "camera": "12 MP webcam, Center Stage",
+            "gpu": "Apple M5 10-core GPU",
+            "batteryLife": "up to 24 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:26:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:26:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70336"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Pro 14 (2024, M4 Pro)",
+        "slug": "apple-macbook-pro-14-2024-m4-pro",
+        "brand": "Apple",
+        "model": "MacBook Pro 14 M4 Pro",
+        "country": "United States",
+        "price": 34482.75,
+        "promotionalPrice": 33620.25,
+        "currency": "MDL",
+        "stock": 200,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-pro-14-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch, 3024 x 1964, Mini-LED, 120Hz, optional matte nano-texture",
+            "processor": "Apple M4 Pro, 14-core CPU (10 performance + 4 efficiency)",
+            "ram": "48 GB LPDDR5x-8533",
+            "storage": "2 TB PCIe SSD",
+            "os": "macOS 15",
+            "battery": "72.6 Wh Li-Ion",
+            "camera": "12 MP webcam, Center Stage, desktop view",
+            "gpu": "Apple M4 Pro 20-core GPU",
+            "batteryLife": "up to 16 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:27:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:27:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70337"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Air 15 (2026, M5)",
+        "slug": "apple-macbook-air-15-2026-m5",
+        "brand": "Apple",
+        "model": "MacBook Air 15 M5",
+        "country": "United States",
+        "price": 22407.75,
+        "promotionalPrice": 20682.75,
+        "currency": "MDL",
+        "stock": 250,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-15-2026-1.png"
+        ],
+        "specs": {
+            "screenSize": "15.3 inch, 2880 x 1864, IPS, 60Hz",
+            "processor": "Apple M5, 10-core CPU (4 performance cores up to 4.6 GHz, 6 efficiency cores up to 3.0 GHz)",
+            "ram": "32 GB LPDDR5x-9600 (onboard, non-upgradable)",
+            "storage": "2 TB PCIe 4.0 SSD (base model: 512 GB, configurable up to 4 TB)",
+            "os": "macOS 15",
+            "battery": "66.5 Wh Li-Ion",
+            "camera": "1080p FaceTime HD (no Face-ID)",
+            "gpu": "Apple M5 10-core GPU",
+            "batteryLife": "up to 17.2 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:29:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:29:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70338"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Air 15 (2025, M4)",
+        "slug": "apple-macbook-air-15-2025-m4",
+        "brand": "Apple",
+        "model": "MacBook Air 15 M4",
+        "country": "United States",
+        "price": 20682.75,
+        "promotionalPrice": 18957.75,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-15-2025-1.png"
+        ],
+        "specs": {
+            "screenSize": "15.3 inch, 2880 x 1864, IPS, 60Hz",
+            "processor": "Apple M4, 10-core CPU (4 performance cores up to 4.5 GHz, 6 efficiency cores up to 2.9 GHz)",
+            "ram": "16 GB LPDDR5-7500 (configurable up to 32 GB)",
+            "storage": "256 GB PCIe SSD (configurable up to 1 TB)",
+            "os": "macOS 15",
+            "battery": "66.5 Wh Li-Ion",
+            "camera": "12 MP webcam, Center Stage",
+            "gpu": "Apple M4 10-core GPU",
+            "batteryLife": "up to 16.5 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:31:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:31:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70339"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Air 15 (2024, M3)",
+        "slug": "apple-macbook-air-15-2024-m3",
+        "brand": "Apple",
+        "model": "MacBook Air 15 M3",
+        "country": "United States",
+        "price": 29307.75,
+        "promotionalPrice": 27582.75,
+        "currency": "MDL",
+        "stock": 280,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-15-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "15.3 inch, 2880 x 1864, IPS, 60Hz",
+            "processor": "Apple M3, 8-core CPU (4 performance cores up to 4.1 GHz, 4 efficiency cores up to 2.7 GHz)",
+            "ram": "16 GB LPDDR5-6400 (onboard, configurable up to 24 GB)",
+            "storage": "512 GB PCIe 3.0 SSD (configurable up to 2 TB)",
+            "os": "macOS 15",
+            "battery": "66.5 Wh Li-Ion",
+            "camera": "1080p FaceTime HD",
+            "gpu": "Apple M3 10-core GPU",
+            "batteryLife": "up to 17 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:32:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:32:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033a"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Neo (2026)",
+        "slug": "apple-macbook-neo-2026",
+        "brand": "Apple",
+        "model": "MacBook Neo 13",
+        "country": "United States",
+        "price": 10332.75,
+        "promotionalPrice": 9470.25,
+        "currency": "MDL",
+        "stock": 500,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-neo-13-2026-1.png"
+        ],
+        "specs": {
+            "screenSize": "13.6 inch, 2560 x 1664, IPS, 60Hz",
+            "processor": "Apple M3, 8-core CPU (4 performance cores, 4 efficiency cores)",
+            "ram": "8 GB LPDDR5 (configurable up to 16 GB)",
+            "storage": "256 GB PCIe SSD (configurable up to 512 GB)",
+            "os": "macOS 15",
+            "battery": "52.6 Wh Li-Ion",
+            "camera": "1080p FaceTime HD",
+            "gpu": "Apple M3 10-core GPU",
+            "batteryLife": "up to 15 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:33:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:33:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033b"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Apple MacBook Air 13 (2026, M5)",
+        "slug": "apple-macbook-air-13-2026-m5",
+        "brand": "Apple",
+        "model": "MacBook Air 13 M5",
+        "country": "United States",
+        "price": 24303.73,
+        "promotionalPrice": 22276.73,
+        "currency": "MDL",
+        "stock": 320,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-13-2026-1.png"
+        ],
+        "specs": {
+            "screenSize": "13.6 inch, 2560 x 1664, IPS, 60Hz, glossy",
+            "processor": "Apple M5, 10-core CPU (4 performance cores up to 4.6 GHz, 6 efficiency cores up to 3.0 GHz)",
+            "ram": "16 GB LPDDR5x-9600 (onboard, non-upgradable)",
+            "storage": "512 GB PCIe SSD (configurable up to 1 TB)",
+            "os": "macOS 26 Tahoe",
+            "battery": "53.8 Wh Li-Polymer",
+            "camera": "12 MP webcam, Center Stage",
+            "gpu": "Apple M5 8-core GPU",
+            "batteryLife": "up to 15 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:33:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:33:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033c"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Apple MacBook Air 13 (2025, M4)",
+        "slug": "apple-macbook-air-13-2025-m4",
+        "brand": "Apple",
+        "model": "MacBook Air 13 M4",
+        "country": "United States",
+        "price": 17232.75,
+        "promotionalPrice": 16387.5,
+        "currency": "MDL",
+        "stock": 400,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-13-2025-1.png"
+        ],
+        "specs": {
+            "screenSize": "13.6 inch, 2560 x 1664, IPS, 60Hz, glossy",
+            "processor": "Apple M4, 10-core CPU (4 performance cores up to 4.5 GHz, 6 efficiency cores up to 2.9 GHz)",
+            "ram": "16 GB LPDDR5-7500 (onboard, configurable up to 32 GB)",
+            "storage": "256 GB PCIe SSD (configurable up to 1 TB)",
+            "os": "macOS 15",
+            "battery": "53.8 Wh Li-Ion",
+            "camera": "12 MP webcam, Center Stage",
+            "gpu": "Apple M4 8-core GPU",
+            "batteryLife": "up to 16 hours Wi-Fi browsing (7 hours at max brightness)"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:35:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:35:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033d"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Apple MacBook Air 13 (2024, M3)",
+        "slug": "apple-macbook-air-13-2024-m3",
+        "brand": "Apple",
+        "model": "MacBook Air 13 M3",
+        "country": "United States",
+        "price": 35654.93,
+        "promotionalPrice": 34438.73,
+        "currency": "MDL",
+        "stock": 300,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/apple/apple-macbook-air-13-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "13.6 inch, 2560 x 1664, Retina IPS, 60Hz",
+            "processor": "Apple M3, 8-core CPU (4 performance cores up to 3.5 GHz, 4 efficiency cores up to 2.4 GHz)",
+            "ram": "16 GB LPDDR5-6400 (configurable up to 24 GB)",
+            "storage": "512 GB PCIe SSD (configurable up to 2 TB)",
+            "os": "macOS Sonoma (14)",
+            "battery": "52.6 Wh Li-Ion",
+            "camera": "1080p FaceTime HD",
+            "gpu": "Apple M3 10-core GPU",
+            "batteryLife": "up to 18 hours Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:36:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:36:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033e"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book6 Ultra",
+        "slug": "samsung-galaxy-book6-ultra",
+        "brand": "Samsung",
+        "model": "Galaxy Book6 Ultra",
+        "country": "South Korea",
+        "price": 72951.73,
+        "promotionalPrice": 60809.8,
+        "currency": "MDL",
+        "stock": 25,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book6-ultra-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, OLED, 120Hz",
+            "processor": "Intel Core Ultra 7 356H (Panther Lake, 16 cores, up to 4.7 GHz)",
+            "ram": "32 GB LPDDR5x-8533",
+            "storage": "1 TB SSD (Samsung PM9C1b)",
+            "os": "Windows 11",
+            "battery": "80.2 Wh",
+            "camera": "1080p webcam with facial recognition",
+            "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU, 8 GB GDDR7",
+            "batteryLife": "Up to 16h 49min Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:42:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:42:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7033f"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book6 Pro",
+        "slug": "samsung-galaxy-book6-pro",
+        "brand": "Samsung",
+        "model": "Galaxy Book6 Pro",
+        "country": "South Korea",
+        "price": 44573.73,
+        "promotionalPrice": 42546.73,
+        "currency": "MDL",
+        "stock": 30,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book6-pro-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, OLED, 120Hz, 1200 nits HDR",
+            "processor": "Intel Core Ultra 7 356H (Panther Lake, 16 cores, up to 4.7 GHz)",
+            "ram": "32 GB LPDDR5x-8533 (soldered)",
+            "storage": "512 GB SSD (Samsung PM9C1b, PCIe 4.0)",
+            "os": "Windows 11",
+            "battery": "80 Wh",
+            "camera": "1080p webcam",
+            "gpu": "Intel Graphics 4 Xe3 Panther Lake iGPU",
+            "batteryLife": "Up to 16h 18min Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T09:43:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T09:43:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70340"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book6 NP760VJG-KG5DE",
+        "slug": "samsung-galaxy-book6-np760vjg-kg5de",
+        "brand": "Samsung",
+        "model": "Galaxy Book6 NP760VJG-KG5DE",
+        "country": "South Korea",
+        "price": 35452.23,
+        "promotionalPrice": 34438.73,
+        "currency": "MDL",
+        "stock": 40,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book6-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 1920x1200, IPS, 120Hz",
+            "processor": "Intel Core Ultra 7 355 (Panther Lake, 8 cores, up to 4.7 GHz)",
+            "ram": "32 GB LPDDR5x",
+            "storage": "1 TB NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "61.2 Wh",
+            "camera": "1080p webcam",
+            "gpu": "Intel Graphics 4 Xe3 Panther Lake iGPU",
+            "batteryLife": "Up to 12h Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:45:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:45:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70341"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book5 Pro 360",
+        "slug": "samsung-galaxy-book5-pro-360",
+        "brand": "Samsung",
+        "model": "Galaxy Book5 Pro 360",
+        "country": "South Korea",
+        "price": 36465.73,
+        "promotionalPrice": 32431.8,
+        "currency": "MDL",
+        "stock": 35,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book5-pro-360-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, AMOLED, 120Hz",
+            "processor": "Intel Core Ultra 5 226V (Lunar Lake, 8 cores, up to 4.5 GHz)",
+            "ram": "16 GB LPDDR5x-8533 (soldered)",
+            "storage": "512 GB SSD (Samsung PM9B1, PCIe 4.0)",
+            "os": "Windows 11",
+            "battery": "76 Wh",
+            "camera": "1080p webcam with Studio functions",
+            "gpu": "Intel Arc Graphics 130V iGPU",
+            "batteryLife": "Up to 10h 46min Wi-Fi browsing; up to 19h 41min video playback"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:47:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:47:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70342"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book5 Pro 16",
+        "slug": "samsung-galaxy-book5-pro-16",
+        "brand": "Samsung",
+        "model": "Galaxy Book5 Pro 16 NP960XHA-KG2US",
+        "country": "South Korea",
+        "price": 33632.43,
+        "promotionalPrice": 32752,
+        "currency": "MDL",
+        "stock": 50,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book5-pro-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, Dynamic AMOLED, Anti-Reflective, 120Hz",
+            "processor": "Intel Core Ultra 7 226V (Lunar Lake, 8 cores, up to 5 GHz)",
+            "ram": "16 GB LPDDR5x-8533 (soldered)",
+            "storage": "1TB SSD (Samsung)",
+            "os": "Windows 11",
+            "battery": "76Wh Li-ion",
+            "camera": "1080p FHD webcam",
+            "gpu": "Intel Arc Graphics 130V iGPU",
+            "batteryLife": "Up to 21h"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:50:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:50:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70343"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book5 360",
+        "slug": "samsung-galaxy-book5-360",
+        "brand": "Samsung",
+        "model": "Galaxy Book5 360",
+        "country": "South Korea",
+        "price": 32411.73,
+        "promotionalPrice": 30384.73,
+        "currency": "MDL",
+        "stock": 45,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book5-360-1.png"
+        ],
+        "specs": {
+            "screenSize": "15.6 inch, 1920x1080, AMOLED, touchscreen, 60Hz",
+            "processor": "Intel Core Ultra 7 155H (Meteor Lake, 16 cores, up to 4.8 GHz)",
+            "ram": "16 GB LPDDR5x",
+            "storage": "512 GB NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "68 Wh",
+            "camera": "1080p webcam",
+            "gpu": "Intel Arc Graphics iGPU",
+            "batteryLife": "Up to 12h Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:55:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:55:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70344"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book5 15 NP750XHD",
+        "slug": "samsung-galaxy-book5-15-np750xhd",
+        "brand": "Samsung",
+        "model": "Galaxy Book5 15 NP750XHD",
+        "country": "South Korea",
+        "price": 18222.73,
+        "promotionalPrice": 17209.23,
+        "currency": "MDL",
+        "stock": 60,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book5-15-1.png"
+        ],
+        "specs": {
+            "screenSize": "15.6 inch, 1920x1080, IPS, 60Hz",
+            "processor": "Intel Core Ultra 7 255U (Arrow Lake-U, 12 cores, up to 5.2 GHz)",
+            "ram": "8 GB DDR5",
+            "storage": "512 GB NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "61.2 Wh",
+            "camera": "2 MP webcam",
+            "gpu": "Intel Graphics 4-Core iGPU (Arrow Lake)",
+            "batteryLife": "Up to 10h Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:58:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:58:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70345"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book4 Ultra",
+        "slug": "samsung-galaxy-book4-ultra",
+        "brand": "Samsung",
+        "model": "Galaxy Book4 Ultra",
+        "country": "South Korea",
+        "price": 54708.73,
+        "promotionalPrice": 50654.73,
+        "currency": "MDL",
+        "stock": 20,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book4-ultra-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, OLED, 120Hz",
+            "processor": "Intel Core Ultra 7 155H (Meteor Lake, 16 cores, up to 4.8 GHz)",
+            "ram": "32 GB LPDDR5x",
+            "storage": "1 TB NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "76 Wh",
+            "camera": "1080p webcam",
+            "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU, 6 GB GDDR6",
+            "batteryLife": "Up to 13h Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:59:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:59:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70346"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Samsung Galaxy Book4 Edge 16",
+        "slug": "samsung-galaxy-book4-edge-16",
+        "brand": "Samsung",
+        "model": "Galaxy Book4 Edge 16 NP960XMB-KB1US",
+        "country": "South Korea",
+        "price": 30182.95,
+        "promotionalPrice": 28499,
+        "currency": "MDL",
+        "stock": 25,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-book4-edge-16-1.png"
+        ],
+        "specs": {
+            "screenSize": "16.0 inch, 2880x1800, AMOLED, Anti-Reflective, 120Hz",
+            "processor": "Qualcomm Snapdragon X Elite X1E-84-100, 12 cores up to 4.2 GHz",
+            "ram": "16 GB LPDDR5x-8448 (soldered)",
+            "storage": "1 TB eUFS (non-upgradable)",
+            "os": "Windows 11 ARM",
+            "battery": "76Wh Li-ion",
+            "camera": "1080p FHD webcam",
+            "gpu": "Qualcomm Adreno X1-85, 4.6 TFLOPS",
+            "batteryLife": "Up to 22 hours"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T09:05:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T09:05:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70347"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Samsung Galaxy Chromebook Plus",
+        "slug": "samsung-galaxy-chromebook-plus",
+        "brand": "Samsung",
+        "model": "Galaxy Chromebook Plus",
+        "country": "South Korea",
+        "price": 17232.75,
+        "promotionalPrice": 15507.75,
+        "currency": "MDL",
+        "stock": 50,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/samsung/us-galaxy-chromebook-plus-15-1.png"
+        ],
+        "specs": {
+            "screenSize": "13.3 inch, 1920x1080, AMOLED touchscreen",
+            "processor": "Intel Core i3-1215U (Alder Lake, 6 cores, up to 4.4 GHz)",
+            "ram": "8 GB LPDDR4x",
+            "storage": "256 GB NVMe SSD",
+            "os": "ChromeOS",
+            "battery": "51 Wh",
+            "camera": "1080p webcam",
+            "gpu": "Intel UHD Graphics (integrated)",
+            "batteryLife": "Up to 8h Wi-Fi browsing"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T09:10:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T09:10:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70348"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook X Pro 2023",
+        "slug": "huawei-matebook-x-pro-2023",
+        "brand": "Huawei",
+        "model": "MateBook X Pro 2023",
+        "country": "China",
+        "price": 44573.73,
+        "promotionalPrice": 37499.5,
+        "currency": "MDL",
+        "stock": 50,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-x-pro-2023-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch, 3120x2080, IPS, 90Hz",
+            "processor": "Intel Core i7-1360P (Raptor Lake, 12c/16t, up to 5.0 GHz)",
+            "ram": "16 GB LPDDR5-5200",
+            "storage": "1 TB PCIe SSD",
+            "os": "Windows 11",
+            "battery": "60 Wh",
+            "camera": "720p webcam",
+            "gpu": "Intel Iris Xe Graphics G7 (96 EUs)",
+            "batteryLife": "≈9.5h Wi-Fi browsing, ≈8.5h video playback"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T08:57:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T08:57:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df70349"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook X Pro 2022",
+        "slug": "huawei-matebook-x-pro-2022",
+        "brand": "Huawei",
+        "model": "MateBook X Pro 2022",
+        "country": "China",
+        "price": 44573.73,
+        "promotionalPrice": 40519.73,
+        "currency": "MDL",
+        "stock": 40,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-x-pro-2022-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch, 3120x2080, IPS, 90Hz, 600 nits",
+            "processor": "Intel Core i7-1260P (Alder Lake, 12c/16t, up to 4.7 GHz)",
+            "ram": "16 GB LPDDR5-5200",
+            "storage": "1 TB PCIe SSD",
+            "os": "Windows 11",
+            "battery": "60 Wh",
+            "camera": "720p webcam",
+            "gpu": "Intel Iris Xe Graphics G7 (96 EUs)",
+            "batteryLife": "≈7.5h Wi-Fi browsing, ≈7.5h video playback"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T09:58:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T09:58:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7034a"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook GT 14",
+        "slug": "huawei-matebook-gt-14",
+        "brand": "Huawei",
+        "model": "MateBook GT 14",
+        "country": "China",
+        "price": 17940,
+        "promotionalPrice": 16387.5,
+        "currency": "MDL",
+        "stock": 60,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-gt-14-1.png"
+        ],
+        "specs": {
+            "screenSize": "14.2 inch OLED, 2880x1920, 3:2, 144Hz, 1000 nits",
+            "processor": "Intel Core Ultra 5 125H / Ultra 7 155H / Ultra 9 185H",
+            "ram": "16 GB or 32 GB LPDDR5",
+            "storage": "1 TB or 2 TB PCIe SSD",
+            "os": "Windows 11",
+            "battery": "70 Wh",
+            "camera": "720p webcam",
+            "gpu": "Intel integrated GPU + optional Huawei eGPU via Thunderbolt 4",
+            "batteryLife": "≈8-9h browsing/video playback (estimat)"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T10:15:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T10:15:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7034b"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook 14 (2024)",
+        "slug": "huawei-matebook-14-2024",
+        "brand": "Huawei",
+        "model": "MateBook 14 2024",
+        "country": "China",
+        "price": 22297,
+        "promotionalPrice": 16803.83,
+        "currency": "MDL",
+        "stock": 75,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-14-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "14 inch, 2160x1440, IPS, touchscreen, 3:2 format, 411 nits",
+            "processor": "Intel Core i5-1240P (Alder Lake, 12c/16t, up to 4.4 GHz)",
+            "ram": "16 GB DDR4-3733",
+            "storage": "512 GB PCIe NVMe SSD (Samsung PM991)",
+            "os": "Windows 11",
+            "battery": "56 Wh",
+            "camera": "720p webcam (integrată în tastatură)",
+            "gpu": "Intel Iris Xe Graphics G7 (80 EUs)",
+            "batteryLife": "≈9h Wi-Fi browsing, ≈1h40m full load"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T12:02:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T12:02:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7034c"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook 14 (2022)",
+        "slug": "huawei-matebook-14-2022",
+        "brand": "Huawei",
+        "model": "MateBook 14 2022 i5-1240P",
+        "country": "China",
+        "price": 13074.15,
+        "promotionalPrice": 12141.73,
+        "currency": "MDL",
+        "stock": 80,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-14-2022-1.png"
+        ],
+        "specs": {
+            "screenSize": "14 inch, 2160x1440, IPS, 3:2 aspect ratio, 60Hz",
+            "processor": "Intel Core i5-1240P (Alder Lake, 12c/16t, 1.2–4.4 GHz)",
+            "ram": "16 GB DDR4-3733",
+            "storage": "512 GB PCIe NVMe SSD (Samsung PM991)",
+            "os": "Windows 11 Home",
+            "battery": "56 Wh Li-Polymer",
+            "camera": "720p HD webcam (pop-up)",
+            "gpu": "Intel Iris Xe Graphics G7 (80 EUs)",
+            "batteryLife": "≈10h browsing (producător), ≈7-8h real usage"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T12:04:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T12:04:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7034d"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "categorySlug": "laptops",
+        "name": "Huawei MateBook D 14 (2024)",
+        "slug": "huawei-matebook-d-14-2024",
+        "brand": "Huawei",
+        "model": "MateBook D 14 2024",
+        "country": "China",
+        "price": 13782.75,
+        "promotionalPrice": 12057.75,
+        "currency": "MDL",
+        "stock": 100,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-d-14-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "14 inch, 1920x1200, IPS, 16:10 aspect ratio",
+            "processor": "Intel Core i5-13420H (Raptor Lake-H, 8c/12t, up to 4.6 GHz)",
+            "ram": "16 GB DDR4",
+            "storage": "512 GB PCIe NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "56 Wh Lithium-Polymer",
+            "camera": "720p HD webcam",
+            "gpu": "Intel UHD Graphics Xe G4 (48 EUs)",
+            "batteryLife": "≈8h browsing/video playback (estimat)"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T12:05:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T12:05:00Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f659bbe8a7c42df7034e"
+        },
+        "categoryId": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "categorySlug": "offers",
+        "name": "Huawei MateBook D 16 (2024)",
+        "slug": "huawei-matebook-d-16-2024",
+        "brand": "Huawei",
+        "model": "MateBook D 16 2024",
+        "country": "China",
+        "price": 28357.73,
+        "promotionalPrice": 24303.73,
+        "currency": "MDL",
+        "stock": 60,
+        "imageUrls": [
+            "static/assets/images/prod-images/laptops/huawei/matebook-d-16-2024-1.png"
+        ],
+        "specs": {
+            "screenSize": "16 inch, 1920x1200, IPS, 16:10 aspect ratio, 340 nits",
+            "processor": "Intel Core i9-13900H (Raptor Lake-H, 14c/20t, up to 5.4 GHz)",
+            "ram": "16 GB LPDDR4-3733 (dual-channel, onboard)",
+            "storage": "1 TB PCIe 4.0 NVMe SSD",
+            "os": "Windows 11 Home",
+            "battery": "70 Wh Lithium-Polymer",
+            "camera": "720p HD webcam",
+            "gpu": "Intel Iris Xe Graphics G7 (96 EUs)",
+            "batteryLife": "≈8-9h browsing/video playback (estimat)"
+        },
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-24T12:06:00Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-24T12:06:00Z"
+        }
+    }
+]

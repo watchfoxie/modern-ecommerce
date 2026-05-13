@@ -1,0 +1,500 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.2.5-management-alpine
+    container_name: modern-ecommerce-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USERNAME:-guest}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_DEFAULT_VHOST: "${RABBITMQ_VHOST:-/}"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+    volumes:
+      - .\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - modern-ecommerce-rabbitmq:/var/lib/rabbitmq
+    deploy:
+      resources:
+        limits:
+          cpus: "1.00"
+          memory: 1G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  service-registry:
+    image: modern-ecommerce-service-registry:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-service-registry
+    restart: unless-stopped
+    build:
+      context: .\api\service-registry
+      dockerfile: Dockerfile
+    environment:
+      SERVICE_REGISTRY_PORT: "${SERVICE_REGISTRY_PORT:-8761}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${SERVICE_REGISTRY_PORT:-8761}:${SERVICE_REGISTRY_PORT:-8761}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:${SERVICE_REGISTRY_PORT:-8761}/"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  auth-service:
+    image: modern-ecommerce-auth-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-auth-service
+    restart: unless-stopped
+    build:
+      context: .\api\auth-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    environment:
+      AUTH_SERVICE_PORT: "${AUTH_SERVICE_PORT:-8081}"
+      AUTH_MONGODB_URI: "${AUTH_MONGODB_URI:?AUTH_MONGODB_URI must be set}"
+      AUTH_SERVICE_DB_NAME: "${AUTH_SERVICE_DB_NAME:?AUTH_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      AUTH_SERVICE_USERNAME: "${AUTH_SERVICE_USERNAME:?AUTH_SERVICE_USERNAME must be set}"
+      AUTH_SERVICE_PASSWORD: "${AUTH_SERVICE_PASSWORD:?AUTH_SERVICE_PASSWORD must be set}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-modern-ecommerce-local-jwt-secret-change-me-32}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${AUTH_SERVICE_PORT:-8081}:${AUTH_SERVICE_PORT:-8081}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${AUTH_SERVICE_PORT:-8081}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  user-service:
+    image: modern-ecommerce-user-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-user-service
+    restart: unless-stopped
+    build:
+      context: .\api\user-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    environment:
+      USER_SERVICE_PORT: "${USER_SERVICE_PORT:-8082}"
+      USER_MONGODB_URI: "${USER_MONGODB_URI:?USER_MONGODB_URI must be set}"
+      USER_SERVICE_DB_NAME: "${USER_SERVICE_DB_NAME:?USER_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      USER_SERVICE_USERNAME: "${USER_SERVICE_USERNAME:?USER_SERVICE_USERNAME must be set}"
+      USER_SERVICE_PASSWORD: "${USER_SERVICE_PASSWORD:?USER_SERVICE_PASSWORD must be set}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${USER_SERVICE_PORT:-8082}:${USER_SERVICE_PORT:-8082}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${USER_SERVICE_PORT:-8082}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  category-service:
+    image: modern-ecommerce-category-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-category-service
+    restart: unless-stopped
+    build:
+      context: .\api\category-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    environment:
+      CATEGORY_SERVICE_PORT: "${CATEGORY_SERVICE_PORT:-8083}"
+      CATEGORY_MONGODB_URI: "${CATEGORY_MONGODB_URI:?CATEGORY_MONGODB_URI must be set}"
+      CATEGORY_SERVICE_DB_NAME: "${CATEGORY_SERVICE_DB_NAME:?CATEGORY_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      CATEGORY_SAMPLE_DATA_PATH: "${CATEGORY_SAMPLE_DATA_PATH:-/app/static/sample-data/structured-data/category-service.categories.json}"
+      CATEGORY_SERVICE_USERNAME: "${CATEGORY_SERVICE_USERNAME:?CATEGORY_SERVICE_USERNAME must be set}"
+      CATEGORY_SERVICE_PASSWORD: "${CATEGORY_SERVICE_PASSWORD:?CATEGORY_SERVICE_PASSWORD must be set}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${CATEGORY_SERVICE_PORT:-8083}:${CATEGORY_SERVICE_PORT:-8083}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${CATEGORY_SERVICE_PORT:-8083}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    volumes:
+      - .\static:/app/static:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  product-service:
+    image: modern-ecommerce-product-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-product-service
+    restart: unless-stopped
+    build:
+      context: .\api\product-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    environment:
+      PRODUCT_SERVICE_PORT: "${PRODUCT_SERVICE_PORT:-8084}"
+      PRODUCT_MONGODB_URI: "${PRODUCT_MONGODB_URI:?PRODUCT_MONGODB_URI must be set}"
+      PRODUCT_SERVICE_DB_NAME: "${PRODUCT_SERVICE_DB_NAME:?PRODUCT_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      PRODUCT_SAMPLE_DATA_PATH: "${PRODUCT_SAMPLE_DATA_PATH:-/app/static/sample-data/structured-data/product-service.products.json}"
+      PRODUCT_SERVICE_USERNAME: "${PRODUCT_SERVICE_USERNAME:?PRODUCT_SERVICE_USERNAME must be set}"
+      PRODUCT_SERVICE_PASSWORD: "${PRODUCT_SERVICE_PASSWORD:?PRODUCT_SERVICE_PASSWORD must be set}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${PRODUCT_SERVICE_PORT:-8084}:${PRODUCT_SERVICE_PORT:-8084}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PRODUCT_SERVICE_PORT:-8084}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    volumes:
+      - .\static:/app/static:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  cart-service:
+    image: modern-ecommerce-cart-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-cart-service
+    restart: unless-stopped
+    build:
+      context: .\api\cart-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+    environment:
+      CART_SERVICE_PORT: "${CART_SERVICE_PORT:-8085}"
+      CART_MONGODB_URI: "${CART_MONGODB_URI:?CART_MONGODB_URI must be set}"
+      CART_SERVICE_DB_NAME: "${CART_SERVICE_DB_NAME:?CART_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      CART_SERVICE_USERNAME: "${CART_SERVICE_USERNAME:?CART_SERVICE_USERNAME must be set}"
+      CART_SERVICE_PASSWORD: "${CART_SERVICE_PASSWORD:?CART_SERVICE_PASSWORD must be set}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${CART_SERVICE_PORT:-8085}:${CART_SERVICE_PORT:-8085}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${CART_SERVICE_PORT:-8085}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  notification-service:
+    image: modern-ecommerce-notification-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-notification-service
+    restart: unless-stopped
+    build:
+      context: .\api\notification-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      NOTIFICATION_SERVICE_PORT: "${NOTIFICATION_SERVICE_PORT:-8087}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      NOTIFICATION_MAIL_USERNAME: "${NOTIFICATION_MAIL_USERNAME:-}"
+      NOTIFICATION_MAIL_PASSWORD: "${NOTIFICATION_MAIL_PASSWORD:-}"
+      NOTIFICATION_MAIL_ENABLED: "${NOTIFICATION_MAIL_ENABLED:-false}"
+      NOTIFICATION_MAIL_CONNECTION_TIMEOUT: "${NOTIFICATION_MAIL_CONNECTION_TIMEOUT:-5000}"
+      NOTIFICATION_MAIL_TIMEOUT: "${NOTIFICATION_MAIL_TIMEOUT:-5000}"
+      NOTIFICATION_MAIL_WRITE_TIMEOUT: "${NOTIFICATION_MAIL_WRITE_TIMEOUT:-5000}"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:-guest}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_VHOST: "${RABBITMQ_VHOST:-/}"
+      RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS: "${RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS:-3}"
+      RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL: "${RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL:-1000}"
+      RABBITMQ_LISTENER_RETRY_MAX_INTERVAL: "${RABBITMQ_LISTENER_RETRY_MAX_INTERVAL:-10000}"
+      RABBITMQ_LISTENER_RETRY_MULTIPLIER: "${RABBITMQ_LISTENER_RETRY_MULTIPLIER:-2.0}"
+      ORDER_EVENTS_EXCHANGE: "${ORDER_EVENTS_EXCHANGE:-modern-ecommerce.events}"
+      ORDER_EVENTS_DLX: "${ORDER_EVENTS_DLX:-modern-ecommerce.events.dlx}"
+      ORDER_CREATED_ROUTING_KEY: "${ORDER_CREATED_ROUTING_KEY:-order.created}"
+      ORDER_CREATED_QUEUE: "${ORDER_CREATED_QUEUE:-notification.order-created.v1}"
+      ORDER_CREATED_DLQ_QUEUE: "${ORDER_CREATED_DLQ_QUEUE:-notification.order-created.v1.dlq}"
+      ORDER_CREATED_DLQ_ROUTING_KEY: "${ORDER_CREATED_DLQ_ROUTING_KEY:-notification.order-created.v1.dlq}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${NOTIFICATION_SERVICE_PORT:-8087}:${NOTIFICATION_SERVICE_PORT:-8087}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${NOTIFICATION_SERVICE_PORT:-8087}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.75"
+          memory: 768M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  order-service:
+    image: modern-ecommerce-order-service:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-order-service
+    restart: unless-stopped
+    build:
+      context: .\api\order-service
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ORDER_SERVICE_PORT: "${ORDER_SERVICE_PORT:-8086}"
+      ORDER_MONGODB_URI: "${ORDER_MONGODB_URI:?ORDER_MONGODB_URI must be set}"
+      ORDER_SERVICE_DB_NAME: "${ORDER_SERVICE_DB_NAME:?ORDER_SERVICE_DB_NAME must be set}"
+      COMMON_COLLECTION_NAME: "${COMMON_COLLECTION_NAME:-init}"
+      APP_DATA_MIGRATIONS_ENABLED: "${APP_DATA_MIGRATIONS_ENABLED:-true}"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "${APP_DATA_MIGRATIONS_FAIL_FAST:-true}"
+      APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:-guest}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_VHOST: "${RABBITMQ_VHOST:-/}"
+      ORDER_EVENTS_EXCHANGE: "${ORDER_EVENTS_EXCHANGE:-modern-ecommerce.events}"
+      ORDER_EVENTS_DLX: "${ORDER_EVENTS_DLX:-modern-ecommerce.events.dlx}"
+      ORDER_CREATED_ROUTING_KEY: "${ORDER_CREATED_ROUTING_KEY:-order.created}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${ORDER_SERVICE_PORT:-8086}:${ORDER_SERVICE_PORT:-8086}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${ORDER_SERVICE_PORT:-8086}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.75"
+          memory: 768M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  api-gateway:
+    image: modern-ecommerce-api-gateway:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-api-gateway
+    restart: unless-stopped
+    build:
+      context: .\api\api-gateway
+      dockerfile: Dockerfile
+    depends_on:
+      service-registry:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      category-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+      cart-service:
+        condition: service_healthy
+      order-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+    environment:
+      API_GATEWAY_PORT: "${API_GATEWAY_PORT:-8080}"
+      APP_VERSION: "${APP_VERSION:-0.0.1-SNAPSHOT}"
+      GATEWAY_ALLOWED_ORIGINS: "${GATEWAY_ALLOWED_ORIGINS:-http://localhost:5173}"
+      API_GATEWAY_CONNECT_TIMEOUT: "${API_GATEWAY_CONNECT_TIMEOUT:-5000}"
+      API_GATEWAY_RESPONSE_TIMEOUT: "${API_GATEWAY_RESPONSE_TIMEOUT:-5s}"
+      API_GATEWAY_RATE_LIMIT_PER_MINUTE: "${API_GATEWAY_RATE_LIMIT_PER_MINUTE:-120}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-modern-ecommerce-local-jwt-secret-change-me-32}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
+    ports:
+      - "${API_GATEWAY_PORT:-8080}:${API_GATEWAY_PORT:-8080}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${API_GATEWAY_PORT:-8080}/actuator/health | grep -q '\"status\":\"UP\"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 45s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.75"
+          memory: 768M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    networks:
+      - modern-ecommerce-network
+
+  web:
+    image: modern-ecommerce-web:${IMAGE_TAG:-local}
+    container_name: modern-ecommerce-web
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: .\web\Dockerfile
+      args:
+        VITE_API_BASE_URL: "${VITE_API_BASE_URL:-/api}"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    environment:
+      VITE_PORT: "${VITE_PORT:-4173}"
+      VITE_API_BASE_URL: "${VITE_API_BASE_URL:-/api}"
+      VITE_API_PROXY_TARGET: "http://api-gateway:${API_GATEWAY_PORT:-8080}"
+    ports:
+      - "${VITE_PORT:-4173}:${VITE_PORT:-4173}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${VITE_PORT:-4173}/ >/dev/null"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256M
+        reservations:
+          cpus: "0.10"
+          memory: 128M
+    networks:
+      - modern-ecommerce-network
+
+networks:
+  modern-ecommerce-network:
+    driver: bridge
+
+volumes:
+  modern-ecommerce-rabbitmq:
+    name: modern-ecommerce-rabbitmq
+    driver: local

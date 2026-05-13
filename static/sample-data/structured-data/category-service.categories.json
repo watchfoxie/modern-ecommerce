@@ -1,0 +1,80 @@
+[
+    {
+        "_id": {
+            "$oid": "69e9f54f9ef154d26c17ef19"
+        },
+        "name": "Electronics",
+        "slug": "electronics",
+        "parentId": null,
+        "description": "All electronic products available on modern e-commerce platform (smartphones and laptops)",
+        "imageUrl": null,
+        "displayOrder": 1,
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T01:40:00.000Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T01:40:00.000Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f54f9ef154d26c17ef1a"
+        },
+        "name": "Smartphones",
+        "slug": "smartphones",
+        "parentId": {
+            "$oid": "69e9f54f9ef154d26c17ef19"
+        },
+        "description": "All smartphone products available on modern e-commerce platform",
+        "imageUrl": "static/assets/images/prod-images/categories-offers/generic-smartphones-1.png",
+        "displayOrder": 2,
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T01:40:03.000Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T01:40:03.000Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f54f9ef154d26c17ef1b"
+        },
+        "name": "Laptops",
+        "slug": "laptops",
+        "parentId": {
+            "$oid": "69e9f54f9ef154d26c17ef19"
+        },
+        "description": "All laptop products available on modern e-commerce platform",
+        "imageUrl": "static/assets/images/prod-images/categories-offers/generic-laptops-1.png",
+        "displayOrder": 3,
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T01:40:06.000Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T01:40:06.000Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69e9f54f9ef154d26c17ef1c"
+        },
+        "name": "Offers",
+        "slug": "offers",
+        "parentId": {
+            "$oid": "69e9f54f9ef154d26c17ef19"
+        },
+        "description": "Special offers and discounts on various products",
+        "imageUrl": null,
+        "displayOrder": 4,
+        "isActive": true,
+        "createdAt": {
+            "$date": "2026-04-23T01:40:09.000Z"
+        },
+        "updatedAt": {
+            "$date": "2026-04-23T01:40:09.000Z"
+        }
+    }
+]

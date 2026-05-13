@@ -1,0 +1,46 @@
+spring:
+  config:
+    import: optional:file:.env.production[.properties],optional:file:../.env.production[.properties],optional:file:../../.env.production[.properties]
+  application:
+    name: cart-service
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+  data:
+    mongodb:
+      uri: ${CART_MONGODB_URI}
+  mongodb:
+    uri: ${CART_MONGODB_URI}
+
+server:
+  port: ${CART_SERVICE_PORT:8085}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://service-registry:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

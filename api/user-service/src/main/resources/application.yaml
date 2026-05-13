@@ -1,0 +1,22 @@
+spring:
+    lifecycle:
+        timeout-per-shutdown-phase: ${USER_SERVICE_SHUTDOWN_TIMEOUT:${GRACEFUL_SHUTDOWN_TIMEOUT:30s}}
+    profiles:
+        default: local
+    security:
+        user:
+            name: ${USER_SERVICE_USERNAME}
+            password: ${USER_SERVICE_PASSWORD}
+
+server:
+    shutdown: graceful
+
+app:
+    data:
+        migrations:
+            enabled: ${APP_DATA_MIGRATIONS_ENABLED:true}
+            fail-fast: ${APP_DATA_MIGRATIONS_FAIL_FAST:true}
+        seed:
+            enabled: ${APP_DATA_SEED_ENABLED:false}
+    security:
+        internal-service-token: ${INTERNAL_SERVICE_TOKEN:modern-ecommerce-local-internal-token}

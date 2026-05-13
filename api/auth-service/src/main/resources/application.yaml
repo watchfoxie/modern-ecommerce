@@ -1,0 +1,20 @@
+spring:
+    lifecycle:
+        timeout-per-shutdown-phase: ${AUTH_SERVICE_SHUTDOWN_TIMEOUT:${GRACEFUL_SHUTDOWN_TIMEOUT:30s}}
+    profiles:
+        default: local
+    security:
+        user:
+            name: ${AUTH_SERVICE_USERNAME}
+            password: ${AUTH_SERVICE_PASSWORD}
+
+server:
+    shutdown: graceful
+
+app:
+    data:
+        migrations:
+            enabled: ${APP_DATA_MIGRATIONS_ENABLED:true}
+            fail-fast: ${APP_DATA_MIGRATIONS_FAIL_FAST:true}
+        seed:
+            enabled: ${APP_DATA_SEED_ENABLED:false}

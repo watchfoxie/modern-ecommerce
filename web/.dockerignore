@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+npm-debug.log*
+run-local.ps1
+run-local.sh

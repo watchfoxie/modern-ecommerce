@@ -1,0 +1,37 @@
+{
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-21",
+      "path": "C:\\Program Files\\Java\\jdk-21.0.10",
+      "default": true
+    }
+  ],
+  "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-21.0.10",
+  "spring-boot.ls.java.home": "C:\\Program Files\\Java\\jdk-21.0.10",
+  "spring-boot-dashboard.java.home": "C:\\Program Files\\Java\\jdk-21.0.10",
+  "maven.executable.path": "C:\\Program Files\\Apache\\apache-maven-3.9.12\\bin\\mvn.cmd",
+  "maven.terminal.customEnv": [
+    {
+      "environmentVariable": "JAVA_HOME",
+      "value": "C:\\Program Files\\Java\\jdk-21.0.10"
+    }
+  ],
+  "maven.view": "hierarchical",
+  "java.import.maven.enabled": true,
+  "java.autobuild.enabled": true,
+  "java.saveActions.organizeImports": true,
+  "editor.formatOnSave": true,
+  "files.exclude": {
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/*.class": true,
+    "**/target": true,
+    "**/.mvn": true
+  },
+  "search.exclude": {
+    "**/target": true,
+    "**/.mvn": true
+  }
+}

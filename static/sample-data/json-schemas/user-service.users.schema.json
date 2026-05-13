@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modern-ecommerce.local/schemas/user-service.users.schema.json",
+  "title": "user-service users document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "authId",
+    "email",
+    "firstName",
+    "lastName",
+    "addresses",
+    "preferences",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": { "$ref": "#/$defs/objectId" },
+    "authId": { "$ref": "#/$defs/objectId" },
+    "email": { "type": "string", "format": "email" },
+    "firstName": { "type": "string", "minLength": 1 },
+    "lastName": { "type": "string", "minLength": 1 },
+    "phone": { "type": ["string", "null"] },
+    "birthDate": { "anyOf": [{ "$ref": "#/$defs/date" }, { "type": "null" }] },
+    "addresses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/address" }
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "currency"],
+      "properties": {
+        "language": { "type": "string", "minLength": 2 },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+      }
+    },
+    "active": { "type": "boolean" },
+    "createdAt": { "$ref": "#/$defs/date" },
+    "updatedAt": { "$ref": "#/$defs/date" }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$oid"],
+      "properties": {
+        "$oid": { "type": "string", "pattern": "^[a-fA-F0-9]{24}$" }
+      }
+    },
+    "date": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": { "type": "string", "format": "date-time" }
+      }
+    },
+    "address": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "street", "city", "district", "postalCode", "isDefault"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "street": { "type": "string", "minLength": 1 },
+        "city": { "type": "string", "minLength": 1 },
+        "district": { "type": "string", "minLength": 1 },
+        "postalCode": { "type": "string", "minLength": 1 },
+        "isDefault": { "type": "boolean" }
+      }
+    }
+  }
+}

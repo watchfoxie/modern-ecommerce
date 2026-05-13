@@ -1,0 +1,82 @@
+spring:
+  lifecycle:
+    timeout-per-shutdown-phase: ${NOTIFICATION_SERVICE_SHUTDOWN_TIMEOUT:${GRACEFUL_SHUTDOWN_TIMEOUT:30s}}
+  profiles:
+    default: local
+  application:
+    name: notification-service
+  cloud:
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${NOTIFICATION_MAIL_USERNAME:}
+    password: ${NOTIFICATION_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: ${NOTIFICATION_MAIL_CONNECTION_TIMEOUT:5000}
+          timeout: ${NOTIFICATION_MAIL_TIMEOUT:5000}
+          writetimeout: ${NOTIFICATION_MAIL_WRITE_TIMEOUT:5000}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    listener:
+      simple:
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          initial-interval: ${RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL:1000}
+          max-retries: ${RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS:3}
+          max-interval: ${RABBITMQ_LISTENER_RETRY_MAX_INTERVAL:10000}
+          multiplier: ${RABBITMQ_LISTENER_RETRY_MULTIPLIER:2.0}
+
+server:
+  shutdown: graceful
+  port: ${NOTIFICATION_SERVICE_PORT:8087}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+
+app:
+  security:
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:modern-ecommerce-local-internal-token}
+  messaging:
+    exchange: ${ORDER_EVENTS_EXCHANGE:modern-ecommerce.events}
+    dead-letter-exchange: ${ORDER_EVENTS_DLX:modern-ecommerce.events.dlx}
+    order-created-routing-key: ${ORDER_CREATED_ROUTING_KEY:order.created}
+    order-created-queue: ${ORDER_CREATED_QUEUE:notification.order-created.v1}
+    order-created-dlq-queue: ${ORDER_CREATED_DLQ_QUEUE:notification.order-created.v1.dlq}
+    order-created-dlq-routing-key: ${ORDER_CREATED_DLQ_ROUTING_KEY:notification.order-created.v1.dlq}
+
+notification:
+  mail:
+    enabled: ${NOTIFICATION_MAIL_ENABLED:false}

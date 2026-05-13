@@ -1,0 +1,135 @@
+spring:
+  config:
+    import: optional:file:.env.local[.properties],optional:file:../.env.local[.properties],optional:file:../../.env.local[.properties]
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: ${API_GATEWAY_CONNECT_TIMEOUT:5000}
+            response-timeout: ${API_GATEWAY_RESPONSE_TIMEOUT:5s}
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: ${GATEWAY_ALLOWED_ORIGINS:http://localhost:5173}
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - PATCH
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders:
+                  - '*'
+                allowCredentials: true
+          routes:
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/api/auth-service/**
+              filters:
+                - StripPrefix=2
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/api/user-service/**
+              filters:
+                - StripPrefix=2
+            - id: category-service
+              uri: lb://CATEGORY-SERVICE
+              predicates:
+                - Path=/api/category-service/**
+              filters:
+                - StripPrefix=2
+            - id: product-service
+              uri: lb://PRODUCT-SERVICE
+              predicates:
+                - Path=/api/product-service/**
+              filters:
+                - StripPrefix=2
+            - id: cart-service
+              uri: lb://CART-SERVICE
+              predicates:
+                - Path=/api/cart-service/**
+              filters:
+                - StripPrefix=2
+            - id: order-service
+              uri: lb://ORDER-SERVICE
+              predicates:
+                - Path=/api/order-service/**
+              filters:
+                - StripPrefix=2
+            - id: notification-service
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/api/notification-service/**
+              filters:
+                - StripPrefix=2
+    inetutils:
+      timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
+      preferred-networks:
+        - 192\.168\..*
+        - 10\..*
+        - 172\.(1[6-9]|2\d|3[0-1])\..*
+      ignored-interfaces:
+        - vEthernet.*
+        - .*WSL.*
+        - .*Hyper-V.*
+        - VirtualBox.*
+        - VMware.*
+        - Loopback.*
+        - docker.*
+        - br-.*
+        - Radmin.*
+      use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
+
+server:
+  port: ${API_GATEWAY_PORT:8080}
+
+app:
+  security:
+    jwt-signing-secret: ${JWT_SIGNING_SECRET:modern-ecommerce-local-jwt-secret-change-me-32}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:modern-ecommerce-local-internal-token}
+    rate-limit-per-minute: ${API_GATEWAY_RATE_LIMIT_PER_MINUTE:120}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+    filter: true
+    urls:
+      - name: auth-service
+        url: /api/auth-service/v3/api-docs
+      - name: user-service
+        url: /api/user-service/v3/api-docs
+      - name: category-service
+        url: /api/category-service/v3/api-docs
+      - name: product-service
+        url: /api/product-service/v3/api-docs
+      - name: cart-service
+        url: /api/cart-service/v3/api-docs
+      - name: order-service
+        url: /api/order-service/v3/api-docs
+      - name: notification-service
+        url: /api/notification-service/v3/api-docs
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    metadata-map:
+      version: ${APP_VERSION:0.0.1-SNAPSHOT}
+    prefer-ip-address: ${EUREKA_INSTANCE_PREFER_IP_ADDRESS:false}
+    home-page-url: ${EUREKA_INSTANCE_HOME_PAGE_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/}
+    status-page-url: ${EUREKA_INSTANCE_STATUS_PAGE_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/actuator/info}
+    health-check-url: ${EUREKA_INSTANCE_HEALTH_CHECK_URL:http://${EUREKA_PUBLIC_HOST:localhost}:${server.port}/actuator/health/readiness}

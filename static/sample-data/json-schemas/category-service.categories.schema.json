@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://modern-ecommerce.local/schemas/category-service.categories.schema.json",
+  "title": "category-service categories document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "_id",
+    "name",
+    "slug",
+    "parentId",
+    "description",
+    "imageUrl",
+    "displayOrder",
+    "isActive",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "_id": { "$ref": "#/$defs/objectId" },
+    "name": { "type": "string", "minLength": 1 },
+    "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "parentId": { "anyOf": [{ "$ref": "#/$defs/objectId" }, { "type": "null" }] },
+    "description": { "type": "string", "minLength": 1 },
+    "imageUrl": { "type": ["string", "null"] },
+    "displayOrder": { "type": "integer", "minimum": 0 },
+    "isActive": { "type": "boolean" },
+    "createdAt": { "$ref": "#/$defs/date" },
+    "updatedAt": { "$ref": "#/$defs/date" }
+  },
+  "$defs": {
+    "objectId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$oid"],
+      "properties": {
+        "$oid": { "type": "string", "pattern": "^[a-fA-F0-9]{24}$" }
+      }
+    },
+    "date": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["$date"],
+      "properties": {
+        "$date": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

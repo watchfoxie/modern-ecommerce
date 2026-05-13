@@ -1,0 +1,31 @@
+{
+  "_id": { "$oid": "string (UUID/Hex)" },
+  "categoryId": { "$oid": "string (UUID/Hex/Foreign Key)" },
+  "categorySlug": "string",
+  "name": "string",
+  "slug": "string",
+  "brand": "string",
+  "model": "string",
+  "country": "string",
+  "price": "number",
+  "promotionalPrice": "number",
+  "currency": "string",
+  "stock": "number",
+  "imageUrls": [
+    "string"
+  ],
+  "specs": {
+    "screenSize": "string",
+    "processor": "string",
+    "ram": "string",
+    "storage": "string",
+    "os": "string",
+    "battery": "string",
+    "camera": "string",
+    "gpu": "string",
+    "batteryLife": "string"
+  },
+  "isActive": "boolean",
+  "createdAt": { "$date": "string (ISO-8601 UTC)" },
+  "updatedAt": { "$date": "string (ISO-8601 UTC)" }
+}

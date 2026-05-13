@@ -1,0 +1,102 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "mvnd clean install",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "clean",
+        "install"
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd test",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "test"
+      ],
+      "group": "test",
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd spring-boot:run (current module)",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "spring-boot:run"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd dependency:tree",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "dependency:tree"
+      ],
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd wrapper:wrapper",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "wrapper:wrapper"
+      ],
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd package",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "package"
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd clean",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "clean"
+      ],
+      "group": "build",
+      "problemMatcher": [
+        "$maven"
+      ]
+    },
+    {
+      "label": "mvnd verify",
+      "type": "shell",
+      "command": "C:\\Program Files\\Apache\\maven-mvnd-1.0.3-windows-amd64\\bin\\mvnd.cmd",
+      "args": [
+        "verify"
+      ],
+      "group": "test",
+      "problemMatcher": [
+        "$maven"
+      ]
+    }
+  ]
+}

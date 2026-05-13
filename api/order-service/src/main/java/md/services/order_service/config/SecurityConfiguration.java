@@ -1,0 +1,40 @@
+package md.services.order_service.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfiguration {
+
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http,
+			@Value("${app.security.internal-service-token:modern-ecommerce-local-internal-token}") String internalServiceToken)
+			throws Exception {
+		return http
+				.csrf(AbstractHttpConfigurer::disable)
+				.addFilterBefore(new InternalHeaderAuthenticationFilter(internalServiceToken),
+						UsernamePasswordAuthenticationFilter.class)
+				.httpBasic(AbstractHttpConfigurer::disable)
+				.formLogin(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers(
+								"/actuator/health",
+								"/actuator/health/**",
+								"/actuator/info",
+								"/v3/api-docs",
+								"/v3/api-docs/**",
+								"/swagger-ui.html",
+								"/swagger-ui/**")
+						.permitAll()
+						.anyRequest().authenticated())
+				.logout(AbstractHttpConfigurer::disable)
+				.rememberMe(AbstractHttpConfigurer::disable)
+				.build();
+	}
+
+}

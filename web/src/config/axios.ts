@@ -1,0 +1,79 @@
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import { API_BASE_URL } from './api'
+import { useAuthStore } from '@/stores/authStore'
+import type { AuthTokenResponse } from '@/contracts/auth'
+
+interface RetryableRequestConfig extends InternalAxiosRequestConfig {
+  _retry?: boolean
+}
+
+const AUTH_ENDPOINTS = [
+  '/auth-service/sign-in',
+  '/auth-service/sign-up',
+  '/auth-service/password-reset/request',
+  '/auth-service/password-reset/confirm',
+  '/auth-service/token/refresh',
+]
+
+export const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: { 'Content-Type': 'application/json' },
+})
+
+api.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().accessToken
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
+function isAuthEndpoint(url?: string) {
+  return Boolean(url && AUTH_ENDPOINTS.some((endpoint) => url.startsWith(endpoint)))
+}
+
+async function refreshAccessToken() {
+  const refreshToken = useAuthStore.getState().refreshToken
+  if (!refreshToken) {
+    return null
+  }
+
+  const response = await axios.post<AuthTokenResponse>(
+    `${API_BASE_URL}/auth-service/token/refresh`,
+    { refreshToken },
+    { headers: { 'Content-Type': 'application/json' } },
+  )
+  useAuthStore.getState().setAccessToken(response.data)
+  return response.data.accessToken
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as RetryableRequestConfig | undefined
+    if (
+      error.response?.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !isAuthEndpoint(originalRequest.url)
+    ) {
+      originalRequest._retry = true
+      try {
+        const token = await refreshAccessToken()
+        if (token) {
+          originalRequest.headers.Authorization = `Bearer ${token}`
+          return api(originalRequest)
+        }
+      } catch {
+        useAuthStore.getState().clearAuth()
+      }
+    }
+
+    if (error.response?.status === 401 && !isAuthEndpoint(originalRequest?.url)) {
+      useAuthStore.getState().clearAuth()
+      window.location.assign('/profile/sign-in')
+    }
+
+    return Promise.reject(error)
+  },
+)
