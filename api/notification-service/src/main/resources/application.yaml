@@ -68,7 +68,7 @@ eureka:
 
 app:
   security:
-    internal-service-token: ${INTERNAL_SERVICE_TOKEN:modern-ecommerce-local-internal-token}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
   messaging:
     exchange: ${ORDER_EVENTS_EXCHANGE:modern-ecommerce.events}
     dead-letter-exchange: ${ORDER_EVENTS_DLX:modern-ecommerce.events.dlx}

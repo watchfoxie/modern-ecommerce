@@ -46,7 +46,11 @@ services:
     ports:
       - "${SERVICE_REGISTRY_PORT:-8761}:${SERVICE_REGISTRY_PORT:-8761}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:${SERVICE_REGISTRY_PORT:-8761}/"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://127.0.0.1:${SERVICE_REGISTRY_PORT:-8761}/",
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -82,8 +86,8 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       AUTH_SERVICE_USERNAME: "${AUTH_SERVICE_USERNAME:?AUTH_SERVICE_USERNAME must be set}"
       AUTH_SERVICE_PASSWORD: "${AUTH_SERVICE_PASSWORD:?AUTH_SERVICE_PASSWORD must be set}"
-      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-modern-ecommerce-local-jwt-secret-change-me-32}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -91,7 +95,11 @@ services:
     ports:
       - "${AUTH_SERVICE_PORT:-8081}:${AUTH_SERVICE_PORT:-8081}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${AUTH_SERVICE_PORT:-8081}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${AUTH_SERVICE_PORT:-8081}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -127,7 +135,7 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       USER_SERVICE_USERNAME: "${USER_SERVICE_USERNAME:?USER_SERVICE_USERNAME must be set}"
       USER_SERVICE_PASSWORD: "${USER_SERVICE_PASSWORD:?USER_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -135,7 +143,11 @@ services:
     ports:
       - "${USER_SERVICE_PORT:-8082}:${USER_SERVICE_PORT:-8082}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${USER_SERVICE_PORT:-8082}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${USER_SERVICE_PORT:-8082}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -179,7 +191,11 @@ services:
     ports:
       - "${CATEGORY_SERVICE_PORT:-8083}:${CATEGORY_SERVICE_PORT:-8083}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${CATEGORY_SERVICE_PORT:-8083}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${CATEGORY_SERVICE_PORT:-8083}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -218,7 +234,7 @@ services:
       PRODUCT_SAMPLE_DATA_PATH: "${PRODUCT_SAMPLE_DATA_PATH:-/app/static/sample-data/structured-data/product-service.products.json}"
       PRODUCT_SERVICE_USERNAME: "${PRODUCT_SERVICE_USERNAME:?PRODUCT_SERVICE_USERNAME must be set}"
       PRODUCT_SERVICE_PASSWORD: "${PRODUCT_SERVICE_PASSWORD:?PRODUCT_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -226,7 +242,11 @@ services:
     ports:
       - "${PRODUCT_SERVICE_PORT:-8084}:${PRODUCT_SERVICE_PORT:-8084}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${PRODUCT_SERVICE_PORT:-8084}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${PRODUCT_SERVICE_PORT:-8084}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -264,7 +284,7 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       CART_SERVICE_USERNAME: "${CART_SERVICE_USERNAME:?CART_SERVICE_USERNAME must be set}"
       CART_SERVICE_PASSWORD: "${CART_SERVICE_PASSWORD:?CART_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -272,7 +292,11 @@ services:
     ports:
       - "${CART_SERVICE_PORT:-8085}:${CART_SERVICE_PORT:-8085}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${CART_SERVICE_PORT:-8085}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${CART_SERVICE_PORT:-8085}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -302,7 +326,7 @@ services:
         condition: service_healthy
     environment:
       NOTIFICATION_SERVICE_PORT: "${NOTIFICATION_SERVICE_PORT:-8087}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       NOTIFICATION_MAIL_USERNAME: "${NOTIFICATION_MAIL_USERNAME:-}"
       NOTIFICATION_MAIL_PASSWORD: "${NOTIFICATION_MAIL_PASSWORD:-}"
       NOTIFICATION_MAIL_ENABLED: "${NOTIFICATION_MAIL_ENABLED:-false}"
@@ -331,7 +355,11 @@ services:
     ports:
       - "${NOTIFICATION_SERVICE_PORT:-8087}:${NOTIFICATION_SERVICE_PORT:-8087}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${NOTIFICATION_SERVICE_PORT:-8087}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${NOTIFICATION_SERVICE_PORT:-8087}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -375,7 +403,7 @@ services:
       ORDER_EVENTS_EXCHANGE: "${ORDER_EVENTS_EXCHANGE:-modern-ecommerce.events}"
       ORDER_EVENTS_DLX: "${ORDER_EVENTS_DLX:-modern-ecommerce.events.dlx}"
       ORDER_CREATED_ROUTING_KEY: "${ORDER_CREATED_ROUTING_KEY:-order.created}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -383,7 +411,11 @@ services:
     ports:
       - "${ORDER_SERVICE_PORT:-8086}:${ORDER_SERVICE_PORT:-8086}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${ORDER_SERVICE_PORT:-8086}/actuator/health/readiness | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${ORDER_SERVICE_PORT:-8086}/actuator/health/readiness | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -430,8 +462,8 @@ services:
       API_GATEWAY_CONNECT_TIMEOUT: "${API_GATEWAY_CONNECT_TIMEOUT:-5000}"
       API_GATEWAY_RESPONSE_TIMEOUT: "${API_GATEWAY_RESPONSE_TIMEOUT:-5s}"
       API_GATEWAY_RATE_LIMIT_PER_MINUTE: "${API_GATEWAY_RATE_LIMIT_PER_MINUTE:-120}"
-      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-modern-ecommerce-local-jwt-secret-change-me-32}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-modern-ecommerce-local-internal-token}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
@@ -439,7 +471,11 @@ services:
     ports:
       - "${API_GATEWAY_PORT:-8080}:${API_GATEWAY_PORT:-8080}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${API_GATEWAY_PORT:-8080}/actuator/health | grep -q '\"status\":\"UP\"'"]
+      test:
+        [
+          "CMD-SHELL",
+          'wget -qO- http://127.0.0.1:${API_GATEWAY_PORT:-8080}/actuator/health | grep -q ''"status":"UP"''',
+        ]
       interval: 15s
       timeout: 5s
       retries: 10
@@ -474,7 +510,11 @@ services:
     ports:
       - "${VITE_PORT:-4173}:${VITE_PORT:-4173}"
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:${VITE_PORT:-4173}/ >/dev/null"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:${VITE_PORT:-4173}/ >/dev/null",
+        ]
       interval: 15s
       timeout: 5s
       retries: 10

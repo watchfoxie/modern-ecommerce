@@ -12,7 +12,7 @@ spring:
             response-timeout: ${API_GATEWAY_RESPONSE_TIMEOUT:5s}
           globalcors:
             cors-configurations:
-              '[/**]':
+              "[/**]":
                 allowedOrigins: ${GATEWAY_ALLOWED_ORIGINS:http://localhost:5173}
                 allowedMethods:
                   - GET
@@ -22,7 +22,7 @@ spring:
                   - DELETE
                   - OPTIONS
                 allowedHeaders:
-                  - '*'
+                  - "*"
                 allowCredentials: true
           routes:
             - id: auth-service
@@ -90,8 +90,8 @@ server:
 
 app:
   security:
-    jwt-signing-secret: ${JWT_SIGNING_SECRET:modern-ecommerce-local-jwt-secret-change-me-32}
-    internal-service-token: ${INTERNAL_SERVICE_TOKEN:modern-ecommerce-local-internal-token}
+    jwt-signing-secret: ${JWT_SIGNING_SECRET:r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
     rate-limit-per-minute: ${API_GATEWAY_RATE_LIMIT_PER_MINUTE:120}
 
 springdoc:
