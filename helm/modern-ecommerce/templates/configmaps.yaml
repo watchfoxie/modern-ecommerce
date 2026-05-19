@@ -1,0 +1,38 @@
+{{- range $name, $workload := .Values.workloads }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "modern-ecommerce.componentName" (dict "root" $ "component" $name) }}-config
+  labels:
+{{ include "modern-ecommerce.componentLabels" (dict "root" $ "component" $name) | indent 4 }}
+data:
+{{- range $key, $value := $workload.config }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- if $workload.usesEurekaClient }}
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: {{ printf "http://%s-service-registry:8761/eureka/" (include "modern-ecommerce.fullname" $) | quote }}
+  EUREKA_INSTANCE_PREFER_IP_ADDRESS: {{ $.Values.global.eurekaPreferIpAddress | quote }}
+  SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: {{ $.Values.global.siteLocalInterfacesOnly | quote }}
+{{- end }}
+{{- if $workload.usesRabbitMq }}
+  RABBITMQ_HOST: {{ ternary (printf "%s-rabbitmq" (include "modern-ecommerce.fullname" $)) $.Values.rabbitmq.external.host $.Values.rabbitmq.embedded.enabled | quote }}
+  RABBITMQ_PORT: {{ ternary $.Values.rabbitmq.service.amqpPort $.Values.rabbitmq.external.port $.Values.rabbitmq.embedded.enabled | quote }}
+  RABBITMQ_VHOST: "/"
+{{- end }}
+{{- if eq $name "web" }}
+  VITE_API_PROXY_TARGET: {{ printf "http://%s-api-gateway:8080" (include "modern-ecommerce.fullname" $) | quote }}
+{{- end }}
+---
+{{- end }}
+{{- if .Values.rabbitmq.embedded.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-rabbitmq-config
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+    app.kubernetes.io/component: rabbitmq
+data:
+  rabbitmq.conf: |
+{{ .Values.rabbitmq.embedded.config | indent 4 }}
+{{- end }}

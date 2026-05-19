@@ -56,7 +56,7 @@ public class LocalActuatorSecurityConfiguration {
 
 	@Bean
 	InternalServiceTokenFilter internalServiceTokenFilter(
-			@Value("${app.security.internal-service-token:modern-ecommerce-local-internal-token}") String token) {
+			@Value("${app.security.internal-service-token}") String token) {
 		return new InternalServiceTokenFilter(token);
 	}
 

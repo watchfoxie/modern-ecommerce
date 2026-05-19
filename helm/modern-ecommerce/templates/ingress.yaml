@@ -1,0 +1,34 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-web
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+    app.kubernetes.io/component: web
+{{- if .Values.ingress.annotations }}
+  annotations:
+{{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+{{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      secretName: {{ .Values.ingress.tls.secretName | quote }}
+{{- end }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "modern-ecommerce.fullname" . }}-web
+                port:
+                  name: http
+{{- end }}

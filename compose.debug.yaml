@@ -1,0 +1,41 @@
+services:
+  rabbitmq:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${RABBITMQ_PORT:-5672}:5672"
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+
+  service-registry:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${SERVICE_REGISTRY_PORT:-8761}:${SERVICE_REGISTRY_PORT:-8761}"
+
+  auth-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${AUTH_SERVICE_PORT:-8081}:${AUTH_SERVICE_PORT:-8081}"
+
+  user-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${USER_SERVICE_PORT:-8082}:${USER_SERVICE_PORT:-8082}"
+
+  category-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${CATEGORY_SERVICE_PORT:-8083}:${CATEGORY_SERVICE_PORT:-8083}"
+
+  product-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${PRODUCT_SERVICE_PORT:-8084}:${PRODUCT_SERVICE_PORT:-8084}"
+
+  cart-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${CART_SERVICE_PORT:-8085}:${CART_SERVICE_PORT:-8085}"
+
+  order-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${ORDER_SERVICE_PORT:-8086}:${ORDER_SERVICE_PORT:-8086}"
+
+  notification-service:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${NOTIFICATION_SERVICE_PORT:-8087}:${NOTIFICATION_SERVICE_PORT:-8087}"
+
+  api-gateway:
+    ports:
+      - "${DEBUG_BIND_ADDRESS:-127.0.0.1}:${API_GATEWAY_PORT:-8080}:${API_GATEWAY_PORT:-8080}"

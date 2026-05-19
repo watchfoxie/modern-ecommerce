@@ -1,0 +1,6 @@
+bucket         = "replace-with-terraform-state-bucket"
+key            = "modern-ecommerce/production/terraform.tfstate"
+region         = "eu-central-1"
+dynamodb_table = "replace-with-terraform-lock-table"
+encrypt        = true
+kms_key_id     = "replace-with-state-kms-key-arn"

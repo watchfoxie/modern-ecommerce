@@ -1,5 +1,7 @@
-.env.local
-.env.production
+.env
+.env.*
+!.env.example
+!.env.production.example
 **/target
 **/.settings
 **/.project

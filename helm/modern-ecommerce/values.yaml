@@ -1,0 +1,286 @@
+global:
+  imageRegistry: ghcr.io/replace-with-owner
+  imageTag: local
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets: []
+  springProfilesActive: production
+  eurekaPreferIpAddress: "false"
+  siteLocalInterfacesOnly: "true"
+
+podSecurityContext:
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+secrets:
+  createPlaceholders: false
+  defaultSecretName: modern-ecommerce-runtime-secrets
+
+externalSecrets:
+  enabled: false
+  secretStoreName: aws-secrets-manager
+  secretStoreKind: ClusterSecretStore
+  refreshInterval: 1h
+  secretNamePrefix: modern-ecommerce/production
+
+ingress:
+  enabled: true
+  className: nginx
+  host: modern-ecommerce.example.com
+  tls:
+    enabled: true
+    secretName: modern-ecommerce-web-tls
+  annotations: {}
+
+networkPolicy:
+  enabled: true
+  ingressNamespaceSelector:
+    kubernetes.io/metadata.name: ingress-nginx
+
+rabbitmq:
+  embedded:
+    enabled: true
+    image: rabbitmq:4.2.5-management-alpine
+    storageSize: 5Gi
+    config: |
+      loopback_users.guest = false
+  external:
+    host: ""
+    port: "5672"
+    managementPort: "15672"
+  service:
+    amqpPort: 5672
+    managementPort: 15672
+
+workloads:
+  service-registry:
+    image:
+      repository: modern-ecommerce-service-registry
+    port: 8761
+    replicas: 1
+    config:
+      SERVICE_REGISTRY_PORT: "8761"
+      SPRING_PROFILES_ACTIVE: production
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "true"
+    secretEnv: []
+    probe:
+      path: /
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  auth-service:
+    image:
+      repository: modern-ecommerce-auth-service
+    port: 8081
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      AUTH_SERVICE_PORT: "8081"
+      AUTH_SERVICE_DB_NAME: modern_ecommerce_auth_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - AUTH_MONGODB_URI
+      - AUTH_SERVICE_USERNAME
+      - AUTH_SERVICE_PASSWORD
+      - JWT_SIGNING_SECRET
+      - INTERNAL_SERVICE_TOKEN
+
+  user-service:
+    image:
+      repository: modern-ecommerce-user-service
+    port: 8082
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      USER_SERVICE_PORT: "8082"
+      USER_SERVICE_DB_NAME: modern_ecommerce_user_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - USER_MONGODB_URI
+      - USER_SERVICE_USERNAME
+      - USER_SERVICE_PASSWORD
+      - INTERNAL_SERVICE_TOKEN
+
+  category-service:
+    image:
+      repository: modern-ecommerce-category-service
+    port: 8083
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      CATEGORY_SERVICE_PORT: "8083"
+      CATEGORY_SERVICE_DB_NAME: modern_ecommerce_category_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - CATEGORY_MONGODB_URI
+      - CATEGORY_SERVICE_USERNAME
+      - CATEGORY_SERVICE_PASSWORD
+
+  product-service:
+    image:
+      repository: modern-ecommerce-product-service
+    port: 8084
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      PRODUCT_SERVICE_PORT: "8084"
+      PRODUCT_SERVICE_DB_NAME: modern_ecommerce_product_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - PRODUCT_MONGODB_URI
+      - PRODUCT_SERVICE_USERNAME
+      - PRODUCT_SERVICE_PASSWORD
+      - INTERNAL_SERVICE_TOKEN
+
+  cart-service:
+    image:
+      repository: modern-ecommerce-cart-service
+    port: 8085
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      CART_SERVICE_PORT: "8085"
+      CART_SERVICE_DB_NAME: modern_ecommerce_cart_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - CART_MONGODB_URI
+      - CART_SERVICE_USERNAME
+      - CART_SERVICE_PASSWORD
+      - INTERNAL_SERVICE_TOKEN
+
+  order-service:
+    image:
+      repository: modern-ecommerce-order-service
+    port: 8086
+    replicas: 2
+    usesEurekaClient: true
+    usesRabbitMq: true
+    config:
+      ORDER_SERVICE_PORT: "8086"
+      ORDER_SERVICE_DB_NAME: modern_ecommerce_order_service
+      COMMON_COLLECTION_NAME: init
+      APP_DATA_MIGRATIONS_ENABLED: "true"
+      APP_DATA_MIGRATIONS_FAIL_FAST: "true"
+      APP_DATA_SEED_ENABLED: "false"
+      ORDER_EVENTS_EXCHANGE: modern-ecommerce.events
+      ORDER_EVENTS_DLX: modern-ecommerce.events.dlx
+      ORDER_CREATED_ROUTING_KEY: order.created
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - ORDER_MONGODB_URI
+      - RABBITMQ_USERNAME
+      - RABBITMQ_PASSWORD
+      - INTERNAL_SERVICE_TOKEN
+
+  notification-service:
+    image:
+      repository: modern-ecommerce-notification-service
+    port: 8087
+    replicas: 2
+    usesEurekaClient: true
+    usesRabbitMq: true
+    config:
+      NOTIFICATION_SERVICE_PORT: "8087"
+      NOTIFICATION_MAIL_ENABLED: "false"
+      NOTIFICATION_MAIL_CONNECTION_TIMEOUT: "5000"
+      NOTIFICATION_MAIL_TIMEOUT: "5000"
+      NOTIFICATION_MAIL_WRITE_TIMEOUT: "5000"
+      RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS: "3"
+      RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL: "1000"
+      RABBITMQ_LISTENER_RETRY_MAX_INTERVAL: "10000"
+      RABBITMQ_LISTENER_RETRY_MULTIPLIER: "2.0"
+      ORDER_EVENTS_EXCHANGE: modern-ecommerce.events
+      ORDER_EVENTS_DLX: modern-ecommerce.events.dlx
+      ORDER_CREATED_ROUTING_KEY: order.created
+      ORDER_CREATED_QUEUE: notification.order-created.v1
+      ORDER_CREATED_DLQ_QUEUE: notification.order-created.v1.dlq
+      ORDER_CREATED_DLQ_ROUTING_KEY: notification.order-created.v1.dlq
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - RABBITMQ_USERNAME
+      - RABBITMQ_PASSWORD
+      - INTERNAL_SERVICE_TOKEN
+      - NOTIFICATION_MAIL_USERNAME
+      - NOTIFICATION_MAIL_PASSWORD
+
+  api-gateway:
+    image:
+      repository: modern-ecommerce-api-gateway
+    port: 8080
+    replicas: 2
+    usesEurekaClient: true
+    config:
+      API_GATEWAY_PORT: "8080"
+      APP_VERSION: 0.0.1-SNAPSHOT
+      GATEWAY_ALLOWED_ORIGINS: https://modern-ecommerce.example.com
+      API_GATEWAY_CONNECT_TIMEOUT: "5000"
+      API_GATEWAY_RESPONSE_TIMEOUT: 5s
+      API_GATEWAY_RATE_LIMIT_PER_MINUTE: "300"
+      SPRING_PROFILES_ACTIVE: production
+    secretEnv:
+      - JWT_SIGNING_SECRET
+      - INTERNAL_SERVICE_TOKEN
+    probe:
+      path: /actuator/health
+
+  web:
+    image:
+      repository: modern-ecommerce-web
+    port: 4173
+    replicas: 2
+    config:
+      VITE_PORT: "4173"
+      VITE_API_BASE_URL: /api
+      NODE_ENV: production
+    secretEnv: []
+    probe:
+      path: /
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+
+defaultProbe:
+  readinessPath: /actuator/health/readiness
+  livenessPath: /actuator/health/liveness
+  initialDelaySeconds: 30
+  periodSeconds: 15
+  timeoutSeconds: 5
+  failureThreshold: 10
+
+defaultResources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

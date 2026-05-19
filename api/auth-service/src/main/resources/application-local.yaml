@@ -63,8 +63,8 @@ app:
     mongo-verification:
       enabled: true
   security:
-    jwt-signing-secret: ${JWT_SIGNING_SECRET:r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}
-    internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
+    jwt-signing-secret: ${JWT_SIGNING_SECRET}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN}
     access-token-ttl: ${JWT_ACCESS_TOKEN_TTL:30m}
     refresh-token-ttl: ${JWT_REFRESH_TOKEN_TTL:7d}
     password-reset-ttl: ${PASSWORD_RESET_TOKEN_TTL:30m}

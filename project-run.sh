@@ -42,6 +42,7 @@ STATE_DIR="$(mktemp -d -t modern-ecommerce-project-run.XXXXXX)"
 TERMINAL_EMULATOR=""
 cleanup_started=0
 shutdown_requested=0
+rabbitmq_preflight_started=0
 
 COMPONENTS=(
   "service-registry"
@@ -178,6 +179,105 @@ load_env_files() {
       export "$key=$value"
     done < "$env_file"
   done < <(get_environment_files)
+}
+
+compose_base_args() {
+  local local_env="$REPO_ROOT/.env.local"
+
+  if [ -f "$local_env" ]; then
+    printf '%s\0' "--env-file" "$local_env" "-f" "$REPO_ROOT/compose.yaml"
+  else
+    printf '%s\0' "-f" "$REPO_ROOT/compose.yaml"
+  fi
+}
+
+compose_rabbitmq_args() {
+  local item
+
+  while IFS= read -r -d '' item; do
+    printf '%s\0' "$item"
+  done < <(compose_base_args)
+
+  if [ -f "$REPO_ROOT/compose.debug.yaml" ]; then
+    printf '%s\0' "-f" "$REPO_ROOT/compose.debug.yaml"
+  fi
+}
+
+docker_compose() {
+  local compose_args=()
+  local item
+
+  while IFS= read -r -d '' item; do
+    compose_args+=("$item")
+  done < <(compose_base_args)
+
+  docker compose "${compose_args[@]}" "$@"
+}
+
+docker_compose_rabbitmq() {
+  local compose_args=()
+  local item
+
+  while IFS= read -r -d '' item; do
+    compose_args+=("$item")
+  done < <(compose_rabbitmq_args)
+
+  docker compose "${compose_args[@]}" "$@"
+}
+
+ensure_rabbitmq() {
+  if [[ "${PROJECT_RUN_SKIP_RABBITMQ_PREFLIGHT:-}" =~ ^(1|true|TRUE|yes|YES)$ ]]; then
+    echo "Skipping RabbitMQ preflight because PROJECT_RUN_SKIP_RABBITMQ_PREFLIGHT is enabled."
+    return
+  fi
+
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "Could not find 'docker' on PATH. It is required to start RabbitMQ for local sequential runs." >&2
+    exit 1
+  fi
+
+  if [ ! -f "$REPO_ROOT/.env.local" ]; then
+    echo ".env.local is required for RabbitMQ preflight because the hardened Compose profile fails fast on required secrets." >&2
+    exit 1
+  fi
+
+  echo "Ensuring RabbitMQ is available through Docker Compose..."
+  local rabbitmq_already_running=0
+  if docker_compose_rabbitmq ps --status running --services rabbitmq 2>/dev/null | grep -qx "rabbitmq"; then
+    rabbitmq_already_running=1
+  fi
+
+  docker_compose_rabbitmq up -d --build rabbitmq
+  if [ "$rabbitmq_already_running" -eq 0 ]; then
+    rabbitmq_preflight_started=1
+  fi
+
+  local deadline=$((SECONDS + 120))
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    if docker_compose_rabbitmq exec -T rabbitmq sh -c "rabbitmq-diagnostics -q ping" >/dev/null 2>&1; then
+      echo "RabbitMQ preflight passed."
+      return
+    fi
+
+    sleep 3
+  done
+
+  echo "RabbitMQ did not become healthy within the preflight timeout." >&2
+  exit 1
+}
+
+stop_rabbitmq_preflight() {
+  if [ "$rabbitmq_preflight_started" -ne 1 ]; then
+    return
+  fi
+
+  if [[ "${PROJECT_RUN_STOP_RABBITMQ_ON_EXIT:-}" =~ ^(0|false|FALSE|no|NO)$ ]]; then
+    echo "Leaving RabbitMQ running because PROJECT_RUN_STOP_RABBITMQ_ON_EXIT is disabled."
+    return
+  fi
+
+  echo "Stopping RabbitMQ preflight container..."
+  docker_compose_rabbitmq stop rabbitmq >/dev/null 2>&1 || true
 }
 
 resolve_port() {
@@ -431,6 +531,7 @@ cleanup() {
     stop_component "${started_components[$index]}"
   done
 
+  stop_rabbitmq_preflight
   rm -rf "$STATE_DIR"
 }
 
@@ -438,6 +539,7 @@ trap 'shutdown_requested=1' INT TERM
 trap cleanup EXIT
 
 load_env_files
+ensure_rabbitmq
 detect_terminal_emulator
 
 if ! command -v node >/dev/null 2>&1; then

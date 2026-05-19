@@ -22,6 +22,7 @@ if ([Console]::IsInputRedirected) {
 $script:repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $script:stateDir = Join-Path ([System.IO.Path]::GetTempPath()) ("modern-ecommerce-project-run-" + [Guid]::NewGuid().ToString("N"))
 $script:cleanupStarted = $false
+$script:rabbitMqPreflightStarted = $false
 
 $components = @(
     [pscustomobject]@{
@@ -159,6 +160,107 @@ function Import-DotEnvFiles {
             $value = $line.Substring($separatorIndex + 1)
             Set-Item -Path "Env:$name" -Value $value
         }
+    }
+}
+
+function Get-ComposeBaseArguments {
+    $composeArguments = New-Object System.Collections.Generic.List[string]
+    $localEnvFile = Join-Path $script:repoRoot ".env.local"
+
+    if (Test-Path -LiteralPath $localEnvFile) {
+        $composeArguments.Add("--env-file") | Out-Null
+        $composeArguments.Add($localEnvFile) | Out-Null
+    }
+
+    $composeArguments.Add("-f") | Out-Null
+    $composeArguments.Add((Join-Path $script:repoRoot "compose.yaml")) | Out-Null
+
+    return $composeArguments.ToArray()
+}
+
+function Get-ComposeRabbitMqArguments {
+    $composeArguments = New-Object System.Collections.Generic.List[string]
+    $composeArguments.AddRange([string[]](Get-ComposeBaseArguments))
+
+    $debugComposeFile = Join-Path $script:repoRoot "compose.debug.yaml"
+    if (Test-Path -LiteralPath $debugComposeFile) {
+        $composeArguments.Add("-f") | Out-Null
+        $composeArguments.Add($debugComposeFile) | Out-Null
+    }
+
+    return $composeArguments.ToArray()
+}
+
+function Invoke-DockerCompose {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    $dockerArguments = @("compose") + $Arguments
+    & docker @dockerArguments
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Docker Compose command failed with exit code ${LASTEXITCODE}: docker $($dockerArguments -join ' ')"
+    }
+}
+
+function Invoke-RabbitMqPreflight {
+    $skipPreflight = (Get-EnvironmentValue -Name "PROJECT_RUN_SKIP_RABBITMQ_PREFLIGHT")
+    if ($skipPreflight -in @("1", "true", "TRUE", "yes", "YES")) {
+        Write-Host "Skipping RabbitMQ preflight because PROJECT_RUN_SKIP_RABBITMQ_PREFLIGHT is enabled."
+        return
+    }
+
+    if ($null -eq (Get-Command docker -ErrorAction SilentlyContinue)) {
+        throw "Could not find 'docker' on PATH. It is required to start RabbitMQ for local sequential runs."
+    }
+
+    $localEnvFile = Join-Path $script:repoRoot ".env.local"
+    if (-not (Test-Path -LiteralPath $localEnvFile)) {
+        throw ".env.local is required for RabbitMQ preflight because the hardened Compose profile fails fast on required secrets."
+    }
+
+    $composeArguments = @(Get-ComposeRabbitMqArguments)
+    $runningServices = & docker @(@("compose") + $composeArguments + @("ps", "--status", "running", "--services", "rabbitmq"))
+    $rabbitMqAlreadyRunning = ($LASTEXITCODE -eq 0) -and (($runningServices | Where-Object { $_ -eq "rabbitmq" }) -ne $null)
+
+    Write-Host "Ensuring RabbitMQ is available through Docker Compose..."
+    Invoke-DockerCompose -Arguments ($composeArguments + @("up", "-d", "--build", "rabbitmq"))
+    if (-not $rabbitMqAlreadyRunning) {
+        $script:rabbitMqPreflightStarted = $true
+    }
+
+    $deadline = (Get-Date).AddSeconds(120)
+    while ((Get-Date) -lt $deadline) {
+        & docker @(@("compose") + $composeArguments + @("exec", "-T", "rabbitmq", "sh", "-c", "rabbitmq-diagnostics -q ping")) | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "RabbitMQ preflight passed."
+            return
+        }
+
+        Start-Sleep -Seconds 3
+    }
+
+    throw "RabbitMQ did not become healthy within the preflight timeout."
+}
+
+function Stop-RabbitMqPreflight {
+    if (-not $script:rabbitMqPreflightStarted) {
+        return
+    }
+
+    $stopOnExit = Get-EnvironmentValue -Name "PROJECT_RUN_STOP_RABBITMQ_ON_EXIT"
+    if ($stopOnExit -in @("0", "false", "FALSE", "no", "NO")) {
+        Write-Host "Leaving RabbitMQ running because PROJECT_RUN_STOP_RABBITMQ_ON_EXIT is disabled."
+        return
+    }
+
+    try {
+        Write-Host "Stopping RabbitMQ preflight container..."
+        Invoke-DockerCompose -Arguments (@(Get-ComposeRabbitMqArguments) + @("stop", "rabbitmq"))
+    } catch {
+        Write-Warning "RabbitMQ preflight cleanup failed: $($_.Exception.Message)"
     }
 }
 
@@ -377,6 +479,8 @@ function Invoke-PreflightChecks {
         Import-DotEnvFiles -Paths $environmentFiles
     }
 
+    Invoke-RabbitMqPreflight
+
     if ($null -eq (Get-Command node -ErrorAction SilentlyContinue)) {
         throw "Could not find 'node' on PATH. It is required to launch the Vite frontend."
     }
@@ -533,6 +637,7 @@ function Invoke-Cleanup {
         Stop-ComponentInstance -Instance $StartedComponents[$index]
     }
 
+    Stop-RabbitMqPreflight
     Remove-Item -LiteralPath $script:stateDir -Recurse -Force -ErrorAction SilentlyContinue
 }
 

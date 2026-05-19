@@ -11,7 +11,7 @@ public class InternalFeignConfiguration {
 
 	@Bean
 	RequestInterceptor internalServiceTokenRequestInterceptor(
-			@Value("${app.security.internal-service-token:modern-ecommerce-local-internal-token}") String internalServiceToken) {
+			@Value("${app.security.internal-service-token}") String internalServiceToken) {
 		return template -> {
 			template.header("X-Internal-Service", "cart-service");
 			template.header("X-Internal-Service-Token", internalServiceToken);

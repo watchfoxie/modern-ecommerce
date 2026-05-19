@@ -1,0 +1,84 @@
+{{- range $name, $workload := .Values.workloads }}
+{{- $probe := default dict $workload.probe }}
+{{- $defaultReadinessPath := default $.Values.defaultProbe.path $.Values.defaultProbe.readinessPath }}
+{{- $defaultLivenessPath := default $defaultReadinessPath $.Values.defaultProbe.livenessPath }}
+{{- $readinessPath := default (default $defaultReadinessPath $probe.path) $probe.readinessPath }}
+{{- $livenessPath := default (default $defaultLivenessPath $probe.path) $probe.livenessPath }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "modern-ecommerce.componentName" (dict "root" $ "component" $name) }}
+  labels:
+{{ include "modern-ecommerce.componentLabels" (dict "root" $ "component" $name) | indent 4 }}
+spec:
+  replicas: {{ $workload.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      app.kubernetes.io/component: {{ $name }}
+  template:
+    metadata:
+      labels:
+{{ include "modern-ecommerce.componentLabels" (dict "root" $ "component" $name) | indent 8 }}
+    spec:
+      automountServiceAccountToken: false
+{{- if $.Values.global.imagePullSecrets }}
+      imagePullSecrets:
+{{- range $.Values.global.imagePullSecrets }}
+        - name: {{ . | quote }}
+{{- end }}
+{{- end }}
+      securityContext:
+        runAsNonRoot: true
+{{- with $.Values.podSecurityContext }}
+        runAsUser: {{ .runAsUser }}
+        runAsGroup: {{ .runAsGroup }}
+        fsGroup: {{ .fsGroup }}
+{{- end }}
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ $name }}
+          image: {{ include "modern-ecommerce.image" (dict "root" $ "workload" $workload) | quote }}
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $workload.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "modern-ecommerce.componentName" (dict "root" $ "component" $name) }}-config
+{{- if $workload.secretEnv }}
+          env:
+{{- range $key := $workload.secretEnv }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ default $.Values.secrets.defaultSecretName $workload.secretName }}
+                  key: {{ $key }}
+{{- end }}
+{{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ $readinessPath }}
+              port: http
+            initialDelaySeconds: {{ default $.Values.defaultProbe.initialDelaySeconds $probe.initialDelaySeconds }}
+            periodSeconds: {{ default $.Values.defaultProbe.periodSeconds $probe.periodSeconds }}
+            timeoutSeconds: {{ default $.Values.defaultProbe.timeoutSeconds $probe.timeoutSeconds }}
+            failureThreshold: {{ default $.Values.defaultProbe.failureThreshold $probe.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ $livenessPath }}
+              port: http
+            initialDelaySeconds: {{ default 60 $probe.livenessInitialDelaySeconds }}
+            periodSeconds: {{ default $.Values.defaultProbe.periodSeconds $probe.periodSeconds }}
+            timeoutSeconds: {{ default $.Values.defaultProbe.timeoutSeconds $probe.timeoutSeconds }}
+            failureThreshold: {{ default $.Values.defaultProbe.failureThreshold $probe.failureThreshold }}
+          resources:
+{{ toYaml (default $.Values.defaultResources $workload.resources) | indent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+---
+{{- end }}

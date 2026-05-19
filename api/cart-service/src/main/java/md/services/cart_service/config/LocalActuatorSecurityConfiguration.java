@@ -38,7 +38,7 @@ public class LocalActuatorSecurityConfiguration {
 	@Bean
 	@Order(2)
 	SecurityFilterChain applicationSecurityFilterChain(HttpSecurity http,
-			@Value("${app.security.internal-service-token:modern-ecommerce-local-internal-token}") String internalServiceToken)
+			@Value("${app.security.internal-service-token}") String internalServiceToken)
 			throws Exception {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)

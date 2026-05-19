@@ -11,6 +11,16 @@ spring:
 server:
     shutdown: graceful
 
+management:
+    endpoint:
+        health:
+            probes:
+                enabled: true
+    endpoints:
+        web:
+            exposure:
+                include: health,info
+
 app:
     data:
         migrations:
@@ -20,7 +30,7 @@ app:
             enabled: ${APP_DATA_SEED_ENABLED:false}
             products-path: ${PRODUCT_SAMPLE_DATA_PATH:../../static/sample-data/structured-data/product-service.products.json}
     security:
-        internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
+        internal-service-token: ${INTERNAL_SERVICE_TOKEN}
 
 logging:
     level:

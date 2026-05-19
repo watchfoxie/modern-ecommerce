@@ -57,6 +57,16 @@ server:
   shutdown: graceful
   port: ${NOTIFICATION_SERVICE_PORT:8087}
 
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
 eureka:
   client:
     service-url:
@@ -68,7 +78,7 @@ eureka:
 
 app:
   security:
-    internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN}
   messaging:
     exchange: ${ORDER_EVENTS_EXCHANGE:modern-ecommerce.events}
     dead-letter-exchange: ${ORDER_EVENTS_DLX:modern-ecommerce.events.dlx}

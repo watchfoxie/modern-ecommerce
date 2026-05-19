@@ -3,12 +3,12 @@ services:
     image: rabbitmq:4.2.5-management-alpine
     container_name: modern-ecommerce-rabbitmq
     restart: unless-stopped
-    ports:
-      - "${RABBITMQ_PORT:-5672}:5672"
-      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    expose:
+      - "5672"
+      - "15672"
     environment:
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USERNAME:-guest}"
-      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USERNAME:?RABBITMQ_USERNAME must be set}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASSWORD:?RABBITMQ_PASSWORD must be set}"
       RABBITMQ_DEFAULT_VHOST: "${RABBITMQ_VHOST:-/}"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
@@ -17,7 +17,10 @@ services:
       retries: 10
       start_period: 15s
     volumes:
-      - .\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - type: bind
+        source: ${RABBITMQ_CONFIG_FILE:-./rabbitmq.conf.example}
+        target: /etc/rabbitmq/rabbitmq.conf
+        read_only: true
       - modern-ecommerce-rabbitmq:/var/lib/rabbitmq
     deploy:
       resources:
@@ -35,7 +38,7 @@ services:
     container_name: modern-ecommerce-service-registry
     restart: unless-stopped
     build:
-      context: .\api\service-registry
+      context: ./api/service-registry
       dockerfile: Dockerfile
     environment:
       SERVICE_REGISTRY_PORT: "${SERVICE_REGISTRY_PORT:-8761}"
@@ -43,8 +46,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${SERVICE_REGISTRY_PORT:-8761}:${SERVICE_REGISTRY_PORT:-8761}"
+    expose:
+      - "${SERVICE_REGISTRY_PORT:-8761}"
     healthcheck:
       test:
         [
@@ -71,7 +74,7 @@ services:
     container_name: modern-ecommerce-auth-service
     restart: unless-stopped
     build:
-      context: .\api\auth-service
+      context: ./api/auth-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -86,14 +89,14 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       AUTH_SERVICE_USERNAME: "${AUTH_SERVICE_USERNAME:?AUTH_SERVICE_USERNAME must be set}"
       AUTH_SERVICE_PASSWORD: "${AUTH_SERVICE_PASSWORD:?AUTH_SERVICE_PASSWORD must be set}"
-      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:?JWT_SIGNING_SECRET must be set}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${AUTH_SERVICE_PORT:-8081}:${AUTH_SERVICE_PORT:-8081}"
+    expose:
+      - "${AUTH_SERVICE_PORT:-8081}"
     healthcheck:
       test:
         [
@@ -120,7 +123,7 @@ services:
     container_name: modern-ecommerce-user-service
     restart: unless-stopped
     build:
-      context: .\api\user-service
+      context: ./api/user-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -135,13 +138,13 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       USER_SERVICE_USERNAME: "${USER_SERVICE_USERNAME:?USER_SERVICE_USERNAME must be set}"
       USER_SERVICE_PASSWORD: "${USER_SERVICE_PASSWORD:?USER_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${USER_SERVICE_PORT:-8082}:${USER_SERVICE_PORT:-8082}"
+    expose:
+      - "${USER_SERVICE_PORT:-8082}"
     healthcheck:
       test:
         [
@@ -168,7 +171,7 @@ services:
     container_name: modern-ecommerce-category-service
     restart: unless-stopped
     build:
-      context: .\api\category-service
+      context: ./api/category-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -188,8 +191,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${CATEGORY_SERVICE_PORT:-8083}:${CATEGORY_SERVICE_PORT:-8083}"
+    expose:
+      - "${CATEGORY_SERVICE_PORT:-8083}"
     healthcheck:
       test:
         [
@@ -201,7 +204,7 @@ services:
       retries: 10
       start_period: 45s
     volumes:
-      - .\static:/app/static:ro
+      - ./static:/app/static:ro
     deploy:
       resources:
         limits:
@@ -218,7 +221,7 @@ services:
     container_name: modern-ecommerce-product-service
     restart: unless-stopped
     build:
-      context: .\api\product-service
+      context: ./api/product-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -234,13 +237,13 @@ services:
       PRODUCT_SAMPLE_DATA_PATH: "${PRODUCT_SAMPLE_DATA_PATH:-/app/static/sample-data/structured-data/product-service.products.json}"
       PRODUCT_SERVICE_USERNAME: "${PRODUCT_SERVICE_USERNAME:?PRODUCT_SERVICE_USERNAME must be set}"
       PRODUCT_SERVICE_PASSWORD: "${PRODUCT_SERVICE_PASSWORD:?PRODUCT_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${PRODUCT_SERVICE_PORT:-8084}:${PRODUCT_SERVICE_PORT:-8084}"
+    expose:
+      - "${PRODUCT_SERVICE_PORT:-8084}"
     healthcheck:
       test:
         [
@@ -252,7 +255,7 @@ services:
       retries: 10
       start_period: 45s
     volumes:
-      - .\static:/app/static:ro
+      - ./static:/app/static:ro
     deploy:
       resources:
         limits:
@@ -269,7 +272,7 @@ services:
     container_name: modern-ecommerce-cart-service
     restart: unless-stopped
     build:
-      context: .\api\cart-service
+      context: ./api/cart-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -284,13 +287,13 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       CART_SERVICE_USERNAME: "${CART_SERVICE_USERNAME:?CART_SERVICE_USERNAME must be set}"
       CART_SERVICE_PASSWORD: "${CART_SERVICE_PASSWORD:?CART_SERVICE_PASSWORD must be set}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${CART_SERVICE_PORT:-8085}:${CART_SERVICE_PORT:-8085}"
+    expose:
+      - "${CART_SERVICE_PORT:-8085}"
     healthcheck:
       test:
         [
@@ -317,7 +320,7 @@ services:
     container_name: modern-ecommerce-notification-service
     restart: unless-stopped
     build:
-      context: .\api\notification-service
+      context: ./api/notification-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -326,7 +329,7 @@ services:
         condition: service_healthy
     environment:
       NOTIFICATION_SERVICE_PORT: "${NOTIFICATION_SERVICE_PORT:-8087}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       NOTIFICATION_MAIL_USERNAME: "${NOTIFICATION_MAIL_USERNAME:-}"
       NOTIFICATION_MAIL_PASSWORD: "${NOTIFICATION_MAIL_PASSWORD:-}"
       NOTIFICATION_MAIL_ENABLED: "${NOTIFICATION_MAIL_ENABLED:-false}"
@@ -335,8 +338,8 @@ services:
       NOTIFICATION_MAIL_WRITE_TIMEOUT: "${NOTIFICATION_MAIL_WRITE_TIMEOUT:-5000}"
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: "5672"
-      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:-guest}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:?RABBITMQ_USERNAME must be set}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:?RABBITMQ_PASSWORD must be set}"
       RABBITMQ_VHOST: "${RABBITMQ_VHOST:-/}"
       RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS: "${RABBITMQ_LISTENER_RETRY_MAX_ATTEMPTS:-3}"
       RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL: "${RABBITMQ_LISTENER_RETRY_INITIAL_INTERVAL:-1000}"
@@ -352,8 +355,8 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${NOTIFICATION_SERVICE_PORT:-8087}:${NOTIFICATION_SERVICE_PORT:-8087}"
+    expose:
+      - "${NOTIFICATION_SERVICE_PORT:-8087}"
     healthcheck:
       test:
         [
@@ -380,7 +383,7 @@ services:
     container_name: modern-ecommerce-order-service
     restart: unless-stopped
     build:
-      context: .\api\order-service
+      context: ./api/order-service
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -397,19 +400,19 @@ services:
       APP_DATA_SEED_ENABLED: "${APP_DATA_SEED_ENABLED:-false}"
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: "5672"
-      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:-guest}"
-      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:-guest}"
+      RABBITMQ_USERNAME: "${RABBITMQ_USERNAME:?RABBITMQ_USERNAME must be set}"
+      RABBITMQ_PASSWORD: "${RABBITMQ_PASSWORD:?RABBITMQ_PASSWORD must be set}"
       RABBITMQ_VHOST: "${RABBITMQ_VHOST:-/}"
       ORDER_EVENTS_EXCHANGE: "${ORDER_EVENTS_EXCHANGE:-modern-ecommerce.events}"
       ORDER_EVENTS_DLX: "${ORDER_EVENTS_DLX:-modern-ecommerce.events.dlx}"
       ORDER_CREATED_ROUTING_KEY: "${ORDER_CREATED_ROUTING_KEY:-order.created}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${ORDER_SERVICE_PORT:-8086}:${ORDER_SERVICE_PORT:-8086}"
+    expose:
+      - "${ORDER_SERVICE_PORT:-8086}"
     healthcheck:
       test:
         [
@@ -436,7 +439,7 @@ services:
     container_name: modern-ecommerce-api-gateway
     restart: unless-stopped
     build:
-      context: .\api\api-gateway
+      context: ./api/api-gateway
       dockerfile: Dockerfile
     depends_on:
       service-registry:
@@ -462,14 +465,14 @@ services:
       API_GATEWAY_CONNECT_TIMEOUT: "${API_GATEWAY_CONNECT_TIMEOUT:-5000}"
       API_GATEWAY_RESPONSE_TIMEOUT: "${API_GATEWAY_RESPONSE_TIMEOUT:-5s}"
       API_GATEWAY_RATE_LIMIT_PER_MINUTE: "${API_GATEWAY_RATE_LIMIT_PER_MINUTE:-120}"
-      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:-r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}"
-      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:-AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}"
+      JWT_SIGNING_SECRET: "${JWT_SIGNING_SECRET:?JWT_SIGNING_SECRET must be set}"
+      INTERNAL_SERVICE_TOKEN: "${INTERNAL_SERVICE_TOKEN:?INTERNAL_SERVICE_TOKEN must be set}"
       SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE:-local}"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://service-registry:${SERVICE_REGISTRY_PORT:-8761}/eureka/"
       SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES: "${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:-true}"
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
-    ports:
-      - "${API_GATEWAY_PORT:-8080}:${API_GATEWAY_PORT:-8080}"
+    expose:
+      - "${API_GATEWAY_PORT:-8080}"
     healthcheck:
       test:
         [
@@ -497,7 +500,7 @@ services:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: .\web\Dockerfile
+      dockerfile: ./web/Dockerfile
       args:
         VITE_API_BASE_URL: "${VITE_API_BASE_URL:-/api}"
     depends_on:
@@ -508,7 +511,7 @@ services:
       VITE_API_BASE_URL: "${VITE_API_BASE_URL:-/api}"
       VITE_API_PROXY_TARGET: "http://api-gateway:${API_GATEWAY_PORT:-8080}"
     ports:
-      - "${VITE_PORT:-4173}:${VITE_PORT:-4173}"
+      - "${WEB_BIND_ADDRESS:-127.0.0.1}:${VITE_PORT:-4173}:${VITE_PORT:-4173}"
     healthcheck:
       test:
         [

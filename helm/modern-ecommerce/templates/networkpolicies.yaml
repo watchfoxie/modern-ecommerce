@@ -1,0 +1,151 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-web-ingress
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: web
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+{{ toYaml .Values.networkPolicy.ingressNamespaceSelector | indent 14 }}
+      ports:
+        - protocol: TCP
+          port: 4173
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-gateway-ingress
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: api-gateway
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: web
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-service-registry-ingress
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: service-registry
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+{{- range $component := list "api-gateway" "auth-service" "user-service" "category-service" "product-service" "cart-service" "order-service" "notification-service" }}
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ $.Release.Name }}
+              app.kubernetes.io/component: {{ $component }}
+{{- end }}
+      ports:
+        - protocol: TCP
+          port: 8761
+{{- $backendIngress := dict
+  "auth-service" (list "api-gateway")
+  "user-service" (list "api-gateway" "auth-service")
+  "category-service" (list "api-gateway")
+  "product-service" (list "api-gateway" "cart-service" "order-service")
+  "cart-service" (list "api-gateway" "order-service")
+  "order-service" (list "api-gateway")
+}}
+{{- range $component, $sources := $backendIngress }}
+{{- $workload := index $.Values.workloads $component }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" $ }}-{{ $component }}-ingress
+  labels:
+{{ include "modern-ecommerce.labels" $ | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      app.kubernetes.io/component: {{ $component }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+{{- range $source := $sources }}
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ $.Release.Name }}
+              app.kubernetes.io/component: {{ $source }}
+{{- end }}
+      ports:
+        - protocol: TCP
+          port: {{ $workload.port }}
+{{- end }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-notification-http-ingress
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: notification-service
+  policyTypes:
+    - Ingress
+  ingress: []
+{{- if .Values.rabbitmq.embedded.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "modern-ecommerce.fullname" . }}-rabbitmq-ingress
+  labels:
+{{ include "modern-ecommerce.labels" . | indent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: rabbitmq
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: order-service
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/instance: {{ .Release.Name }}
+              app.kubernetes.io/component: notification-service
+      ports:
+        - protocol: TCP
+          port: 5672
+{{- end }}
+{{- end }}

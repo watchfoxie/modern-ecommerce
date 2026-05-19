@@ -1,2 +1,2 @@
-management.disable_stats = <replace-with-boolean-value>
-management_agent.disable_metrics_collector = <replace-with-boolean-value>
+management.disable_stats = false
+management_agent.disable_metrics_collector = false

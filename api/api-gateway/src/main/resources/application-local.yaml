@@ -90,8 +90,8 @@ server:
 
 app:
   security:
-    jwt-signing-secret: ${JWT_SIGNING_SECRET:r6qeV6d8J9t3cDbFw1y8EydRHoY1h17CoOrpzl5rvB3}
-    internal-service-token: ${INTERNAL_SERVICE_TOKEN:AYmtWAAxsNTXoHtWZYjyQ1k01u8huw9fIIo1VAkbA3t}
+    jwt-signing-secret: ${JWT_SIGNING_SECRET}
+    internal-service-token: ${INTERNAL_SERVICE_TOKEN}
     rate-limit-per-minute: ${API_GATEWAY_RATE_LIMIT_PER_MINUTE:120}
 
 springdoc:

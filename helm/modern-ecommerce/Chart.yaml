@@ -1,0 +1,6 @@
+apiVersion: v2
+name: modern-ecommerce
+description: Production-ready Kubernetes delivery chart for the modern-ecommerce stack.
+type: application
+version: 0.1.0
+appVersion: 0.0.1-SNAPSHOT

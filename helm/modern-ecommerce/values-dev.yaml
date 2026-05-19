@@ -1,0 +1,65 @@
+global:
+  imageRegistry: ghcr.io/replace-with-owner
+  imageTag: dev
+  imagePullPolicy: IfNotPresent
+  springProfilesActive: local
+
+secrets:
+  createPlaceholders: true
+  defaultSecretName: modern-ecommerce-runtime-secrets
+
+ingress:
+  enabled: true
+  className: nginx
+  host: modern-ecommerce.local
+  tls:
+    enabled: false
+    secretName: ""
+  annotations: {}
+
+rabbitmq:
+  embedded:
+    enabled: true
+    storageSize: 2Gi
+
+workloads:
+  service-registry:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  auth-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  user-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  category-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  product-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  cart-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  order-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  notification-service:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+  api-gateway:
+    replicas: 1
+    config:
+      SPRING_PROFILES_ACTIVE: local
+      GATEWAY_ALLOWED_ORIGINS: http://localhost:5173
+      API_GATEWAY_RATE_LIMIT_PER_MINUTE: "120"
+  web:
+    replicas: 1

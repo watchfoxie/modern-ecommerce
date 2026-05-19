@@ -1,0 +1,61 @@
+global:
+  imageRegistry: ghcr.io/replace-with-owner
+  imageTag: replace-with-immutable-git-sha
+  imagePullPolicy: IfNotPresent
+  imagePullSecrets:
+    - modern-ecommerce-registry-credentials
+
+secrets:
+  createPlaceholders: false
+  defaultSecretName: modern-ecommerce-production-runtime
+
+externalSecrets:
+  enabled: true
+  secretStoreName: aws-secrets-manager
+  secretStoreKind: ClusterSecretStore
+  refreshInterval: 1h
+  secretNamePrefix: modern-ecommerce/production
+
+ingress:
+  enabled: true
+  className: nginx
+  host: modern-ecommerce.example.com
+  tls:
+    enabled: true
+    secretName: modern-ecommerce-web-tls
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 2m
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+rabbitmq:
+  embedded:
+    enabled: false
+  external:
+    host: rabbitmq.internal.example.com
+    port: "5672"
+    managementPort: "15672"
+
+workloads:
+  service-registry:
+    replicas: 1
+  auth-service:
+    replicas: 3
+  user-service:
+    replicas: 3
+  category-service:
+    replicas: 3
+  product-service:
+    replicas: 3
+  cart-service:
+    replicas: 3
+  order-service:
+    replicas: 3
+  notification-service:
+    replicas: 3
+  api-gateway:
+    replicas: 3
+    config:
+      GATEWAY_ALLOWED_ORIGINS: https://modern-ecommerce.example.com
+      API_GATEWAY_RATE_LIMIT_PER_MINUTE: "300"
+  web:
+    replicas: 3

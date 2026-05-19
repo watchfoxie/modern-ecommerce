@@ -21,7 +21,7 @@ public class ProductInternalController {
 	private final String internalServiceToken;
 
 	public ProductInternalController(ProductContractService productContractService,
-			@Value("${app.security.internal-service-token:modern-ecommerce-local-internal-token}") String internalServiceToken) {
+			@Value("${app.security.internal-service-token}") String internalServiceToken) {
 		this.productContractService = productContractService;
 		this.internalServiceToken = internalServiceToken;
 	}

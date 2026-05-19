@@ -10,10 +10,10 @@ public record GatewaySecurityProperties(
 
 	public GatewaySecurityProperties {
 		if (jwtSigningSecret == null || jwtSigningSecret.isBlank()) {
-			jwtSigningSecret = "modern-ecommerce-local-jwt-secret-change-me-32";
+			throw new IllegalArgumentException("app.security.jwt-signing-secret must be configured.");
 		}
 		if (internalServiceToken == null || internalServiceToken.isBlank()) {
-			internalServiceToken = "modern-ecommerce-local-internal-token";
+			throw new IllegalArgumentException("app.security.internal-service-token must be configured.");
 		}
 		if (rateLimitPerMinute <= 0) {
 			rateLimitPerMinute = 120;

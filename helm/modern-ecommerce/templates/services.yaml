@@ -1,0 +1,18 @@
+{{- range $name, $workload := .Values.workloads }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "modern-ecommerce.componentName" (dict "root" $ "component" $name) }}
+  labels:
+{{ include "modern-ecommerce.componentLabels" (dict "root" $ "component" $name) | indent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: {{ $name }}
+  ports:
+    - name: http
+      port: {{ $workload.port }}
+      targetPort: http
+---
+{{- end }}

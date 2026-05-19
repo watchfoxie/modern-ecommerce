@@ -1,0 +1,25 @@
+project_name = "modern-ecommerce"
+environment  = "production"
+aws_region   = "eu-central-1"
+
+vpc_cidr = "10.42.0.0/16"
+
+# Leave subnet variables empty to derive three private and three public subnets.
+availability_zones   = []
+public_subnet_cidrs  = []
+private_subnet_cidrs = []
+
+kubernetes_version = "1.35"
+node_instance_types = [
+  "t3.large",
+]
+node_desired_size = 3
+node_min_size     = 2
+node_max_size     = 6
+
+enable_dns_and_tls = false
+zone_name          = "example.com"
+public_host        = "shop.example.com"
+
+log_retention_days         = 90
+force_delete_repositories  = false

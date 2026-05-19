@@ -1,0 +1,41 @@
+global:
+  imageRegistry: ghcr.io/replace-with-owner
+  imageTag: staging
+  imagePullPolicy: IfNotPresent
+
+secrets:
+  createPlaceholders: false
+  defaultSecretName: modern-ecommerce-staging-runtime
+
+externalSecrets:
+  enabled: true
+  secretStoreName: aws-secrets-manager
+  secretStoreKind: ClusterSecretStore
+  refreshInterval: 1h
+  secretNamePrefix: modern-ecommerce/staging
+
+ingress:
+  enabled: true
+  className: nginx
+  host: staging.modern-ecommerce.example.com
+  tls:
+    enabled: true
+    secretName: modern-ecommerce-staging-web-tls
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 2m
+
+rabbitmq:
+  embedded:
+    enabled: false
+  external:
+    host: rabbitmq.staging.internal.example.com
+    port: "5672"
+    managementPort: "15672"
+
+workloads:
+  api-gateway:
+    config:
+      GATEWAY_ALLOWED_ORIGINS: https://staging.modern-ecommerce.example.com
+      API_GATEWAY_RATE_LIMIT_PER_MINUTE: "240"
+  web:
+    replicas: 2
