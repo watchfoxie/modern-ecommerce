@@ -1,5 +1,5 @@
 global:
-  imageRegistry: ghcr.io/replace-with-owner
+  imageRegistry: replace-with-registry-host
   imageTag: local
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -55,7 +55,7 @@ rabbitmq:
 workloads:
   service-registry:
     image:
-      repository: modern-ecommerce-service-registry
+      repository: modern-ecommerce/service-registry
     port: 8761
     replicas: 1
     config:
@@ -76,7 +76,7 @@ workloads:
 
   auth-service:
     image:
-      repository: modern-ecommerce-auth-service
+      repository: modern-ecommerce/auth-service
     port: 8081
     replicas: 2
     usesEurekaClient: true
@@ -97,7 +97,7 @@ workloads:
 
   user-service:
     image:
-      repository: modern-ecommerce-user-service
+      repository: modern-ecommerce/user-service
     port: 8082
     replicas: 2
     usesEurekaClient: true
@@ -117,7 +117,7 @@ workloads:
 
   category-service:
     image:
-      repository: modern-ecommerce-category-service
+      repository: modern-ecommerce/category-service
     port: 8083
     replicas: 2
     usesEurekaClient: true
@@ -136,7 +136,7 @@ workloads:
 
   product-service:
     image:
-      repository: modern-ecommerce-product-service
+      repository: modern-ecommerce/product-service
     port: 8084
     replicas: 2
     usesEurekaClient: true
@@ -156,7 +156,7 @@ workloads:
 
   cart-service:
     image:
-      repository: modern-ecommerce-cart-service
+      repository: modern-ecommerce/cart-service
     port: 8085
     replicas: 2
     usesEurekaClient: true
@@ -176,7 +176,7 @@ workloads:
 
   order-service:
     image:
-      repository: modern-ecommerce-order-service
+      repository: modern-ecommerce/order-service
     port: 8086
     replicas: 2
     usesEurekaClient: true
@@ -200,7 +200,7 @@ workloads:
 
   notification-service:
     image:
-      repository: modern-ecommerce-notification-service
+      repository: modern-ecommerce/notification-service
     port: 8087
     replicas: 2
     usesEurekaClient: true
@@ -231,7 +231,7 @@ workloads:
 
   api-gateway:
     image:
-      repository: modern-ecommerce-api-gateway
+      repository: modern-ecommerce/api-gateway
     port: 8080
     replicas: 2
     usesEurekaClient: true
@@ -251,7 +251,7 @@ workloads:
 
   web:
     image:
-      repository: modern-ecommerce-web
+      repository: modern-ecommerce/web
     port: 4173
     replicas: 2
     config:

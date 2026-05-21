@@ -21,3 +21,15 @@ variable "recovery_window_in_days" {
   type        = number
   default     = 30
 }
+
+variable "rotation_lambda_arn" {
+  description = "Optional Lambda ARN used to enable automatic rotation for all runtime secrets."
+  type        = string
+  default     = null
+}
+
+variable "rotation_automatically_after_days" {
+  description = "Number of days between automatic Secrets Manager rotations when rotation_lambda_arn is configured."
+  type        = number
+  default     = 30
+}

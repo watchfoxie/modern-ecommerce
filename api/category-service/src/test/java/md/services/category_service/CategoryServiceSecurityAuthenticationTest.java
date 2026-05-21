@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
         "CATEGORY_SERVICE_USERNAME=test-category-user",
         "CATEGORY_SERVICE_PASSWORD=test-category-password",
         "CATEGORY_MONGODB_URI=mongodb://localhost:27017/category-service-test",
+        "CATEGORY_SERVICE_DB_NAME=category-service-test",
         "app.data.migrations.enabled=false",
         "eureka.client.enabled=false",
         "spring.cloud.discovery.enabled=false"

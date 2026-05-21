@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
         "PRODUCT_SERVICE_USERNAME=test-product-user",
         "PRODUCT_SERVICE_PASSWORD=test-product-password",
         "PRODUCT_MONGODB_URI=mongodb://localhost:27017/product-service-test",
+        "PRODUCT_SERVICE_DB_NAME=product-service-test",
         "app.data.migrations.enabled=false",
         "eureka.client.enabled=false",
         "spring.cloud.discovery.enabled=false"

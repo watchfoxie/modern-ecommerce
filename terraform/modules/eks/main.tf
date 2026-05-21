@@ -16,6 +16,10 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "cluster_key" {
+  #checkov:skip=CKV_AWS_109:KMS key policies require Resource "*" and are constrained by principal plus CloudWatch Logs encryption context.
+  #checkov:skip=CKV_AWS_111:KMS key policies require Resource "*" and do not grant unconstrained data-plane access outside the key policy scope.
+  #checkov:skip=CKV_AWS_356:KMS key policies require Resource "*" because the policy is attached to the key itself.
+
   statement {
     sid    = "AllowAccountAdministration"
     effect = "Allow"
@@ -172,7 +176,7 @@ resource "aws_launch_template" "node" {
 
   metadata_options {
     http_endpoint               = "enabled"
-    http_put_response_hop_limit = 2
+    http_put_response_hop_limit = 1
     http_tokens                 = "required"
   }
 

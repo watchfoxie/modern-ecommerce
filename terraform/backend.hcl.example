@@ -1,6 +1,6 @@
-bucket         = "replace-with-terraform-state-bucket"
-key            = "modern-ecommerce/production/terraform.tfstate"
-region         = "eu-central-1"
-dynamodb_table = "replace-with-terraform-lock-table"
+bucket         = "modern-ecommerce-tfstate-<account-id>-<region>"
+key            = "modern-ecommerce/<environment>/terraform.tfstate"
+region         = "<region>"
+dynamodb_table = "modern-ecommerce-tf-locks"
 encrypt        = true
-kms_key_id     = "replace-with-state-kms-key-arn"
+kms_key_id     = "arn:aws:kms:<region>:<account-id>:key/<kms-key-id>"

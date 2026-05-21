@@ -17,6 +17,10 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "flow_logs_key" {
+  #checkov:skip=CKV_AWS_109:KMS key policies require Resource "*" and are constrained by principal plus CloudWatch Logs encryption context.
+  #checkov:skip=CKV_AWS_111:KMS key policies require Resource "*" and do not grant unconstrained data-plane access outside the key policy scope.
+  #checkov:skip=CKV_AWS_356:KMS key policies require Resource "*" because the policy is attached to the key itself.
+
   statement {
     sid    = "AllowAccountAdministration"
     effect = "Allow"
@@ -91,6 +95,14 @@ resource "aws_vpc" "this" {
 
   tags = {
     Name = local.name
+  }
+}
+
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  tags = {
+    Name = "${local.name}-default-deny"
   }
 }
 
@@ -236,6 +248,8 @@ resource "aws_route_table_association" "private" {
 }
 
 resource "aws_security_group" "eks_cluster" {
+  #checkov:skip=CKV2_AWS_5:The security group is attached to the EKS cluster in the eks module through cluster_security_group_id.
+
   name        = "${local.name}-eks-cluster"
   description = "EKS control plane security group for ${local.name}."
   vpc_id      = aws_vpc.this.id

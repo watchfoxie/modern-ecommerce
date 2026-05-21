@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(properties = {
 		"ORDER_MONGODB_URI=mongodb://localhost:27017/order-service-test",
+		"ORDER_SERVICE_DB_NAME=order-service-test",
 		"app.data.migrations.enabled=false",
 		"spring.rabbitmq.dynamic=false",
 		"eureka.client.enabled=false",

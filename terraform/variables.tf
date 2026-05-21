@@ -96,7 +96,7 @@ variable "public_host" {
 variable "log_retention_days" {
   description = "CloudWatch log retention in days."
   type        = number
-  default     = 90
+  default     = 365
 }
 
 variable "force_delete_repositories" {

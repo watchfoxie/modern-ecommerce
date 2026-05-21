@@ -40,7 +40,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\auth-service"
         PortEnvironmentVariable      = "AUTH_SERVICE_PORT"
         DefaultPort                  = 8081
-        RequiredEnvironmentVariables = @("AUTH_MONGODB_URI")
+        RequiredEnvironmentVariables = @("AUTH_MONGODB_URI", "AUTH_SERVICE_USERNAME", "AUTH_SERVICE_PASSWORD", "JWT_SIGNING_SECRET", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "MongoDB must be reachable through AUTH_MONGODB_URI."
     },
     [pscustomobject]@{
@@ -49,7 +49,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\user-service"
         PortEnvironmentVariable      = "USER_SERVICE_PORT"
         DefaultPort                  = 8082
-        RequiredEnvironmentVariables = @("USER_MONGODB_URI")
+        RequiredEnvironmentVariables = @("USER_MONGODB_URI", "USER_SERVICE_USERNAME", "USER_SERVICE_PASSWORD", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "MongoDB must be reachable through USER_MONGODB_URI."
     },
     [pscustomobject]@{
@@ -58,7 +58,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\category-service"
         PortEnvironmentVariable      = "CATEGORY_SERVICE_PORT"
         DefaultPort                  = 8083
-        RequiredEnvironmentVariables = @("CATEGORY_MONGODB_URI")
+        RequiredEnvironmentVariables = @("CATEGORY_MONGODB_URI", "CATEGORY_SERVICE_USERNAME", "CATEGORY_SERVICE_PASSWORD")
         ExternalPrerequisite         = "MongoDB must be reachable through CATEGORY_MONGODB_URI."
     },
     [pscustomobject]@{
@@ -67,7 +67,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\product-service"
         PortEnvironmentVariable      = "PRODUCT_SERVICE_PORT"
         DefaultPort                  = 8084
-        RequiredEnvironmentVariables = @("PRODUCT_MONGODB_URI")
+        RequiredEnvironmentVariables = @("PRODUCT_MONGODB_URI", "PRODUCT_SERVICE_USERNAME", "PRODUCT_SERVICE_PASSWORD", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "MongoDB must be reachable through PRODUCT_MONGODB_URI."
     },
     [pscustomobject]@{
@@ -76,7 +76,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\cart-service"
         PortEnvironmentVariable      = "CART_SERVICE_PORT"
         DefaultPort                  = 8085
-        RequiredEnvironmentVariables = @("CART_MONGODB_URI")
+        RequiredEnvironmentVariables = @("CART_MONGODB_URI", "CART_SERVICE_USERNAME", "CART_SERVICE_PASSWORD", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "MongoDB must be reachable through CART_MONGODB_URI."
     },
     [pscustomobject]@{
@@ -85,7 +85,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\notification-service"
         PortEnvironmentVariable      = "NOTIFICATION_SERVICE_PORT"
         DefaultPort                  = 8087
-        RequiredEnvironmentVariables = @()
+        RequiredEnvironmentVariables = @("RABBITMQ_USERNAME", "RABBITMQ_PASSWORD", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "RabbitMQ must be reachable through RABBITMQ_* settings. SMTP credentials are required only when NOTIFICATION_MAIL_ENABLED=true."
     },
     [pscustomobject]@{
@@ -94,7 +94,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\order-service"
         PortEnvironmentVariable      = "ORDER_SERVICE_PORT"
         DefaultPort                  = 8086
-        RequiredEnvironmentVariables = @("ORDER_MONGODB_URI")
+        RequiredEnvironmentVariables = @("ORDER_MONGODB_URI", "RABBITMQ_USERNAME", "RABBITMQ_PASSWORD", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "MongoDB must be reachable through ORDER_MONGODB_URI and RabbitMQ must be reachable through RABBITMQ_* settings."
     },
     [pscustomobject]@{
@@ -103,7 +103,7 @@ $components = @(
         WorkingDirectory             = Join-Path $script:repoRoot "api\api-gateway"
         PortEnvironmentVariable      = "API_GATEWAY_PORT"
         DefaultPort                  = 8080
-        RequiredEnvironmentVariables = @()
+        RequiredEnvironmentVariables = @("JWT_SIGNING_SECRET", "INTERNAL_SERVICE_TOKEN")
         ExternalPrerequisite         = "Downstream services should have time to register in Eureka before the frontend starts."
     },
     [pscustomobject]@{

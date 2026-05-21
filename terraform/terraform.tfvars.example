@@ -1,6 +1,6 @@
 project_name = "modern-ecommerce"
 environment  = "production"
-aws_region   = "eu-central-1"
+aws_region   = "us-east-1"
 
 vpc_cidr = "10.42.0.0/16"
 
@@ -21,5 +21,5 @@ enable_dns_and_tls = false
 zone_name          = "example.com"
 public_host        = "shop.example.com"
 
-log_retention_days         = 90
+log_retention_days         = 365
 force_delete_repositories  = false

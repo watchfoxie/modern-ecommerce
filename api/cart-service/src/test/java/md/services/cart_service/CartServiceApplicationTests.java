@@ -11,6 +11,7 @@ import md.services.cart_service.repository.CartRepository;
 
 @SpringBootTest(properties = {
 		"CART_MONGODB_URI=mongodb://localhost:27017/cart-service-test",
+		"CART_SERVICE_DB_NAME=cart-service-test",
 		"app.data.migrations.enabled=false",
 		"eureka.client.enabled=false",
 		"spring.cloud.discovery.enabled=false"

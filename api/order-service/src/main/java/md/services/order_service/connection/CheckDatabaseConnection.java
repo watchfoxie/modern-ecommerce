@@ -20,6 +20,7 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.util.StringUtils;
 
 import com.mongodb.ConnectionString;
@@ -32,6 +33,7 @@ import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoClient;
 
 @SpringBootApplication
+@ConditionalOnProperty(value = "app.database.connection-check.enabled", havingValue = "true")
 public class CheckDatabaseConnection implements ExitCodeGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckDatabaseConnection.class);
@@ -221,6 +223,7 @@ public class CheckDatabaseConnection implements ExitCodeGenerator {
         properties.put("eureka.client.fetch-registry", "false");
         properties.put("eureka.client.register-with-eureka", "false");
         properties.put("spring.main.lazy-initialization", "true");
+        properties.put("app.database.connection-check.enabled", "true");
         return properties;
     }
 

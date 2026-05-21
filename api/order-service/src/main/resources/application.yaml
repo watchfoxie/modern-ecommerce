@@ -25,14 +25,14 @@ spring:
       use-only-site-local-interfaces: ${SPRING_CLOUD_INETUTILS_USE_ONLY_SITE_LOCAL_INTERFACES:true}
   data:
     mongodb:
-      uri: ${ORDER_MONGODB_URI:mongodb://localhost:27017/order-service}
+      uri: ${ORDER_MONGODB_URI}
   mongodb:
-    uri: ${ORDER_MONGODB_URI:mongodb://localhost:27017/order-service}
+    uri: ${ORDER_MONGODB_URI}
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
     virtual-host: ${RABBITMQ_VHOST:/}
 
 server:

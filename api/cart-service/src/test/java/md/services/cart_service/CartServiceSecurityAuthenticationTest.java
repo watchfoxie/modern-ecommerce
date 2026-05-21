@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
         "CART_SERVICE_USERNAME=test-cart-user",
         "CART_SERVICE_PASSWORD=test-cart-password",
         "CART_MONGODB_URI=mongodb://localhost:27017/cart-service-test",
+        "CART_SERVICE_DB_NAME=cart-service-test",
         "app.data.migrations.enabled=false",
         "eureka.client.enabled=false",
         "spring.cloud.discovery.enabled=false"

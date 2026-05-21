@@ -1,25 +1,32 @@
 import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-dom'
 import App from './App'
-import NotFoundPage from '@/pages/NotFoundPage'
-import { RequireAuth, RequireGuest } from '@/components/app/RouteGuards'
-import { SignInPage, SignUpPage, PasswordResetPage } from '@/pages/auth/AuthPages'
-import CartLayout from '@/pages/cart/CartLayout'
-import CartPage from '@/pages/cart/CartPage'
-import { DeliveryPage, PayPage, PersonalDataPage } from '@/pages/cart/CheckoutPages'
-import CatalogLayout from '@/pages/catalog/CatalogLayout'
-import CatalogPage from '@/pages/catalog/CatalogPage'
-import HomePage from '@/pages/catalog/HomePage'
-import ProductDetailPage from '@/pages/catalog/ProductDetailPage'
-import SearchPage from '@/pages/catalog/SearchPage'
 import {
+  AboutPage,
   AccountLayout,
   AccountOverviewPage,
+  CartLayout,
+  CartPage,
+  CatalogLayout,
+  CatalogPage,
+  ContactsPage,
+  DeliveryPage,
   ExpenseDashboardPage,
+  HomePage,
+  LazyRoute,
+  NotFoundPage,
   OrderHistoryPage,
+  PasswordResetPage,
+  PayPage,
+  PersonalDataPage,
   PersonalPage,
+  ProductDetailPage,
   ProfileLandingPage,
-} from '@/pages/profile/ProfilePages'
-import { AboutPage, ContactsPage, SupportPage } from '@/pages/static/StaticPages'
+  SearchPage,
+  SignInPage,
+  SignUpPage,
+  SupportPage,
+} from './route-elements'
+import { RequireAuth, RequireGuest } from '@/components/app/RouteGuards'
 
 const developmentRoutes: RouteObject[] = import.meta.env.DEV
   ? [
@@ -39,58 +46,58 @@ export const router = createBrowserRouter([
     Component: App,
     children: [
       { index: true, element: <Navigate to="/home" replace /> },
-      { path: 'home', element: <HomePage /> },
+      { path: 'home', element: <LazyRoute><HomePage /></LazyRoute> },
       {
         path: 'categories',
-        element: <CatalogLayout />,
+        element: <LazyRoute><CatalogLayout /></LazyRoute>,
         children: [
-          { index: true, element: <CatalogPage mode="all" /> },
-          { path: 'smartphones', element: <CatalogPage mode="smartphones" /> },
-          { path: 'laptops', element: <CatalogPage mode="laptops" /> },
-          { path: 'offers', element: <CatalogPage mode="offers" /> },
-          { path: 'smartphones/:productId', element: <ProductDetailPage /> },
-          { path: 'laptops/:productId', element: <ProductDetailPage /> },
-          { path: 'offers/:productId', element: <ProductDetailPage promotional /> },
-          { path: 'offers/smartphones/:productId', element: <ProductDetailPage promotional /> },
-          { path: 'offers/laptops/:productId', element: <ProductDetailPage promotional /> },
-          { path: ':productId', element: <ProductDetailPage /> },
+          { index: true, element: <LazyRoute><CatalogPage mode="all" /></LazyRoute> },
+          { path: 'smartphones', element: <LazyRoute><CatalogPage mode="smartphones" /></LazyRoute> },
+          { path: 'laptops', element: <LazyRoute><CatalogPage mode="laptops" /></LazyRoute> },
+          { path: 'offers', element: <LazyRoute><CatalogPage mode="offers" /></LazyRoute> },
+          { path: 'smartphones/:productId', element: <LazyRoute><ProductDetailPage /></LazyRoute> },
+          { path: 'laptops/:productId', element: <LazyRoute><ProductDetailPage /></LazyRoute> },
+          { path: 'offers/:productId', element: <LazyRoute><ProductDetailPage promotional /></LazyRoute> },
+          { path: 'offers/smartphones/:productId', element: <LazyRoute><ProductDetailPage promotional /></LazyRoute> },
+          { path: 'offers/laptops/:productId', element: <LazyRoute><ProductDetailPage promotional /></LazyRoute> },
+          { path: ':productId', element: <LazyRoute><ProductDetailPage /></LazyRoute> },
         ],
       },
-      { path: 'search', element: <SearchPage /> },
+      { path: 'search', element: <LazyRoute><SearchPage /></LazyRoute> },
       {
         path: 'cart',
-        element: <RequireAuth><CartLayout /></RequireAuth>,
+        element: <RequireAuth><LazyRoute><CartLayout /></LazyRoute></RequireAuth>,
         children: [
-          { index: true, element: <CartPage /> },
-          { path: 'delivery', element: <DeliveryPage /> },
-          { path: 'personal-data', element: <PersonalDataPage /> },
-          { path: 'pay', element: <PayPage /> },
+          { index: true, element: <LazyRoute><CartPage /></LazyRoute> },
+          { path: 'delivery', element: <LazyRoute><DeliveryPage /></LazyRoute> },
+          { path: 'personal-data', element: <LazyRoute><PersonalDataPage /></LazyRoute> },
+          { path: 'pay', element: <LazyRoute><PayPage /></LazyRoute> },
         ],
       },
       {
         path: 'profile',
         children: [
-          { index: true, element: <ProfileLandingPage /> },
-          { path: 'sign-up', element: <RequireGuest><SignUpPage /></RequireGuest> },
-          { path: 'sign-in', element: <RequireGuest><SignInPage /></RequireGuest> },
-          { path: 'password-reset', element: <RequireGuest><PasswordResetPage /></RequireGuest> },
+          { index: true, element: <LazyRoute><ProfileLandingPage /></LazyRoute> },
+          { path: 'sign-up', element: <RequireGuest><LazyRoute><SignUpPage /></LazyRoute></RequireGuest> },
+          { path: 'sign-in', element: <RequireGuest><LazyRoute><SignInPage /></LazyRoute></RequireGuest> },
+          { path: 'password-reset', element: <RequireGuest><LazyRoute><PasswordResetPage /></LazyRoute></RequireGuest> },
           {
             path: 'account',
-            element: <RequireAuth><AccountLayout /></RequireAuth>,
+            element: <RequireAuth><LazyRoute><AccountLayout /></LazyRoute></RequireAuth>,
             children: [
-              { index: true, element: <AccountOverviewPage /> },
-              { path: 'order-history', element: <OrderHistoryPage /> },
-              { path: 'expense-dashboard', element: <ExpenseDashboardPage /> },
-              { path: 'personal', element: <PersonalPage /> },
+              { index: true, element: <LazyRoute><AccountOverviewPage /></LazyRoute> },
+              { path: 'order-history', element: <LazyRoute><OrderHistoryPage /></LazyRoute> },
+              { path: 'expense-dashboard', element: <LazyRoute><ExpenseDashboardPage /></LazyRoute> },
+              { path: 'personal', element: <LazyRoute><PersonalPage /></LazyRoute> },
             ],
           },
         ],
       },
-      { path: 'support', element: <SupportPage /> },
-      { path: 'contacts', element: <ContactsPage /> },
-      { path: 'about', element: <AboutPage /> },
+      { path: 'support', element: <LazyRoute><SupportPage /></LazyRoute> },
+      { path: 'contacts', element: <LazyRoute><ContactsPage /></LazyRoute> },
+      { path: 'about', element: <LazyRoute><AboutPage /></LazyRoute> },
       ...developmentRoutes,
-      { path: '*', element: <NotFoundPage /> },
+      { path: '*', element: <LazyRoute><NotFoundPage /></LazyRoute> },
     ],
   },
 ])

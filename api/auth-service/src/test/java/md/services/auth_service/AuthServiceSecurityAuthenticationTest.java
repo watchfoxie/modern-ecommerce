@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
         "AUTH_SERVICE_USERNAME=test-auth-user",
         "AUTH_SERVICE_PASSWORD=test-auth-password",
         "AUTH_MONGODB_URI=mongodb://localhost:27017/auth-service-test",
+        "AUTH_SERVICE_DB_NAME=auth-service-test",
         "app.data.migrations.enabled=false",
         "app.startup.mongo-verification.enabled=false",
         "eureka.client.enabled=false",

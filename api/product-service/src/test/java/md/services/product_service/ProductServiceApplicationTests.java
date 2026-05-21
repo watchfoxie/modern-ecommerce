@@ -11,6 +11,7 @@ import md.services.product_service.repository.ProductRepository;
 
 @SpringBootTest(properties = {
 		"PRODUCT_MONGODB_URI=mongodb://localhost:27017/product-service-test",
+		"PRODUCT_SERVICE_DB_NAME=product-service-test",
 		"app.data.migrations.enabled=false",
 		"eureka.client.enabled=false",
 		"spring.cloud.discovery.enabled=false"

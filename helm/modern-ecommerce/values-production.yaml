@@ -1,5 +1,5 @@
 global:
-  imageRegistry: ghcr.io/replace-with-owner
+  imageRegistry: replace-with-aws-account-id.dkr.ecr.us-east-1.amazonaws.com
   imageTag: replace-with-immutable-git-sha
   imagePullPolicy: IfNotPresent
   imagePullSecrets:
