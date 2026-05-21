@@ -17,6 +17,10 @@ node_desired_size = 3
 node_min_size     = 2
 node_max_size     = 6
 
+eks_endpoint_public_access       = false
+eks_endpoint_private_access      = true
+eks_endpoint_public_access_cidrs = []
+
 enable_dns_and_tls = false
 zone_name          = "example.com"
 public_host        = "shop.example.com"

@@ -44,6 +44,25 @@ variable "endpoint_public_access" {
   default     = false
 }
 
+variable "endpoint_private_access" {
+  description = "Whether the EKS API endpoint is reachable from inside the VPC."
+  type        = bool
+  default     = true
+}
+
+variable "public_access_cidrs" {
+  description = "CIDR blocks allowed to reach the public EKS API endpoint when public access is enabled."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for cidr in var.public_access_cidrs : can(cidrhost(cidr, 0))
+    ])
+    error_message = "public_access_cidrs must contain valid CIDR blocks."
+  }
+}
+
 variable "log_retention_days" {
   description = "EKS control plane log retention in days."
   type        = number

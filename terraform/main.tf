@@ -40,6 +40,9 @@ module "eks" {
   node_desired_size         = var.node_desired_size
   node_min_size             = var.node_min_size
   node_max_size             = var.node_max_size
+  endpoint_public_access    = var.eks_endpoint_public_access
+  endpoint_private_access   = var.eks_endpoint_private_access
+  public_access_cidrs       = var.eks_endpoint_public_access_cidrs
   log_retention_days        = var.log_retention_days
 }
 

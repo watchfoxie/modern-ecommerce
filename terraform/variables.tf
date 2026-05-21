@@ -75,6 +75,31 @@ variable "node_max_size" {
   default     = 6
 }
 
+variable "eks_endpoint_public_access" {
+  description = "Whether to expose the EKS API endpoint publicly. Keep false unless an allowlisted operator CIDR is provided."
+  type        = bool
+  default     = false
+}
+
+variable "eks_endpoint_private_access" {
+  description = "Whether to expose the EKS API endpoint privately inside the VPC."
+  type        = bool
+  default     = true
+}
+
+variable "eks_endpoint_public_access_cidrs" {
+  description = "CIDR blocks allowed to reach the public EKS API endpoint when public access is enabled."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for cidr in var.eks_endpoint_public_access_cidrs : can(cidrhost(cidr, 0))
+    ])
+    error_message = "eks_endpoint_public_access_cidrs must contain valid CIDR blocks."
+  }
+}
+
 variable "enable_dns_and_tls" {
   description = "When true, provisions Route 53 DNS validation records and an ACM certificate for the public host."
   type        = bool

@@ -13,6 +13,12 @@ resource "aws_ecr_repository" "this" {
     encryption_type = "KMS"
   }
 
+  lifecycle {
+    # Existing repositories were created with AES256 encryption. ECR encryption
+    # cannot be changed in place, so imported repositories must not be replaced.
+    ignore_changes = [encryption_configuration]
+  }
+
   tags = {
     Environment = var.environment
     Service     = each.value

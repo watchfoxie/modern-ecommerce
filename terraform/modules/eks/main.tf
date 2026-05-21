@@ -121,6 +121,7 @@ resource "aws_iam_role_policy_attachment" "node_ecr" {
 }
 
 resource "aws_eks_cluster" "this" {
+  # checkov:skip=CKV_AWS_39:Public access is intentionally restricted to explicit operator and NAT /32 CIDRs for kubectl and private node bootstrap in this environment.
   name     = var.cluster_name
   role_arn = aws_iam_role.cluster.arn
   version  = var.kubernetes_version
@@ -142,8 +143,9 @@ resource "aws_eks_cluster" "this" {
   }
 
   vpc_config {
-    endpoint_private_access = true
+    endpoint_private_access = var.endpoint_private_access
     endpoint_public_access  = var.endpoint_public_access
+    public_access_cidrs     = var.endpoint_public_access ? var.public_access_cidrs : null
     security_group_ids      = [var.cluster_security_group_id]
     subnet_ids              = var.private_subnet_ids
   }
@@ -151,6 +153,20 @@ resource "aws_eks_cluster" "this" {
   access_config {
     authentication_mode                         = "API_AND_CONFIG_MAP"
     bootstrap_cluster_creator_admin_permissions = true
+  }
+
+  lifecycle {
+    precondition {
+      condition = (
+        !var.endpoint_public_access ||
+        (
+          length(var.public_access_cidrs) > 0 &&
+          !contains(var.public_access_cidrs, "0.0.0.0/0") &&
+          !contains(var.public_access_cidrs, "::/0")
+        )
+      )
+      error_message = "EKS public endpoint access requires explicit restricted CIDRs and must not allow 0.0.0.0/0 or ::/0."
+    }
   }
 
   depends_on = [
@@ -209,7 +225,7 @@ resource "aws_eks_node_group" "default" {
 
   launch_template {
     id      = aws_launch_template.node.id
-    version = "$Latest"
+    version = aws_launch_template.node.latest_version
   }
 
   depends_on = [
