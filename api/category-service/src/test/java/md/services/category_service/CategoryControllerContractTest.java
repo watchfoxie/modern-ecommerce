@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import md.services.category_service.api.CategoryController;
 import md.services.category_service.api.CategoryDto;
 import md.services.category_service.api.CategoryUpsertRequest;
+import md.services.category_service.api.PagedResponseDto;
 import md.services.category_service.exception.ApiExceptionHandler;
 import md.services.category_service.exception.DuplicateResourceException;
 import md.services.category_service.exception.ResourceNotFoundException;
@@ -42,12 +43,24 @@ class CategoryControllerContractTest {
 
 	@Test
 	void listCategoriesReturnsPublicDtos() throws Exception {
-		when(categoryContractService.listCategories(null)).thenReturn(List.of(category()));
+		when(categoryContractService.listCategories(null, 0, 20))
+				.thenReturn(new PagedResponseDto<>(List.of(category()), 0, 20, 1, 1, true, true));
 
 		mockMvc.perform(get("/categories"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].slug").value("smartphones"))
-				.andExpect(jsonPath("$[0].isActive").value(true));
+				.andExpect(jsonPath("$.data[0].slug").value("smartphones"))
+				.andExpect(jsonPath("$.data[0].isActive").value(true))
+				.andExpect(jsonPath("$.totalElements").value(1));
+	}
+
+	@Test
+	void versionedListRouteReturnsSamePublicContract() throws Exception {
+		when(categoryContractService.listCategories(null, 0, 20))
+				.thenReturn(new PagedResponseDto<>(List.of(category()), 0, 20, 1, 1, true, true));
+
+		mockMvc.perform(get("/v1/categories"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data[0].slug").value("smartphones"));
 	}
 
 	@Test

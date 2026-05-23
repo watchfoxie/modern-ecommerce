@@ -10,6 +10,7 @@
     "test": "vitest run --config vitest.config.ts",
     "test:e2e": "playwright test",
     "sample-data:validate": "node scripts/validate-sample-data.mjs",
+    "static-assets:validate": "node scripts/validate-static-assets.mjs",
     "lockfile:lint": "lockfile-lint --path package-lock.json --allowed-hosts npm --validate-https",
     "start": "node server.mjs",
     "preview": "vite preview"

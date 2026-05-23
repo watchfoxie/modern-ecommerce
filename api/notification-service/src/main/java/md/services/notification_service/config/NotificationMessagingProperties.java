@@ -3,6 +3,7 @@ package md.services.notification_service.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 @Validated
@@ -13,5 +14,7 @@ public record NotificationMessagingProperties(
 		@NotBlank String orderCreatedRoutingKey,
 		@NotBlank String orderCreatedQueue,
 		@NotBlank String orderCreatedDlqQueue,
-		@NotBlank String orderCreatedDlqRoutingKey) {
+		@NotBlank String orderCreatedDlqRoutingKey,
+		@Min(1) Integer orderCreatedTtlMs,
+		@Min(1) Integer orderCreatedDlqTtlMs) {
 }

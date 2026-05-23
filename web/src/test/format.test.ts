@@ -7,6 +7,10 @@ describe('frontend shared helpers', () => {
     expect(assetUrl('static/assets/images/prod-images/support/hero.png')).toBe('/static/assets/images/prod-images/support/hero.png')
   })
 
+  it('falls back when backend image paths escape the static asset namespace', () => {
+    expect(assetUrl('/uploads/product.png')).toBe('/static/assets/images/prod-images/categories-offers/generic-smartphones-1.png')
+  })
+
   it('formats MDL amounts and discount percentages', () => {
     expect(formatMoney(100, 'MDL')).toContain('100')
     expect(discountPercent(100, 75)).toBe(25)

@@ -72,11 +72,45 @@ class GatewaySecurityWebFilterTest {
 	}
 
 	@Test
+	void rejectsUserRoleOnVersionedAdminRoutes() {
+		List<String> paths = List.of(
+				"/api/order-service/v1/orders/all",
+				"/api/order-service/v1/orders/order-1/status");
+
+		for (String path : paths) {
+			MockServerWebExchange exchange = exchange(path, userToken("ROLE_USER"));
+
+			filter(120).filter(exchange, successChain()).block();
+
+			assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		}
+	}
+
+	@Test
+	void permitsVersionedPublicCatalogReadsWithoutBearerToken() {
+		List<String> paths = List.of(
+				"/api/category-service/v1/categories",
+				"/api/product-service/v1/products",
+				"/api/product-service/v1/products/search");
+
+		for (String path : paths) {
+			MockServerWebExchange exchange = exchange(path, null);
+
+			filter(120).filter(exchange, successChain()).block();
+
+			assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.OK);
+		}
+	}
+
+	@Test
 	void hidesInternalRoutesFromPublicGatewaySurface() {
 		List<String> paths = List.of(
 				"/api/notification-service/internal/notifications",
+				"/api/notification-service/v1/internal/notifications",
 				"/api/product-service/internal/products/prod-1",
-				"/api/user-service/users/internal/by-auth/auth-1");
+				"/api/product-service/v1/products/internal/prod-1",
+				"/api/user-service/users/internal/by-auth/auth-1",
+				"/api/user-service/v1/users/internal/by-auth/auth-1");
 
 		for (String path : paths) {
 			MockServerWebExchange exchange = exchange(path, userToken("ROLE_ADMIN"));

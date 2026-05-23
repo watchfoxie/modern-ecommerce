@@ -47,6 +47,31 @@ describe('route guards', () => {
     expect(screen.getByText('Protected cart')).toBeInTheDocument()
   })
 
+  it('keeps protected routes mounted when access token expired but refresh token exists', () => {
+    useAuthStore.getState().setAuth({
+      accessToken: makeJwt({
+        authId: 'auth-1',
+        userId: 'user-1',
+        email: 'customer@example.com',
+        roles: ['ROLE_USER'],
+        exp: Math.floor(Date.now() / 1000) - 60,
+      }),
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/cart" element={<RequireAuth><div>Protected cart</div></RequireAuth>} />
+        <Route path="/profile/sign-in" element={<div>Sign-in route</div>} />
+      </Routes>,
+      { route: '/cart' },
+    )
+
+    expect(screen.getByText('Protected cart')).toBeInTheDocument()
+  })
+
   it('redirects authenticated users away from guest-only auth pages', async () => {
     authenticate()
 

@@ -5,6 +5,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,14 +33,20 @@ public class LocalActuatorSecurityConfiguration {
 
 	@Bean
 	@Order(2)
-	SecurityFilterChain applicationSecurityFilterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain applicationSecurityFilterChain(
+			HttpSecurity http,
+			@Value("${app.security.internal-service-token}") String internalServiceToken) throws Exception {
 		return http
 				.csrf(AbstractHttpConfigurer::disable)
-				.addFilterBefore(new GatewayHeaderAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new GatewayHeaderAuthenticationFilter(internalServiceToken),
+						UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.GET, "/internal/products/*").permitAll()
-						.requestMatchers(HttpMethod.GET, "/products", "/products/*", "/products/search").permitAll()
-						.requestMatchers("/products", "/products/*").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/products", "/products/*", "/products/search",
+								"/v1/products", "/v1/products/*", "/v1/products/search")
+						.permitAll()
+						.requestMatchers("/products", "/products/*", "/v1/products", "/v1/products/*")
+						.hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(withDefaults())
 				.httpBasic(withDefaults())

@@ -49,11 +49,23 @@ class ProductControllerContractTest {
 				.thenReturn(new PagedResponseDto<>(List.of(product()), 0, 12, 1, 1, true, true));
 
 		mockMvc.perform(get("/products")
+				.param("categorySlug", "smartphones")
+				.param("hasPromotion", "true"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data[0].slug").value("phone-pro"))
+				.andExpect(jsonPath("$.totalElements").value(1));
+	}
+
+	@Test
+	void versionedListProductsReturnsPagedEnvelope() throws Exception {
+		when(productContractService.listProducts("smartphones", true, 0, 12, "createdAt", "desc"))
+				.thenReturn(new PagedResponseDto<>(List.of(product()), 0, 12, 1, 1, true, true));
+
+		mockMvc.perform(get("/v1/products")
 						.param("categorySlug", "smartphones")
 						.param("hasPromotion", "true"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[0].slug").value("phone-pro"))
-				.andExpect(jsonPath("$.totalElements").value(1));
+				.andExpect(jsonPath("$.data[0].slug").value("phone-pro"));
 	}
 
 	@Test

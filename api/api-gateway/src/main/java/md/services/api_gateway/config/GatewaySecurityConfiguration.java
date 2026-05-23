@@ -91,14 +91,18 @@ class GatewaySecurityWebFilter implements WebFilter {
 		String correlationId = correlationId(exchange);
 		exchange.getResponse().getHeaders().set(CORRELATION_ID, correlationId);
 
-		if (path.startsWith("/api/notification-service/internal/")) {
+		if (path.startsWith("/api/notification-service/internal/")
+				|| path.startsWith("/api/notification-service/v1/internal/")) {
 			exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
 			return exchange.getResponse().setComplete();
 		}
-		if (path.equals("/api/user-service/users") || path.startsWith("/api/user-service/internal/")
+		if (path.equals("/api/user-service/users") || path.equals("/api/user-service/v1/users")
+				|| path.startsWith("/api/user-service/internal/")
 				|| path.startsWith("/api/user-service/users/internal/")
+				|| path.startsWith("/api/user-service/v1/users/internal/")
 				|| path.startsWith("/api/product-service/internal/")
-				|| path.startsWith("/api/product-service/products/internal/")) {
+				|| path.startsWith("/api/product-service/products/internal/")
+				|| path.startsWith("/api/product-service/v1/products/internal/")) {
 			exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
 			return exchange.getResponse().setComplete();
 		}
@@ -152,21 +156,28 @@ class GatewaySecurityWebFilter implements WebFilter {
 				|| (path.startsWith("/api/auth-service/")
 						&& (path.endsWith("/sign-up") || path.endsWith("/sign-in") || path.contains("/password-reset/")
 								|| path.endsWith("/token/refresh")))
-				|| (HttpMethod.GET.equals(method) && (path.startsWith("/api/category-service/categories")
-						|| path.startsWith("/api/product-service/products")));
+				|| (HttpMethod.GET.equals(method) && isPublicCatalogPath(path));
 	}
 
 	private boolean isAuthorized(ServerWebExchange exchange, List<String> roles) {
 		String path = exchange.getRequest().getURI().getPath();
 		HttpMethod method = exchange.getRequest().getMethod();
-		if ((path.startsWith("/api/category-service/categories") || path.startsWith("/api/product-service/products"))
-				&& !HttpMethod.GET.equals(method)) {
+		if (isPublicCatalogPath(path) && !HttpMethod.GET.equals(method)) {
 			return roles.contains("ROLE_ADMIN");
 		}
-		if (path.equals("/api/order-service/orders/all") || path.matches("/api/order-service/orders/[^/]+/status")) {
+		if (path.equals("/api/order-service/orders/all")
+				|| path.equals("/api/order-service/v1/orders/all")
+				|| path.matches("/api/order-service/(v1/)?orders/[^/]+/status")) {
 			return roles.contains("ROLE_ADMIN");
 		}
 		return !roles.isEmpty();
+	}
+
+	private boolean isPublicCatalogPath(String path) {
+		return path.startsWith("/api/category-service/categories")
+				|| path.startsWith("/api/category-service/v1/categories")
+				|| path.startsWith("/api/product-service/products")
+				|| path.startsWith("/api/product-service/v1/products");
 	}
 
 	private ServerWebExchange sanitize(ServerWebExchange exchange, String correlationId, Claims claims) {

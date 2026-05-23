@@ -1,10 +1,10 @@
-package md.services.order_service.api;
+package md.services.category_service.api;
 
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "Standard paged response.")
+@Schema(description = "Standard offset-paginated response envelope.")
 public record PagedResponseDto<T>(
 		@Schema(requiredMode = Schema.RequiredMode.REQUIRED) List<T> data,
 		@Schema(requiredMode = Schema.RequiredMode.REQUIRED) int page,

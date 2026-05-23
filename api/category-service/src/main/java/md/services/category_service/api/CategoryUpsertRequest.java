@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request used by administrators to create or update a category.")
 public record CategoryUpsertRequest(
 		@Schema(requiredMode = Schema.RequiredMode.REQUIRED) @NotBlank @Size(max = 120) String name,
-		@Schema(requiredMode = Schema.RequiredMode.REQUIRED) @NotBlank @Size(max = 140) String slug,
+		@Schema(requiredMode = Schema.RequiredMode.REQUIRED) @NotBlank @Size(max = 140)
+		@Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "must be a lowercase URL slug") String slug,
 		String parentId,
 		@Size(max = 500) String description,
 		String imageUrl,

@@ -102,12 +102,15 @@ export function SignUpPage() {
 export function SignInPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const [params] = useSearchParams()
   const setAuth = useAuthStore((state) => state.setAuth)
   const form = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema) })
   const mutation = useMutation({
     mutationFn: authService.signIn,
     onSuccess: (response) => {
-      const redirectTo = (location.state as { redirectTo?: string } | null)?.redirectTo ?? '/home'
+      const redirectTo = (location.state as { redirectTo?: string } | null)?.redirectTo
+        ?? params.get('redirectTo')
+        ?? '/home'
       setAuth(response)
       navigate(redirectTo, { replace: true, flushSync: true })
     },

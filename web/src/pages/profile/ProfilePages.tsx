@@ -278,10 +278,10 @@ export function OrderHistoryPage() {
       <SectionHeader title="Istoric comenzi" description="Comenzi personale returnate de `order-service`." />
       {ordersQuery.isLoading && <LoadingRows count={4} />}
       {ordersQuery.isError && <ApiErrorAlert error={ordersQuery.error} onRetry={() => ordersQuery.refetch()} />}
-      {ordersQuery.isSuccess && ordersQuery.data.content.length === 0 && (
+      {ordersQuery.isSuccess && ordersQuery.data.data.length === 0 && (
         <EmptyState icon={<Package />} title="Nu ai plasat nicio comandă" action={<Button asChild><Link to="/home">Descoperă produsele</Link></Button>} />
       )}
-      {ordersQuery.data?.content.length ? (
+      {ordersQuery.data?.data.length ? (
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader>
@@ -294,7 +294,7 @@ export function OrderHistoryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ordersQuery.data.content.map((order) => (
+              {ordersQuery.data.data.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-mono text-xs">{order.orderNumber}</TableCell>
                   <TableCell>{formatDateTime(order.createdAt)}</TableCell>
@@ -350,7 +350,7 @@ export function ExpenseDashboardPage() {
     queryKey: queryKeys.ordersDashboard,
     queryFn: () => orderService.listMine({ page: 0, size: 100, sort: 'createdAt', direction: 'desc' }),
   })
-  const orders = ordersQuery.data?.content ?? []
+  const orders = ordersQuery.data?.data ?? []
   const total = orders.reduce((sum, order) => sum + Number(order.totalAmount), 0)
   const monthlyMap = new Map<string, number>()
   orders.forEach((order) => {

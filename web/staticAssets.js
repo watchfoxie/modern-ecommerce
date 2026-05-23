@@ -25,8 +25,10 @@ export function getStaticContentType(filePath) {
 }
 
 export function getStaticResponseHeaders(filePath) {
+  const immutableAsset = filePath.includes(`${path.sep}static${path.sep}assets${path.sep}`)
   return {
     'Content-Type': getStaticContentType(filePath),
     'X-Content-Type-Options': 'nosniff',
+    'Cache-Control': immutableAsset ? 'public, max-age=31536000, immutable' : 'no-cache',
   }
 }

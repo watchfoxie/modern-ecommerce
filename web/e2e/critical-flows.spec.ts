@@ -104,21 +104,21 @@ async function fulfillJson(route: Route, payload: unknown, status = 200) {
   })
 }
 
-function paged<T>(content: T[]) {
+function paged<T>(data: T[]) {
   return {
-    content,
+    data,
     page: 0,
     size: 12,
-    totalElements: content.length,
-    totalPages: content.length > 0 ? 1 : 0,
+    totalElements: data.length,
+    totalPages: data.length > 0 ? 1 : 0,
     first: true,
     last: true,
   }
 }
 
 async function mockApi(page: Page) {
-  await page.route('**/api/category-service/categories**', (route) =>
-    fulfillJson(route, [
+  await page.route('**/api/category-service/v1/categories**', (route) =>
+    fulfillJson(route, paged([
       {
         id: 'category-smartphones',
         slug: 'smartphones',
@@ -139,10 +139,10 @@ async function mockApi(page: Page) {
         displayOrder: 2,
         isActive: true,
       },
-    ]),
+    ])),
   )
 
-  await page.route('**/api/product-service/products**', (route) => {
+  await page.route('**/api/product-service/v1/products**', (route) => {
     const url = new URL(route.request().url())
     if (url.pathname.endsWith('/search')) {
       return fulfillJson(route, paged([product]))
@@ -155,7 +155,7 @@ async function mockApi(page: Page) {
     return fulfillJson(route, paged([product]))
   })
 
-  await page.route('**/api/auth-service/sign-in', (route) =>
+  await page.route('**/api/auth-service/v1/sign-in', (route) =>
     fulfillJson(route, {
       accessToken: makeJwt(),
       refreshToken: 'refresh-token',
@@ -164,7 +164,7 @@ async function mockApi(page: Page) {
     }),
   )
 
-  await page.route('**/api/user-service/users/me**', (route) =>
+  await page.route('**/api/user-service/v1/users/me**', (route) =>
     fulfillJson(route, {
       id: 'user-1',
       authId: 'auth-1',
@@ -180,9 +180,9 @@ async function mockApi(page: Page) {
     }),
   )
 
-  await page.route('**/api/cart-service/carts/me**', (route) => fulfillJson(route, cart))
+  await page.route('**/api/cart-service/v1/carts/me**', (route) => fulfillJson(route, cart))
 
-  await page.route('**/api/order-service/orders**', (route) => {
+  await page.route('**/api/order-service/v1/orders**', (route) => {
     if (route.request().method() === 'POST') {
       return fulfillJson(route, {
         status: 'ACCEPTED',

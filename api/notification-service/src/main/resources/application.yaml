@@ -86,6 +86,8 @@ app:
     order-created-queue: ${ORDER_CREATED_QUEUE:notification.order-created.v1}
     order-created-dlq-queue: ${ORDER_CREATED_DLQ_QUEUE:notification.order-created.v1.dlq}
     order-created-dlq-routing-key: ${ORDER_CREATED_DLQ_ROUTING_KEY:notification.order-created.v1.dlq}
+    order-created-ttl-ms: ${ORDER_CREATED_TTL_MS:86400000}
+    order-created-dlq-ttl-ms: ${ORDER_CREATED_DLQ_TTL_MS:604800000}
 
 notification:
   mail:

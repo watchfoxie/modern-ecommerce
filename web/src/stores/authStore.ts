@@ -100,8 +100,8 @@ export const useAuthStore = create<AuthState>()(
           user: null,
         }),
       isAuthenticated: () => {
-        const { accessToken, expiresAt } = get()
-        return Boolean(accessToken && (!expiresAt || expiresAt > Date.now()))
+        const { accessToken, expiresAt, refreshToken } = get()
+        return Boolean(accessToken && ((!expiresAt || expiresAt > Date.now()) || refreshToken))
       },
       hasRole: (role) => get().user?.roles.includes(role) ?? false,
     }),

@@ -46,29 +46,29 @@ export interface AuthMessageResponse {
 
 export const authService = {
   async signUp(request: AuthSignUpRequest): Promise<AuthUserDto> {
-    const response = await api.post<AuthUserDto>('/auth-service/sign-up', request)
+    const response = await api.post<AuthUserDto>('/auth-service/v1/sign-up', request)
     return response.data
   },
 
   async signIn(request: AuthSignInRequest): Promise<AuthTokenResponse> {
-    const response = await api.post<AuthTokenResponse>('/auth-service/sign-in', request)
+    const response = await api.post<AuthTokenResponse>('/auth-service/v1/sign-in', request)
     return response.data
   },
 
   async signOut(): Promise<void> {
-    await api.post('/auth-service/sign-out')
+    await api.post('/auth-service/v1/sign-out')
   },
 
   async refreshToken(request: AuthTokenRefreshRequest): Promise<AuthTokenResponse> {
-    const response = await api.post<AuthTokenResponse>('/auth-service/token/refresh', request)
+    const response = await api.post<AuthTokenResponse>('/auth-service/v1/token/refresh', request)
     return response.data
   },
 
   async requestPasswordReset(request: AuthPasswordResetRequest): Promise<void> {
-    await api.post('/auth-service/password-reset/request', request)
+    await api.post('/auth-service/v1/password-reset/request', request)
   },
 
   async confirmPasswordReset(request: AuthPasswordResetConfirmRequest): Promise<void> {
-    await api.post('/auth-service/password-reset/confirm', request)
+    await api.post('/auth-service/v1/password-reset/confirm', request)
   },
 }

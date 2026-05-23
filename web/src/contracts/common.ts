@@ -2,7 +2,7 @@ export type IsoDateString = string
 export type IsoDateTimeString = string
 
 export interface PagedResponseDto<T> {
-  content: T[]
+  data: T[]
   page: number
   size: number
   totalElements: number

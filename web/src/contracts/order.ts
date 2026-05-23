@@ -1,8 +1,9 @@
 import { api } from '@/config/axios'
 import type { CurrencyCode, IsoDateTimeString, PagedResponseDto, PageRequestParams } from './common'
 
-export type OrderStatus = 'CREATED' | 'CONFIRMED' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | string
-export type PaymentStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED' | string
+export type OrderStatus = 'CREATED' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED'
+export type PaymentStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED'
+export type PaymentMethod = 'CARD' | 'CASH'
 
 export interface OrderAddressDto {
   recipientName: string
@@ -23,7 +24,7 @@ export interface OrderItemDto {
 }
 
 export interface OrderPaymentDto {
-  method: string
+  method: PaymentMethod
   status: PaymentStatus
   transactionId?: string | null
 }
@@ -46,7 +47,7 @@ export interface OrderDto {
 export interface CreateOrderRequest {
   deliveryAddress: OrderAddressDto
   payment: {
-    method: string
+    method: PaymentMethod
     transactionId?: string | null
   }
   notes?: string
@@ -65,27 +66,27 @@ export interface UpdateOrderStatusRequest {
 
 export const orderService = {
   async create(request: CreateOrderRequest): Promise<OrderAcceptedResponse> {
-    const response = await api.post<OrderAcceptedResponse>('/order-service/orders', request)
+    const response = await api.post<OrderAcceptedResponse>('/order-service/v1/orders', request)
     return response.data
   },
 
   async listMine(params?: PageRequestParams): Promise<PagedResponseDto<OrderDto>> {
-    const response = await api.get<PagedResponseDto<OrderDto>>('/order-service/orders', { params })
+    const response = await api.get<PagedResponseDto<OrderDto>>('/order-service/v1/orders', { params })
     return response.data
   },
 
   async getByOrderId(orderId: string): Promise<OrderDto> {
-    const response = await api.get<OrderDto>(`/order-service/orders/${orderId}`)
+    const response = await api.get<OrderDto>(`/order-service/v1/orders/${orderId}`)
     return response.data
   },
 
   async listAll(params?: Pick<PageRequestParams, 'page' | 'size'> & { status?: string }): Promise<PagedResponseDto<OrderDto>> {
-    const response = await api.get<PagedResponseDto<OrderDto>>('/order-service/orders/all', { params })
+    const response = await api.get<PagedResponseDto<OrderDto>>('/order-service/v1/orders/all', { params })
     return response.data
   },
 
   async updateStatus(orderId: string, request: UpdateOrderStatusRequest): Promise<OrderDto> {
-    const response = await api.patch<OrderDto>(`/order-service/orders/${orderId}/status`, request)
+    const response = await api.patch<OrderDto>(`/order-service/v1/orders/${orderId}/status`, request)
     return response.data
   },
 }

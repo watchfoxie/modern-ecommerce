@@ -3,9 +3,13 @@ package md.services.category_service.service;
 import java.time.Instant;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import md.services.category_service.api.CategoryDto;
+import md.services.category_service.api.PagedResponseDto;
 import md.services.category_service.api.CategoryUpsertRequest;
 import md.services.category_service.domain.CategoryDocument;
 import md.services.category_service.exception.DuplicateResourceException;
@@ -21,11 +25,21 @@ public class CategoryContractService {
 		this.categoryRepository = categoryRepository;
 	}
 
-	public List<CategoryDto> listCategories(String parentId) {
-		List<CategoryDocument> categories = (parentId == null || parentId.isBlank())
-				? categoryRepository.findByIsActiveTrueOrderByDisplayOrderAscNameAsc()
-				: categoryRepository.findByParentIdAndIsActiveTrueOrderByDisplayOrderAscNameAsc(parentId);
-		return categories.stream().map(this::toDto).toList();
+	public PagedResponseDto<CategoryDto> listCategories(String parentId, int page, int size) {
+		PageRequest pageable = PageRequest.of(page, size, Sort.by(
+				Sort.Order.asc("displayOrder"),
+				Sort.Order.asc("name")));
+		Page<CategoryDocument> categories = (parentId == null || parentId.isBlank())
+				? categoryRepository.findByIsActiveTrue(pageable)
+				: categoryRepository.findByParentIdAndIsActiveTrue(parentId, pageable);
+		return new PagedResponseDto<>(
+				categories.getContent().stream().map(this::toDto).toList(),
+				categories.getNumber(),
+				categories.getSize(),
+				categories.getTotalElements(),
+				categories.getTotalPages(),
+				categories.isFirst(),
+				categories.isLast());
 	}
 
 	public CategoryDto getCategory(String slug) {

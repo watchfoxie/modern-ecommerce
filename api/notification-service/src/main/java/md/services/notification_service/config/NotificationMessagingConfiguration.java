@@ -17,11 +17,19 @@ public class NotificationMessagingConfiguration {
 		TopicExchange mainExchange = new TopicExchange(properties.exchange(), true, false);
 		TopicExchange deadLetterExchange = new TopicExchange(properties.deadLetterExchange(), true, false);
 
-		var orderCreatedQueue = QueueBuilder.durable(properties.orderCreatedQueue())
+		var orderCreatedQueueBuilder = QueueBuilder.durable(properties.orderCreatedQueue())
 				.withArgument("x-dead-letter-exchange", properties.deadLetterExchange())
-				.withArgument("x-dead-letter-routing-key", properties.orderCreatedDlqRoutingKey())
-				.build();
-		var orderCreatedDlqQueue = QueueBuilder.durable(properties.orderCreatedDlqQueue()).build();
+				.withArgument("x-dead-letter-routing-key", properties.orderCreatedDlqRoutingKey());
+		if (properties.orderCreatedTtlMs() != null) {
+			orderCreatedQueueBuilder.withArgument("x-message-ttl", properties.orderCreatedTtlMs());
+		}
+		var orderCreatedQueue = orderCreatedQueueBuilder.build();
+
+		var orderCreatedDlqQueueBuilder = QueueBuilder.durable(properties.orderCreatedDlqQueue());
+		if (properties.orderCreatedDlqTtlMs() != null) {
+			orderCreatedDlqQueueBuilder.withArgument("x-message-ttl", properties.orderCreatedDlqTtlMs());
+		}
+		var orderCreatedDlqQueue = orderCreatedDlqQueueBuilder.build();
 
 		return new Declarables(
 				mainExchange,

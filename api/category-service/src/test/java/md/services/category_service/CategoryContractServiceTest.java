@@ -11,6 +11,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,14 +39,16 @@ class CategoryContractServiceTest {
 	@Test
 	void listsOnlyActiveCategoriesWithParentFilter() {
 		Instant now = Instant.now();
-		when(categoryRepository.findByParentIdAndIsActiveTrueOrderByDisplayOrderAscNameAsc("root"))
-				.thenReturn(List.of(new CategoryDocument(
-						"1", "phones", "Phones", "root", "Mobile phones", "/phones.png", 10, true, now, now)));
+		when(categoryRepository.findByParentIdAndIsActiveTrue(any(), any()))
+				.thenReturn(new PageImpl<>(List.of(new CategoryDocument(
+						"1", "phones", "Phones", "root", "Mobile phones", "/phones.png", 10, true, now, now)),
+						PageRequest.of(0, 20), 1));
 
-		List<?> categories = categoryContractService.listCategories("root");
+		var categories = categoryContractService.listCategories("root", 0, 20);
 
-		assertThat(categories).hasSize(1);
-		verify(categoryRepository).findByParentIdAndIsActiveTrueOrderByDisplayOrderAscNameAsc("root");
+		assertThat(categories.data()).hasSize(1);
+		assertThat(categories.totalElements()).isEqualTo(1);
+		verify(categoryRepository).findByParentIdAndIsActiveTrue(any(), any());
 	}
 
 	@Test

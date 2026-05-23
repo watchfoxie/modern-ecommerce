@@ -35,25 +35,25 @@ export interface UpdateCartItemRequest {
 
 export const cartService = {
   async getMe(): Promise<CartDto> {
-    const response = await api.get<CartDto>('/cart-service/carts/me')
+    const response = await api.get<CartDto>('/cart-service/v1/carts/me')
     return response.data
   },
 
   async addItem(request: AddCartItemRequest): Promise<CartDto> {
-    const response = await api.post<CartDto>('/cart-service/carts/me/items', request)
+    const response = await api.post<CartDto>('/cart-service/v1/carts/me/items', request)
     return response.data
   },
 
   async updateItem(productId: string, request: UpdateCartItemRequest): Promise<CartDto> {
-    const response = await api.put<CartDto>(`/cart-service/carts/me/items/${productId}`, request)
+    const response = await api.put<CartDto>(`/cart-service/v1/carts/me/items/${productId}`, request)
     return response.data
   },
 
   async removeItem(productId: string): Promise<void> {
-    await api.delete(`/cart-service/carts/me/items/${productId}`)
+    await api.delete(`/cart-service/v1/carts/me/items/${productId}`)
   },
 
   async clear(): Promise<void> {
-    await api.delete('/cart-service/carts/me')
+    await api.delete('/cart-service/v1/carts/me')
   },
 }

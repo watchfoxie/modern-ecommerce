@@ -52,7 +52,7 @@ class ProductContractServiceTest {
 
 		PagedResponseDto<ProductDto> page = productContractService.listProducts("phones", true, 0, 12, "price", "asc");
 
-		assertThat(page.content()).extracting(ProductDto::slug).containsExactly("phone");
+		assertThat(page.data()).extracting(ProductDto::slug).containsExactly("phone");
 		assertThat(page.totalElements()).isEqualTo(1);
 		assertThat(page.first()).isTrue();
 		assertThat(page.last()).isTrue();

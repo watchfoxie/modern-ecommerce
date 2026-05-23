@@ -52,14 +52,14 @@ public class OrderContractService {
 	private final OrderRepository orderRepository;
 	private final CartInternalClient cartInternalClient;
 	private final ProductInternalClient productInternalClient;
-	private final OrderEventPublisher orderEventPublisher;
+	private final OrderOutboxService orderOutboxService;
 
 	public OrderContractService(OrderRepository orderRepository, CartInternalClient cartInternalClient,
-			ProductInternalClient productInternalClient, OrderEventPublisher orderEventPublisher) {
+			ProductInternalClient productInternalClient, OrderOutboxService orderOutboxService) {
 		this.orderRepository = orderRepository;
 		this.cartInternalClient = cartInternalClient;
 		this.productInternalClient = productInternalClient;
-		this.orderEventPublisher = orderEventPublisher;
+		this.orderOutboxService = orderOutboxService;
 	}
 
 	public OrderAcceptedResponse createOrder(CreateOrderRequest request) {
@@ -94,7 +94,7 @@ public class OrderContractService {
 				now,
 				now));
 
-		orderEventPublisher.publishOrderCreated(new OrderEventCommand(
+		orderOutboxService.enqueueAndDispatchOrderCreated(new OrderEventCommand(
 				order.id(),
 				order.userId(),
 				order.customerEmail(),

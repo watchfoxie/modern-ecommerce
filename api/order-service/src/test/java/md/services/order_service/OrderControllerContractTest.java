@@ -88,7 +88,7 @@ class OrderControllerContractTest {
 	}
 
 	@Test
-	void unsupportedStatusReturnsUnprocessableProblemDetail() throws Exception {
+	void unsupportedStatusReturnsBadRequestProblemDetail() throws Exception {
 		when(orderContractService.updateStatus(any(String.class), any(OrderStatusUpdateRequest.class)))
 				.thenThrow(new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Order status is not supported."));
 
@@ -97,10 +97,32 @@ class OrderControllerContractTest {
 						.content("""
 								{ "status": "BROKEN" }
 								"""))
-				.andExpect(status().isUnprocessableEntity())
+				.andExpect(status().isBadRequest())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
-				.andExpect(jsonPath("$.status").value(422))
-				.andExpect(jsonPath("$.title").value("Request cannot be processed"));
+				.andExpect(jsonPath("$.status").value(400));
+	}
+
+	@Test
+	void versionedCreateOrderReturnsAcceptedResponse() throws Exception {
+		when(orderContractService.createOrder(any(CreateOrderRequest.class)))
+				.thenReturn(new OrderAcceptedResponse("ACCEPTED", "order-1", "ORD-20260501120000-1", "Order command accepted."));
+
+		mockMvc.perform(post("/v1/orders")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content("""
+								{
+								  "deliveryAddress": {
+								    "street": "Main 1",
+								    "city": "Chisinau",
+								    "district": "Centru",
+								    "recipientName": "Ana Popescu",
+								    "recipientPhone": "+37360000000"
+								  },
+								  "payment": { "method": "CARD" }
+								}
+								"""))
+				.andExpect(status().isAccepted())
+				.andExpect(jsonPath("$.orderId").value("order-1"));
 	}
 
 	@Test

@@ -1,5 +1,5 @@
 import { api } from '@/config/axios'
-import type { IsoDateTimeString } from './common'
+import type { IsoDateTimeString, PageRequestParams, PagedResponseDto } from './common'
 
 export interface CategoryDto {
   id: string
@@ -14,7 +14,7 @@ export interface CategoryDto {
   updatedAt?: IsoDateTimeString | null
 }
 
-export interface CategoryListParams {
+export interface CategoryListParams extends Pick<PageRequestParams, 'page' | 'size'> {
   parentId?: string
 }
 
@@ -29,27 +29,27 @@ export interface UpsertCategoryRequest {
 }
 
 export const categoryService = {
-  async list(params?: CategoryListParams): Promise<CategoryDto[]> {
-    const response = await api.get<CategoryDto[]>('/category-service/categories', { params })
+  async list(params?: CategoryListParams): Promise<PagedResponseDto<CategoryDto>> {
+    const response = await api.get<PagedResponseDto<CategoryDto>>('/category-service/v1/categories', { params })
     return response.data
   },
 
   async getBySlug(slug: string): Promise<CategoryDto> {
-    const response = await api.get<CategoryDto>(`/category-service/categories/${slug}`)
+    const response = await api.get<CategoryDto>(`/category-service/v1/categories/${slug}`)
     return response.data
   },
 
   async create(request: UpsertCategoryRequest): Promise<CategoryDto> {
-    const response = await api.post<CategoryDto>('/category-service/categories', request)
+    const response = await api.post<CategoryDto>('/category-service/v1/categories', request)
     return response.data
   },
 
   async update(slug: string, request: UpsertCategoryRequest): Promise<CategoryDto> {
-    const response = await api.put<CategoryDto>(`/category-service/categories/${slug}`, request)
+    const response = await api.put<CategoryDto>(`/category-service/v1/categories/${slug}`, request)
     return response.data
   },
 
   async delete(slug: string): Promise<void> {
-    await api.delete(`/category-service/categories/${slug}`)
+    await api.delete(`/category-service/v1/categories/${slug}`)
   },
 }

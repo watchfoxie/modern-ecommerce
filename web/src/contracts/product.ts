@@ -49,31 +49,31 @@ export interface UpsertProductRequest {
 
 export const productService = {
   async list(params?: ProductListParams): Promise<PagedResponseDto<ProductDto>> {
-    const response = await api.get<PagedResponseDto<ProductDto>>('/product-service/products', { params })
+    const response = await api.get<PagedResponseDto<ProductDto>>('/product-service/v1/products', { params })
     return response.data
   },
 
   async getBySlug(slug: string): Promise<ProductDto> {
-    const response = await api.get<ProductDto>(`/product-service/products/${slug}`)
+    const response = await api.get<ProductDto>(`/product-service/v1/products/${slug}`)
     return response.data
   },
 
   async search(params: ProductSearchParams): Promise<PagedResponseDto<ProductDto>> {
-    const response = await api.get<PagedResponseDto<ProductDto>>('/product-service/products/search', { params })
+    const response = await api.get<PagedResponseDto<ProductDto>>('/product-service/v1/products/search', { params })
     return response.data
   },
 
   async create(request: UpsertProductRequest): Promise<ProductDto> {
-    const response = await api.post<ProductDto>('/product-service/products', request)
+    const response = await api.post<ProductDto>('/product-service/v1/products', request)
     return response.data
   },
 
   async update(slug: string, request: UpsertProductRequest): Promise<ProductDto> {
-    const response = await api.put<ProductDto>(`/product-service/products/${slug}`, request)
+    const response = await api.put<ProductDto>(`/product-service/v1/products/${slug}`, request)
     return response.data
   },
 
   async delete(slug: string): Promise<void> {
-    await api.delete(`/product-service/products/${slug}`)
+    await api.delete(`/product-service/v1/products/${slug}`)
   },
 }

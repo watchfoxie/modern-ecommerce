@@ -23,7 +23,7 @@ import md.services.order_service.domain.OrderDocument;
 import md.services.order_service.repository.OrderRepository;
 import md.services.order_service.service.OrderContractService;
 import md.services.order_service.service.OrderEventCommand;
-import md.services.order_service.service.OrderEventPublisher;
+import md.services.order_service.service.OrderOutboxService;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class OrderContractServiceTests {
 	private ProductInternalClient productInternalClient;
 
 	@Mock
-	private OrderEventPublisher orderEventPublisher;
+	private OrderOutboxService orderOutboxService;
 
 	@Captor
 	private ArgumentCaptor<OrderDocument> orderCaptor;
@@ -111,7 +111,7 @@ class OrderContractServiceTests {
 		OrderAcceptedResponse response = service().createOrder(request());
 
 		verify(orderRepository).save(orderCaptor.capture());
-		verify(orderEventPublisher).publishOrderCreated(eventCaptor.capture());
+		verify(orderOutboxService).enqueueAndDispatchOrderCreated(eventCaptor.capture());
 		assertThat(response.status()).isEqualTo("ACCEPTED");
 		assertThat(response.orderId()).isEqualTo("order-1");
 		assertThat(orderCaptor.getValue().totalAmount()).isEqualByComparingTo("200.00");
@@ -121,7 +121,7 @@ class OrderContractServiceTests {
 	}
 
 	private OrderContractService service() {
-		return new OrderContractService(orderRepository, cartInternalClient, productInternalClient, orderEventPublisher);
+		return new OrderContractService(orderRepository, cartInternalClient, productInternalClient, orderOutboxService);
 	}
 
 	private CreateOrderRequest request() {

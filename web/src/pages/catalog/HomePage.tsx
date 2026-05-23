@@ -33,7 +33,7 @@ export default function HomePage() {
     queryFn: () => productService.list({ page: 0, size: 4, hasPromotion: true }),
   })
 
-  const categories = categoriesQuery.data?.filter((category) => category.slug !== 'electronics') ?? []
+  const categories = categoriesQuery.data?.data.filter((category) => category.slug !== 'electronics') ?? []
 
   return (
     <div>
@@ -104,11 +104,11 @@ export default function HomePage() {
         <SectionHeader title="Produse recomandate" description="Cele mai recente produse active din catalog." />
         {featuredQuery.isLoading && <LoadingGrid count={8} />}
         {featuredQuery.isError && <ApiErrorAlert error={featuredQuery.error} onRetry={() => featuredQuery.refetch()} />}
-        {featuredQuery.isSuccess && featuredQuery.data.content.length === 0 && (
+        {featuredQuery.isSuccess && featuredQuery.data.data.length === 0 && (
           <EmptyState title="Nu există produse recomandate" description="Reveniți după actualizarea catalogului de produse." />
         )}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredQuery.data?.content.map((product) => <ProductCard key={product.id} product={product} />)}
+          {featuredQuery.data?.data.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
 
         <Separator className="my-10" />
@@ -116,11 +116,11 @@ export default function HomePage() {
         <SectionHeader title="Oferte active" description="Produse cu preț promoțional disponibil acum." />
         {offersQuery.isLoading && <LoadingGrid count={4} />}
         {offersQuery.isError && <ApiErrorAlert error={offersQuery.error} onRetry={() => offersQuery.refetch()} />}
-        {offersQuery.isSuccess && offersQuery.data.content.length === 0 && (
+        {offersQuery.isSuccess && offersQuery.data.data.length === 0 && (
           <EmptyState title="Nu există oferte active" description="Catalogul nu conține produse cu preț promoțional în acest moment." />
         )}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {offersQuery.data?.content.map((product) => <ProductCard key={product.id} product={product} compact />)}
+          {offersQuery.data?.data.map((product) => <ProductCard key={product.id} product={product} compact />)}
         </div>
       </PageShell>
     </div>

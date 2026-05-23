@@ -41,13 +41,17 @@ public class OrderEventPublisher {
 				command.currency(),
 				Instant.now());
 
+		publish(event);
+
+		return event;
+	}
+
+	public void publish(OrderCreatedEvent event) {
 		rabbitTemplate.convertAndSend(
 				properties.exchange(),
 				properties.orderCreatedRoutingKey(),
 				serialize(event),
 				enrichMessage(event));
-
-		return event;
 	}
 
 	private String serialize(OrderCreatedEvent event) {

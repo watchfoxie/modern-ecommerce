@@ -20,6 +20,13 @@ public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
 
 	private static final String USER_ID_HEADER = "X-User-Id";
 	private static final String USER_ROLES_HEADER = "X-User-Roles";
+	private static final String INTERNAL_SERVICE_TOKEN_HEADER = "X-Internal-Service-Token";
+
+	private final String internalServiceToken;
+
+	public GatewayHeaderAuthenticationFilter(String internalServiceToken) {
+		this.internalServiceToken = internalServiceToken;
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -27,7 +34,8 @@ public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
 		if (SecurityContextHolder.getContext().getAuthentication() == null) {
 			String userId = request.getHeader(USER_ID_HEADER);
 			String roles = request.getHeader(USER_ROLES_HEADER);
-			if (StringUtils.hasText(userId) && StringUtils.hasText(roles)) {
+			String token = request.getHeader(INTERNAL_SERVICE_TOKEN_HEADER);
+			if (internalServiceToken.equals(token) && StringUtils.hasText(userId) && StringUtils.hasText(roles)) {
 				Collection<GrantedAuthority> authorities = Arrays.stream(roles.split(","))
 						.map(String::trim)
 						.filter(StringUtils::hasText)

@@ -33,6 +33,7 @@ export function orderStatusLabel(status: string) {
   const labels: Record<string, string> = {
     CREATED: 'Creată',
     CONFIRMED: 'Confirmată',
+    PROCESSING: 'În procesare',
     SHIPPED: 'Expediată',
     DELIVERED: 'Livrată',
     CANCELLED: 'Anulată',

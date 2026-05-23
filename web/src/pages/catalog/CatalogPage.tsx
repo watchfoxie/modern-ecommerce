@@ -110,7 +110,7 @@ export default function CatalogPage({ mode = 'all' }: { mode?: CatalogMode }) {
     setSearchParams(next)
   }
 
-  const products: ProductDto[] = productsQuery.data?.content ?? []
+  const products: ProductDto[] = productsQuery.data?.data ?? []
 
   return (
     <PageShell>

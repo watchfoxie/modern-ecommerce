@@ -34,11 +34,11 @@ export default function SearchPage() {
       )}
       {searchQuery.isLoading && <LoadingGrid count={12} />}
       {searchQuery.isError && <ApiErrorAlert error={searchQuery.error} onRetry={() => searchQuery.refetch()} />}
-      {searchQuery.isSuccess && searchQuery.data.content.length === 0 && (
+      {searchQuery.isSuccess && searchQuery.data.data.length === 0 && (
         <EmptyState icon={<SearchX />} title="Nu am găsit produse" description="Încercați un brand, model sau termen mai scurt." />
       )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {searchQuery.data?.content.map((product) => <ProductCard key={product.id} product={product} />)}
+        {searchQuery.data?.data.map((product) => <ProductCard key={product.id} product={product} />)}
       </div>
       {searchQuery.data && searchQuery.data.totalPages > 1 && (
         <div className="mt-8 flex items-center justify-center gap-2">

@@ -45,13 +45,18 @@ class OrderMongoMigrationTests {
 	@Test
 	void appliesOrderIndexesAndMigrationRecord() {
 		assertThat(mongoTemplate.collectionExists("orders")).isTrue();
+		assertThat(mongoTemplate.collectionExists("order_outbox")).isTrue();
 		assertThat(indexNames("orders")).contains(
 				"orderNumber",
 				"orders_user_created_idx",
 				"orders_status_created_idx",
 				"orders_user_status_idx");
+		assertThat(indexNames("order_outbox")).contains(
+				"order_outbox_event_aggregate_idx",
+				"order_outbox_status_created_idx");
 		assertThat(index("orders", "orderNumber").isUnique()).isTrue();
-		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(2);
+		assertThat(index("order_outbox", "order_outbox_event_aggregate_idx").isUnique()).isTrue();
+		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(3);
 	}
 
 	@Test

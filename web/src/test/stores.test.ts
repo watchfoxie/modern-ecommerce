@@ -32,10 +32,21 @@ describe('Zustand stores', () => {
     })
   })
 
-  it('treats expired access tokens as unauthenticated', () => {
+  it('keeps expired access tokens refreshable when a refresh token exists', () => {
     useAuthStore.getState().setAuth({
       accessToken: makeJwt({ sub: 'expired@example.com', exp: Math.floor(Date.now() / 1000) - 10 }),
       refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    expect(useAuthStore.getState().isAuthenticated()).toBe(true)
+  })
+
+  it('treats expired access tokens without refresh tokens as unauthenticated', () => {
+    useAuthStore.getState().setAuth({
+      accessToken: makeJwt({ sub: 'expired@example.com', exp: Math.floor(Date.now() / 1000) - 10 }),
+      refreshToken: '',
       tokenType: 'Bearer',
       expiresIn: 3600,
     })
@@ -56,7 +67,7 @@ describe('Zustand stores', () => {
           priceAtAdd: 1000,
           productSnapshot: {
             name: 'iPhone 15 Pro',
-            imageUrl: '/static/assets/images/prod-images/products/phone.png',
+            imageUrl: '/static/assets/images/prod-images/smartphones/apple/apple-iphone-15-pro-1.png',
             categorySlug: 'smartphones',
           },
         },

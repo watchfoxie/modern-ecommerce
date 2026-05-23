@@ -8,12 +8,14 @@ interface RetryableRequestConfig extends InternalAxiosRequestConfig {
 }
 
 const AUTH_ENDPOINTS = [
-  '/auth-service/sign-in',
-  '/auth-service/sign-up',
-  '/auth-service/password-reset/request',
-  '/auth-service/password-reset/confirm',
-  '/auth-service/token/refresh',
+  '/auth-service/v1/sign-in',
+  '/auth-service/v1/sign-up',
+  '/auth-service/v1/password-reset/request',
+  '/auth-service/v1/password-reset/confirm',
+  '/auth-service/v1/token/refresh',
 ]
+
+let refreshPromise: Promise<string | null> | null = null
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -38,13 +40,20 @@ async function refreshAccessToken() {
     return null
   }
 
-  const response = await axios.post<AuthTokenResponse>(
-    `${API_BASE_URL}/auth-service/token/refresh`,
+  refreshPromise ??= axios.post<AuthTokenResponse>(
+    `${API_BASE_URL}/auth-service/v1/token/refresh`,
     { refreshToken },
     { headers: { 'Content-Type': 'application/json' } },
   )
-  useAuthStore.getState().setAccessToken(response.data)
-  return response.data.accessToken
+    .then((response) => {
+      useAuthStore.getState().setAccessToken(response.data)
+      return response.data.accessToken
+    })
+    .finally(() => {
+      refreshPromise = null
+    })
+
+  return refreshPromise
 }
 
 api.interceptors.response.use(
@@ -71,7 +80,8 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !isAuthEndpoint(originalRequest?.url)) {
       useAuthStore.getState().clearAuth()
-      window.location.assign('/profile/sign-in')
+      const redirectTo = `${window.location.pathname}${window.location.search}`
+      window.location.assign(`/profile/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`)
     }
 
     return Promise.reject(error)

@@ -24,11 +24,11 @@ describe('typed API layer and Axios interceptors', () => {
       expiresIn: 3600,
     })
 
-    apiMock.onGet('/product-service/products').reply((config) => [
+    apiMock.onGet('/product-service/v1/products').reply((config) => [
       200,
       {
         authorization: config.headers?.Authorization,
-        content: [],
+        data: [],
         page: 0,
         size: 12,
         totalElements: 0,
@@ -40,9 +40,9 @@ describe('typed API layer and Axios interceptors', () => {
 
     const response = await productService.list({ page: 0, size: 12 })
 
-    expect(apiMock.history.get[0].url).toBe('/product-service/products')
-    expect(response.content).toEqual([])
-    expect((await api.get('/product-service/products')).data.authorization).toMatch(/^Bearer /)
+    expect(apiMock.history.get[0].url).toBe('/product-service/v1/products')
+    expect(response.data).toEqual([])
+    expect((await api.get('/product-service/v1/products')).data.authorization).toMatch(/^Bearer /)
   })
 
   it('refreshes an expired access token once and retries the protected request', async () => {
@@ -56,12 +56,12 @@ describe('typed API layer and Axios interceptors', () => {
     })
 
     apiMock
-      .onGet('/product-service/products')
+      .onGet('/product-service/v1/products')
       .replyOnce(401, { title: 'Unauthorized', status: 401 })
-      .onGet('/product-service/products')
-      .reply((config) => [200, { authorization: config.headers?.Authorization, content: [], page: 0, size: 0, totalElements: 0, totalPages: 0, first: true, last: true }])
+      .onGet('/product-service/v1/products')
+      .reply((config) => [200, { authorization: config.headers?.Authorization, data: [], page: 0, size: 0, totalElements: 0, totalPages: 0, first: true, last: true }])
 
-    axiosMock.onPost(`${API_BASE_URL}/auth-service/token/refresh`).reply(200, {
+    axiosMock.onPost(`${API_BASE_URL}/auth-service/v1/token/refresh`).reply(200, {
       accessToken: refreshedToken,
       refreshToken: 'refresh-token-2',
       tokenType: 'Bearer',
@@ -71,8 +71,41 @@ describe('typed API layer and Axios interceptors', () => {
     const response = await productService.list()
 
     expect(axiosMock.history.post).toHaveLength(1)
-    expect(response.content).toEqual([])
+    expect(response.data).toEqual([])
     expect(apiMock.history.get).toHaveLength(2)
     expect(useAuthStore.getState().accessToken).toBe(refreshedToken)
+  })
+
+  it('deduplicates concurrent refresh calls after protected requests return 401', async () => {
+    const expiredToken = makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) - 10 })
+    const refreshedToken = makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) + 3600 })
+    useAuthStore.getState().setAuth({
+      accessToken: expiredToken,
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    apiMock
+      .onGet('/product-service/v1/products')
+      .replyOnce(401, { title: 'Unauthorized', status: 401 })
+      .onGet('/product-service/v1/products')
+      .replyOnce(401, { title: 'Unauthorized', status: 401 })
+      .onGet('/product-service/v1/products')
+      .reply(200, { data: [], page: 0, size: 0, totalElements: 0, totalPages: 0, first: true, last: true })
+
+    axiosMock.onPost(`${API_BASE_URL}/auth-service/v1/token/refresh`).reply(200, {
+      accessToken: refreshedToken,
+      refreshToken: 'refresh-token-2',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    const [first, second] = await Promise.all([productService.list(), productService.list()])
+
+    expect(first.data).toEqual([])
+    expect(second.data).toEqual([])
+    expect(axiosMock.history.post).toHaveLength(1)
+    expect(apiMock.history.get).toHaveLength(4)
   })
 })

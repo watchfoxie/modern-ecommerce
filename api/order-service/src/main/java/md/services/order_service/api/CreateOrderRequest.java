@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Checkout request. User identity, totals, and canonical prices are resolved server-side.")
@@ -21,12 +22,13 @@ public record CreateOrderRequest(
 			@NotBlank @Size(max = 80) String district,
 			@Size(max = 20) String postalCode,
 			@NotBlank @Size(max = 160) String recipientName,
-			@NotBlank @Size(max = 30) String recipientPhone) {
+			@NotBlank @Size(max = 30)
+			@Pattern(regexp = "^[+0-9()\\-\\s]*$", message = "must be a phone-like value") String recipientPhone) {
 	}
 
 	@Schema(description = "Payment intent selected by the customer.")
 	public record PaymentRequest(
-			@NotBlank String method,
+			@NotBlank @Pattern(regexp = "CARD|CASH", message = "must be CARD or CASH") String method,
 			String transactionId) {
 	}
 

@@ -21,7 +21,7 @@ import md.services.order_service.service.OrderContractService;
 
 @Validated
 @RestController
-@RequestMapping("/orders")
+@RequestMapping({"/orders", "/v1/orders"})
 @Tag(name = "Orders")
 public class OrderCommandController {
 

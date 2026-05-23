@@ -78,6 +78,37 @@ public class OrderMongoMigrations {
 		};
 	}
 
+	@Bean
+	MongoMigration order003CreateOutboxCollection() {
+		return new MongoMigration() {
+			@Override
+			public String version() {
+				return "003";
+			}
+
+			@Override
+			public String description() {
+				return "Create order event outbox collection with dispatch indexes.";
+			}
+
+			@Override
+			public void migrate(MongoTemplate mongoTemplate) {
+				ensureCollection(mongoTemplate, "order_outbox");
+				mongoTemplate.indexOps("order_outbox")
+						.ensureIndex(new Index()
+								.on("eventType", Sort.Direction.ASC)
+								.on("aggregateId", Sort.Direction.ASC)
+								.unique()
+								.named("order_outbox_event_aggregate_idx"));
+				mongoTemplate.indexOps("order_outbox")
+						.ensureIndex(new Index()
+								.on("status", Sort.Direction.ASC)
+								.on("createdAt", Sort.Direction.ASC)
+								.named("order_outbox_status_created_idx"));
+			}
+		};
+	}
+
 	private static void ensureCollection(MongoTemplate mongoTemplate, String collectionName) {
 		if (!mongoTemplate.collectionExists(collectionName)) {
 			mongoTemplate.createCollection(collectionName);

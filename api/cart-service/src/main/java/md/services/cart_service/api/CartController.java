@@ -21,7 +21,7 @@ import md.services.cart_service.service.CartContractService;
 
 @Validated
 @RestController
-@RequestMapping("/carts/me")
+@RequestMapping({"/carts/me", "/v1/carts/me"})
 @Tag(name = "Carts")
 public class CartController {
 

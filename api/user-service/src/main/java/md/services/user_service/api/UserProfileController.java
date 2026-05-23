@@ -17,12 +17,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import md.services.user_service.service.UserContractService;
 
 @Validated
 @RestController
-@RequestMapping("/users")
+@RequestMapping({"/users", "/v1/users"})
 @Tag(name = "User profiles")
 public class UserProfileController {
 
@@ -34,27 +35,27 @@ public class UserProfileController {
 
 	@GetMapping("/me")
 	@Operation(summary = "Get the authenticated user's profile")
-	public UserProfileDto getCurrentUserProfile(@RequestHeader("X-Auth-Id") String authId) {
+	public UserProfileDto getCurrentUserProfile(@RequestHeader("X-Auth-Id") @NotBlank String authId) {
 		return userContractService.getCurrentUserProfile(authId);
 	}
 
 	@PutMapping("/me")
 	@Operation(summary = "Update the authenticated user's profile")
-	public UserProfileDto updateCurrentUserProfile(@RequestHeader("X-Auth-Id") String authId,
+	public UserProfileDto updateCurrentUserProfile(@RequestHeader("X-Auth-Id") @NotBlank String authId,
 			@Valid @RequestBody UserProfileUpdateRequest request) {
 		return userContractService.updateCurrentUserProfile(authId, request);
 	}
 
 	@PostMapping("/me/addresses")
 	@Operation(summary = "Add a delivery address to the authenticated user's profile")
-	public ResponseEntity<UserProfileDto> addAddress(@RequestHeader("X-Auth-Id") String authId,
+	public ResponseEntity<UserProfileDto> addAddress(@RequestHeader("X-Auth-Id") @NotBlank String authId,
 			@Valid @RequestBody AddressRequest request) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(userContractService.addAddress(authId, request));
 	}
 
 	@PutMapping("/me/addresses/{addressIndex}")
 	@Operation(summary = "Replace a delivery address by index")
-	public UserProfileDto replaceAddress(@RequestHeader("X-Auth-Id") String authId,
+	public UserProfileDto replaceAddress(@RequestHeader("X-Auth-Id") @NotBlank String authId,
 			@PathVariable @PositiveOrZero int addressIndex,
 			@Valid @RequestBody AddressRequest request) {
 		return userContractService.replaceAddress(authId, addressIndex, request);
@@ -62,7 +63,7 @@ public class UserProfileController {
 
 	@DeleteMapping("/me/addresses/{addressIndex}")
 	@Operation(summary = "Delete a delivery address by index")
-	public ResponseEntity<Void> deleteAddress(@RequestHeader("X-Auth-Id") String authId,
+	public ResponseEntity<Void> deleteAddress(@RequestHeader("X-Auth-Id") @NotBlank String authId,
 			@PathVariable @PositiveOrZero int addressIndex) {
 		userContractService.deleteAddress(authId, addressIndex);
 		return ResponseEntity.noContent().build();
@@ -78,7 +79,7 @@ public class UserProfileController {
 	@GetMapping("/internal/by-auth/{authId}")
 	@Hidden
 	@Operation(summary = "Resolve a user profile by auth identity for internal services")
-	public UserProfileDto findInternalByAuthId(@PathVariable String authId) {
+	public UserProfileDto findInternalByAuthId(@PathVariable @NotBlank String authId) {
 		return userContractService.findByAuthId(authId);
 	}
 

@@ -1,9 +1,8 @@
 package md.services.category_service.api;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +17,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import md.services.category_service.service.CategoryContractService;
 
+@Validated
 @RestController
-@RequestMapping("/categories")
+@RequestMapping({"/categories", "/v1/categories"})
 @Tag(name = "Categories")
 public class CategoryController {
 
@@ -33,15 +35,18 @@ public class CategoryController {
 
 	@GetMapping
 	@SecurityRequirements
-	@Operation(summary = "List active categories")
-	public List<CategoryDto> listCategories(@RequestParam(required = false) String parentId) {
-		return categoryContractService.listCategories(parentId);
+	@Operation(summary = "List active categories with offset pagination")
+	public PagedResponseDto<CategoryDto> listCategories(
+			@RequestParam(required = false) String parentId,
+			@RequestParam(defaultValue = "0") @Min(0) int page,
+			@RequestParam(defaultValue = "20") @Min(1) int size) {
+		return categoryContractService.listCategories(parentId, page, size);
 	}
 
 	@GetMapping("/{slug}")
 	@SecurityRequirements
 	@Operation(summary = "Get category by slug")
-	public CategoryDto getCategory(@PathVariable String slug) {
+	public CategoryDto getCategory(@PathVariable @NotBlank String slug) {
 		return categoryContractService.getCategory(slug);
 	}
 
@@ -53,13 +58,13 @@ public class CategoryController {
 
 	@PutMapping("/{slug}")
 	@Operation(summary = "Update category as administrator")
-	public CategoryDto updateCategory(@PathVariable String slug, @Valid @RequestBody CategoryUpsertRequest request) {
+	public CategoryDto updateCategory(@PathVariable @NotBlank String slug, @Valid @RequestBody CategoryUpsertRequest request) {
 		return categoryContractService.updateCategory(slug, request);
 	}
 
 	@DeleteMapping("/{slug}")
 	@Operation(summary = "Delete category as administrator")
-	public ResponseEntity<Void> deleteCategory(@PathVariable String slug) {
+	public ResponseEntity<Void> deleteCategory(@PathVariable @NotBlank String slug) {
 		categoryContractService.deleteCategory(slug);
 		return ResponseEntity.noContent().build();
 	}

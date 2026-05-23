@@ -22,6 +22,8 @@ management:
                 include: health,info
 
 app:
+    security:
+        internal-service-token: ${INTERNAL_SERVICE_TOKEN}
     data:
         migrations:
             enabled: ${APP_DATA_MIGRATIONS_ENABLED:true}

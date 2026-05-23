@@ -2,6 +2,7 @@ package md.services.product_service.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +21,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import md.services.product_service.service.ProductContractService;
 
+@Validated
 @RestController
-@RequestMapping("/products")
+@RequestMapping({"/products", "/v1/products"})
 @Tag(name = "Products")
 public class ProductController {
 
@@ -47,7 +49,7 @@ public class ProductController {
 	@GetMapping("/{slug}")
 	@SecurityRequirements
 	@Operation(summary = "Get product by public slug")
-	public ProductDto getProduct(@PathVariable String slug) {
+	public ProductDto getProduct(@PathVariable @NotBlank String slug) {
 		return productContractService.getProduct(slug);
 	}
 
@@ -69,13 +71,13 @@ public class ProductController {
 
 	@PutMapping("/{slug}")
 	@Operation(summary = "Update product as administrator")
-	public ProductDto updateProduct(@PathVariable String slug, @Valid @RequestBody ProductUpsertRequest request) {
+	public ProductDto updateProduct(@PathVariable @NotBlank String slug, @Valid @RequestBody ProductUpsertRequest request) {
 		return productContractService.updateProduct(slug, request);
 	}
 
 	@DeleteMapping("/{slug}")
 	@Operation(summary = "Delete product as administrator")
-	public ResponseEntity<Void> deleteProduct(@PathVariable String slug) {
+	public ResponseEntity<Void> deleteProduct(@PathVariable @NotBlank String slug) {
 		productContractService.deleteProduct(slug);
 		return ResponseEntity.noContent().build();
 	}
