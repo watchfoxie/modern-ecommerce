@@ -38,7 +38,15 @@ public class OrderCreatedEventListener {
 
 	@RabbitListener(queues = "${app.messaging.order-created-dlq-queue}")
 	public void handleDeadLetter(String payload) {
-		OrderCreatedEvent event = deserialize(payload);
+		OrderCreatedEvent event;
+		try {
+			event = deserialize(payload);
+		}
+		catch (IllegalArgumentException exception) {
+			notificationInboxStore.recordMalformedDeadLetter(payload,
+					"Dead-letter payload could not be deserialized: " + exception.getMessage());
+			return;
+		}
 		if (!notificationInboxStore.markProcessedIfNew(event.eventId())) {
 			notificationInboxStore.recordDuplicate(event, "Ignored duplicate dead-letter delivery.");
 			return;

@@ -65,6 +65,8 @@ web/lerna-debug.log*
 web/node_modules
 web/dist
 web/dist-ssr
+web/test-results
+web/playwright-report
 web/*.local
 
 ### Vite: Editor directories and files

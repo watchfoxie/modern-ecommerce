@@ -59,6 +59,21 @@ class OrderCreatedEventListenerTests {
 	}
 
 	@Test
+	void handleDeadLetterRecordsMalformedPayloadWithoutThrowing() {
+		NotificationInboxStore notificationInboxStore = new NotificationInboxStore();
+		OrderCreatedEventListener listener = new OrderCreatedEventListener(
+				JsonMapper.builder().findAndAddModules().build(),
+				notificationDispatchService,
+				notificationInboxStore);
+
+		listener.handleDeadLetter("{not-json");
+
+		assertThat(notificationInboxStore.deadLetterNotifications()).hasSize(1);
+		assertThat(notificationInboxStore.deadLetterNotifications().get(0).status()).isEqualTo("DEAD_LETTER_MALFORMED");
+		assertThat(notificationInboxStore.deadLetterNotifications().get(0).eventId()).startsWith("malformed-");
+	}
+
+	@Test
 	void handleOrderCreatedIgnoresDuplicateEventIds() throws Exception {
 		NotificationInboxStore notificationInboxStore = new NotificationInboxStore();
 		OrderCreatedEventListener listener = new OrderCreatedEventListener(

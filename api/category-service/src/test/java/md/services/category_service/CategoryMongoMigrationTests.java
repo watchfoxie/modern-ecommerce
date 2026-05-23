@@ -1,14 +1,17 @@
 package md.services.category_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -48,6 +51,14 @@ class CategoryMongoMigrationTests {
 				"categories_parent_active_display_name_idx");
 		assertThat(index("categories", "slug").isUnique()).isTrue();
 		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(1);
+	}
+
+	@Test
+	void enforcesUniqueCategorySlug() {
+		mongoTemplate.insert(new Document("slug", "smartphones"), "categories");
+
+		assertThatThrownBy(() -> mongoTemplate.insert(new Document("slug", "smartphones"), "categories"))
+				.isInstanceOf(DuplicateKeyException.class);
 	}
 
 	private Set<String> indexNames(String collection) {

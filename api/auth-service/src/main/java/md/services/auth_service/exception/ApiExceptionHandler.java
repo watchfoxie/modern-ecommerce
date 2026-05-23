@@ -9,6 +9,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -41,6 +42,12 @@ public class ApiExceptionHandler {
 		return problem(HttpStatus.NOT_FOUND, "Resource not found", exception.getMessage());
 	}
 
+	@ExceptionHandler(ResponseStatusException.class)
+	ProblemDetail handleResponseStatus(ResponseStatusException exception) {
+		HttpStatus status = HttpStatus.valueOf(exception.getStatusCode().value());
+		return problem(status, title(status), exception.getReason());
+	}
+
 	@ExceptionHandler(Exception.class)
 	ProblemDetail handleUnexpected(Exception exception) {
 		return problem(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected server error", "The request failed unexpectedly.");
@@ -51,6 +58,18 @@ public class ApiExceptionHandler {
 		problem.setTitle(title);
 		problem.setType(URI.create("urn:modern-ecommerce:problem:" + status.value()));
 		return problem;
+	}
+
+	private String title(HttpStatus status) {
+		return switch (status) {
+			case UNAUTHORIZED -> "Authentication failed";
+			case FORBIDDEN -> "Access denied";
+			case NOT_FOUND -> "Resource not found";
+			case CONFLICT -> "Resource conflict";
+			case UNPROCESSABLE_ENTITY, UNPROCESSABLE_CONTENT -> "Request cannot be processed";
+			case SERVICE_UNAVAILABLE -> "Service unavailable";
+			default -> status.getReasonPhrase();
+		};
 	}
 
 }

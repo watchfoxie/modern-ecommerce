@@ -1,14 +1,17 @@
 package md.services.auth_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -48,8 +51,20 @@ class AuthMongoMigrationTests {
 		assertThat(index("users", "passwordResetToken").isUnique()).isTrue();
 		assertThat(indexNames("roles")).contains("name");
 		assertThat(index("roles", "name").isUnique()).isTrue();
-		assertThat(mongoTemplate.getCollection("roles").countDocuments()).isEqualTo(2);
+		assertThat(mongoTemplate.findDistinct(new org.springframework.data.mongodb.core.query.Query(),
+				"name", "roles", String.class)).contains("ROLE_USER", "ROLE_ADMIN");
 		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(2);
+	}
+
+	@Test
+	void enforcesUniqueAuthEmailAndRoleName() {
+		mongoTemplate.insert(new Document("email", "unique@example.com"), "users");
+		mongoTemplate.insert(new Document("name", "ROLE_TEST"), "roles");
+
+		assertThatThrownBy(() -> mongoTemplate.insert(new Document("email", "unique@example.com"), "users"))
+				.isInstanceOf(DuplicateKeyException.class);
+		assertThatThrownBy(() -> mongoTemplate.insert(new Document("name", "ROLE_TEST"), "roles"))
+				.isInstanceOf(DuplicateKeyException.class);
 	}
 
 	private Set<String> indexNames(String collection) {

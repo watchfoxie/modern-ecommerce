@@ -1,14 +1,17 @@
 package md.services.user_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -46,6 +49,18 @@ class UserMongoMigrationTests {
 		assertThat(index("users", "authId").isUnique()).isTrue();
 		assertThat(index("users", "email").isUnique()).isTrue();
 		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(2);
+	}
+
+	@Test
+	void enforcesUniqueUserAuthIdAndEmail() {
+		mongoTemplate.insert(new Document("authId", "auth-unique").append("email", "unique@example.com"), "users");
+
+		assertThatThrownBy(() -> mongoTemplate.insert(
+				new Document("authId", "auth-unique").append("email", "other@example.com"), "users"))
+				.isInstanceOf(DuplicateKeyException.class);
+		assertThatThrownBy(() -> mongoTemplate.insert(
+				new Document("authId", "auth-other").append("email", "unique@example.com"), "users"))
+				.isInstanceOf(DuplicateKeyException.class);
 	}
 
 	private Set<String> indexNames(String collection) {

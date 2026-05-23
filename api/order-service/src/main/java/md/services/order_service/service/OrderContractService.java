@@ -191,7 +191,7 @@ public class OrderContractService {
 	private String normalizeStatus(String status) {
 		String normalized = status.toUpperCase(Locale.ROOT);
 		if (!ALLOWED_STATUSES.contains(normalized)) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order status is not supported.");
+			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Order status is not supported.");
 		}
 		return normalized;
 	}

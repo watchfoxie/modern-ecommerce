@@ -8,8 +8,10 @@ import java.util.HexFormat;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import io.jsonwebtoken.Claims;
 import md.services.auth_service.api.AuthIdentityDto;
@@ -83,7 +85,10 @@ public class AuthContractService {
 		}
 		catch (RuntimeException exception) {
 			authUserRepository.deleteById(saved.id());
-			throw new IllegalStateException("Could not provision matching user profile.", exception);
+			throw new ResponseStatusException(
+					HttpStatus.SERVICE_UNAVAILABLE,
+					"Could not provision matching user profile.",
+					exception);
 		}
 		return toDto(saved);
 	}
@@ -224,7 +229,15 @@ public class AuthContractService {
 	}
 
 	private String resolveUserProfileId(String authId) {
-		return userProvisioningClient.findByAuthId("auth-service", properties.internalServiceToken(), authId).id();
+		try {
+			return userProvisioningClient.findByAuthId("auth-service", properties.internalServiceToken(), authId).id();
+		}
+		catch (RuntimeException exception) {
+			throw new ResponseStatusException(
+					HttpStatus.SERVICE_UNAVAILABLE,
+					"Could not resolve matching user profile.",
+					exception);
+		}
 	}
 
 	private String tokenDigest(String token) {

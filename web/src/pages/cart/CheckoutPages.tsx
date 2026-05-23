@@ -168,12 +168,12 @@ export function PayPage() {
         notes: values.notes || undefined,
       }),
     onSuccess: (response) => {
+      navigate('/profile/account/order-history', { flushSync: true })
       clearLocalCart()
       resetCheckout()
       queryClient.invalidateQueries({ queryKey: queryKeys.cart(userId) })
       queryClient.invalidateQueries({ queryKey: queryKeys.orders() })
       toast.success(`Comanda ${response.orderNumber} a fost acceptată`)
-      navigate('/profile/account/order-history')
     },
   })
 

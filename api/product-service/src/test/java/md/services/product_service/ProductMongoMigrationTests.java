@@ -1,14 +1,17 @@
 package md.services.product_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -53,6 +56,14 @@ class ProductMongoMigrationTests {
 				"products_text_search_idx");
 		assertThat(index("products", "slug").isUnique()).isTrue();
 		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(2);
+	}
+
+	@Test
+	void enforcesUniqueProductSlug() {
+		mongoTemplate.insert(new Document("slug", "phone-pro"), "products");
+
+		assertThatThrownBy(() -> mongoTemplate.insert(new Document("slug", "phone-pro"), "products"))
+				.isInstanceOf(DuplicateKeyException.class);
 	}
 
 	private Set<String> indexNames(String collection) {

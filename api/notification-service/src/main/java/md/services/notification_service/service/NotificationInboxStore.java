@@ -67,6 +67,17 @@ public class NotificationInboxStore {
 				Instant.now()));
 	}
 
+	public void recordMalformedDeadLetter(String payload, String details) {
+		String eventId = "malformed-" + Integer.toUnsignedString(payload == null ? 0 : payload.hashCode(), 16);
+		addEntry(deadLetterNotifications, new NotificationRecord(
+				eventId,
+				null,
+				null,
+				"DEAD_LETTER_MALFORMED",
+				details,
+				Instant.now()));
+	}
+
 	public void recordDuplicate(OrderCreatedEvent event, String details) {
 		addEntry(recentNotifications, new NotificationRecord(
 				event.eventId(),

@@ -1,14 +1,17 @@
 package md.services.cart_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -45,6 +48,14 @@ class CartMongoMigrationTests {
 		assertThat(indexNames("carts")).contains("userId");
 		assertThat(index("carts", "userId").isUnique()).isTrue();
 		assertThat(mongoTemplate.getCollection("_schema_migrations").countDocuments()).isEqualTo(2);
+	}
+
+	@Test
+	void enforcesUniqueCartPerUser() {
+		mongoTemplate.insert(new Document("userId", "user-1"), "carts");
+
+		assertThatThrownBy(() -> mongoTemplate.insert(new Document("userId", "user-1"), "carts"))
+				.isInstanceOf(DuplicateKeyException.class);
 	}
 
 	private Set<String> indexNames(String collection) {

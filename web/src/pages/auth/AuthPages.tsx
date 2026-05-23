@@ -107,8 +107,9 @@ export function SignInPage() {
   const mutation = useMutation({
     mutationFn: authService.signIn,
     onSuccess: (response) => {
+      const redirectTo = (location.state as { redirectTo?: string } | null)?.redirectTo ?? '/home'
       setAuth(response)
-      navigate((location.state as { redirectTo?: string } | null)?.redirectTo ?? '/home', { replace: true })
+      navigate(redirectTo, { replace: true, flushSync: true })
     },
   })
 
