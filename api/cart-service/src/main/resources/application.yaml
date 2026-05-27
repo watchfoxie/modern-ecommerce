@@ -29,4 +29,5 @@ app:
         seed:
             enabled: ${APP_DATA_SEED_ENABLED:false}
     security:
+        jwt-signing-secret: ${JWT_SIGNING_SECRET}
         internal-service-token: ${INTERNAL_SERVICE_TOKEN}

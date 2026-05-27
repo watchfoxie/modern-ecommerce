@@ -21,7 +21,8 @@ public class LocalActuatorSecurityConfiguration {
 				.securityMatcher(
 						"/actuator/health", "/actuator/health/**", "/actuator/info",
 						"/v3/api-docs", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-						"/sign-up", "/sign-in", "/sign-out", "/token/refresh", "/password-reset/**")
+						"/sign-up", "/sign-in", "/sign-out", "/token/refresh", "/password-reset/**",
+						"/v1/sign-up", "/v1/sign-in", "/v1/sign-out", "/v1/token/refresh", "/v1/password-reset/**")
 				.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
 				.csrf(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)

@@ -23,6 +23,7 @@ management:
 
 app:
     security:
+        jwt-signing-secret: ${JWT_SIGNING_SECRET}
         internal-service-token: ${INTERNAL_SERVICE_TOKEN}
     data:
         migrations:

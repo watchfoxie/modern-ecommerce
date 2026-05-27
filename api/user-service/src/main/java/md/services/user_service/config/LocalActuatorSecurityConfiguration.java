@@ -43,13 +43,16 @@ public class LocalActuatorSecurityConfiguration {
 	@Bean
 	@Order(2)
 	SecurityFilterChain applicationSecurityFilterChain(HttpSecurity http,
-			InternalServiceTokenFilter internalServiceTokenFilter) throws Exception {
+			InternalServiceTokenFilter internalServiceTokenFilter,
+			@Value("${JWT_SIGNING_SECRET}") String jwtSigningSecret) throws Exception {
 		return http
 				.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
 				.csrf(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)
 				.formLogin(AbstractHttpConfigurer::disable)
 				.logout(AbstractHttpConfigurer::disable)
+				.addFilterBefore(new JwtDirectAuthenticationSupport.JwtAuthenticationFilter(jwtSigningSecret),
+						UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(internalServiceTokenFilter, UsernamePasswordAuthenticationFilter.class)
 				.build();
 	}
