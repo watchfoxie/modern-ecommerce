@@ -102,10 +102,8 @@ public class AuthContractService {
 		return issueTokens(touchLogin(user), null);
 	}
 
-	public void signOut(String authId) {
-		if (authId == null || authId.isBlank()) {
-			throw new UnauthorizedException("Missing authenticated identity.");
-		}
+	public void signOut(String authId, String authorization) {
+		authId = resolveAuthId(authId, authorization);
 		AuthUserDocument user = authUserRepository.findById(authId)
 				.orElseThrow(() -> new UnauthorizedException("Authenticated identity was not found."));
 		authUserRepository.save(withRefresh(user, null, null, Instant.now()));
@@ -238,6 +236,24 @@ public class AuthContractService {
 					"Could not resolve matching user profile.",
 					exception);
 		}
+	}
+
+	private String resolveAuthId(String authId, String authorization) {
+		if (authId != null && !authId.isBlank()) {
+			return authId;
+		}
+		if (authorization != null && authorization.startsWith("Bearer ")) {
+			try {
+				String resolvedAuthId = jwtTokenService.verify(authorization.substring("Bearer ".length()))
+						.get("authId", String.class);
+				if (resolvedAuthId != null && !resolvedAuthId.isBlank()) {
+					return resolvedAuthId;
+				}
+			} catch (IllegalArgumentException ignored) {
+				// Fall through to the standard unauthorized response below.
+			}
+		}
+		throw new UnauthorizedException("Missing authenticated identity.");
 	}
 
 	private String tokenDigest(String token) {

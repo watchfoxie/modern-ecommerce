@@ -43,8 +43,10 @@ public class AuthController {
 
 	@PostMapping("/sign-out")
 	@Operation(summary = "Invalidate the current authenticated session")
-	public ResponseEntity<Void> signOut(@RequestHeader(value = "X-Auth-Id", required = false) String authId) {
-		authContractService.signOut(authId);
+	public ResponseEntity<Void> signOut(
+			@RequestHeader(value = "X-Auth-Id", required = false) String authId,
+			@RequestHeader(value = "Authorization", required = false) String authorization) {
+		authContractService.signOut(authId, authorization);
 		return ResponseEntity.noContent().build();
 	}
 
