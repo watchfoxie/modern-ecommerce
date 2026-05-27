@@ -30,6 +30,8 @@ public class LocalAdminSeedConfiguration {
 	private static final String ACTIVE = "ACTIVE";
 	private static final String ROLE_USER = "ROLE_USER";
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
+	private static final long PROFILE_PROVISIONING_TIMEOUT_MILLIS = 60_000;
+	private static final long PROFILE_PROVISIONING_RETRY_DELAY_MILLIS = 5_000;
 
 	@Bean
 	ApplicationRunner localAdminSeedRunner(
@@ -107,23 +109,44 @@ public class LocalAdminSeedConfiguration {
 
 	private void ensureAdminProfile(AuthUserDocument admin, String email, String firstName, String lastName,
 			UserProvisioningClient userProvisioningClient, AuthSecurityProperties properties) {
-		try {
-			userProvisioningClient.findByAuthId("auth-service", properties.internalServiceToken(), admin.id());
-			return;
-		} catch (RuntimeException ignored) {
-			// Create the profile when it does not exist yet or the lookup is not available.
+		long deadline = System.currentTimeMillis() + PROFILE_PROVISIONING_TIMEOUT_MILLIS;
+		RuntimeException lastException = null;
+
+		while (System.currentTimeMillis() < deadline) {
+			try {
+				userProvisioningClient.findByAuthId("auth-service", properties.internalServiceToken(), admin.id());
+				return;
+			} catch (RuntimeException exception) {
+				lastException = exception;
+			}
+
+			try {
+				userProvisioningClient.createProfile(
+						"auth-service",
+						properties.internalServiceToken(),
+						new UserProvisioningClient.CreateUserProfileRequest(
+								admin.id(),
+								email,
+								defaultIfBlank(firstName, "Platform"),
+								defaultIfBlank(lastName, "Administrator"),
+								null,
+								null));
+				return;
+			} catch (RuntimeException exception) {
+				lastException = exception;
+			}
+
+			try {
+				Thread.sleep(PROFILE_PROVISIONING_RETRY_DELAY_MILLIS);
+			} catch (InterruptedException exception) {
+				Thread.currentThread().interrupt();
+				break;
+			}
 		}
 
-		userProvisioningClient.createProfile(
-				"auth-service",
-				properties.internalServiceToken(),
-				new UserProvisioningClient.CreateUserProfileRequest(
-						admin.id(),
-						email,
-						defaultIfBlank(firstName, "Platform"),
-						defaultIfBlank(lastName, "Administrator"),
-						null,
-						null));
+		logger.warn(
+				"[AUTH-SERVICE] Skipping local admin profile provisioning after retry timeout because user-service is not ready yet: {}",
+				lastException == null ? "unknown error" : lastException.getMessage());
 	}
 
 	private String defaultIfBlank(String value, String fallback) {
