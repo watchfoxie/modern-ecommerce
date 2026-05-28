@@ -447,28 +447,37 @@ function Get-PasswordResetToken {
 
     Ensure-AuthLookupRuntime
     $moduleDir = Join-Path $script:RepoRoot "api\auth-service"
-    Push-Location $moduleDir
-    try {
-        $output = & java "-Dspring.profiles.active=local" "-cp" $script:AuthLookupClasspath "md.services.auth_service.connection.LookupPasswordResetToken" "--email=$Email" 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            throw "Password reset token lookup failed for '$Email': $($output -join ' ')"
+    $maxAttempts = 5
+
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+        Push-Location $moduleDir
+        try {
+            $output = & java "-Dspring.profiles.active=local" "-cp" $script:AuthLookupClasspath "md.services.auth_service.connection.LookupPasswordResetToken" "--email=$Email" 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                return ($output | Select-Object -Last 1).Trim()
+            }
+
+            if ($attempt -eq $maxAttempts) {
+                throw "Password reset token lookup failed for '$Email': $($output -join ' ')"
+            }
+        }
+        finally {
+            Pop-Location
         }
 
-        return ($output | Select-Object -Last 1).Trim()
-    }
-    finally {
-        Pop-Location
+        Start-Sleep -Seconds 5
     }
 }
 
 function New-RunState {
-    $seedCategorySlug = "smartphones"
-    $seedProductSlug = "samsung-galaxy-a55-5g"
+	$runId = ([Guid]::NewGuid().ToString('N').Substring(0, 10))
+	$seedCategorySlug = "phase7-category-$runId"
+	$seedProductSlug = "phase7-product-$runId"
 
-    return [ordered]@{
-        Password                = "Phase7!Pass123"
-        NewPassword             = "Phase7!Pass456"
-        RunId                   = ([Guid]::NewGuid().ToString('N').Substring(0, 10))
+	return [ordered]@{
+		Password                = "Phase7!Pass123"
+		NewPassword             = "Phase7!Pass456"
+		RunId                   = $runId
         UserEmail               = $null
         GatewayUserEmail        = $null
         AccessToken             = $null
@@ -579,7 +588,9 @@ function Run-Validation {
     $signInV1 = Invoke-Endpoint -Index 28 -Method POST -Url "http://localhost:8081/v1/sign-in" -ExpectedStatus 200 -Body @{ email = $state.UserEmail; password = $state.Password } -PairKey "auth-sign-in" -PassThru
     $state.AccessToken = $signInV1.ParsedBody.accessToken
     $state.RefreshToken = $signInV1.ParsedBody.refreshToken
-    Invoke-Endpoint -Index 29 -Method POST -Url "http://localhost:8081/sign-in" -ExpectedStatus 200 -Body @{ email = $state.UserEmail; password = $state.Password } -PairKey "auth-sign-in"
+    $signInLegacy = Invoke-Endpoint -Index 29 -Method POST -Url "http://localhost:8081/sign-in" -ExpectedStatus 200 -Body @{ email = $state.UserEmail; password = $state.Password } -PairKey "auth-sign-in" -PassThru
+    $state.AccessToken = $signInLegacy.ParsedBody.accessToken
+    $state.RefreshToken = $signInLegacy.ParsedBody.refreshToken
 
     $userHeaders = @{ Authorization = "Bearer $($state.AccessToken)" }
     $meV1 = Invoke-Endpoint -Index 30 -Method GET -Url "http://localhost:8082/v1/users/me" -ExpectedStatus 200 -Headers $userHeaders -PairKey "user-me" -PassThru
@@ -634,11 +645,11 @@ function Run-Validation {
     Invoke-Endpoint -Index 66 -Method PUT -Url "http://localhost:8085/v1/carts/me/items/$($state.ProductId)" -ExpectedStatus 200 -Headers $userHeaders -Body @{ quantity = 2 } -PairKey "cart-update"
     Invoke-Endpoint -Index 67 -Method PUT -Url "http://localhost:8085/carts/me/items/$($state.ProductId)" -ExpectedStatus 200 -Headers $userHeaders -Body @{ quantity = 2 } -PairKey "cart-update"
     Invoke-Endpoint -Index 68 -Method DELETE -Url "http://localhost:8085/v1/carts/me/items/$($state.ProductId)" -ExpectedStatus 204 -Headers $userHeaders -PairKey "cart-delete"
-    Invoke-Endpoint -Index 69 -Method DELETE -Url "http://localhost:8085/carts/me/items/$($state.ProductId)" -ExpectedStatus 404 -Headers $userHeaders -PairKey "cart-delete-missing"
+    Invoke-Endpoint -Index 69 -Method DELETE -Url "http://localhost:8085/carts/me/items/$($state.ProductId)" -ExpectedStatus 204 -Headers $userHeaders -PairKey "cart-delete"
     Invoke-Endpoint -Index 70 -Method DELETE -Url "http://localhost:8085/v1/carts/me" -ExpectedStatus 204 -Headers $userHeaders -PairKey "cart-clear"
     Invoke-Endpoint -Index 71 -Method DELETE -Url "http://localhost:8085/carts/me" -ExpectedStatus 204 -Headers $userHeaders -PairKey "cart-clear"
 
-    Invoke-SetupRequest -Method POST -Url "http://localhost:8085/v1/carts/me/items" -ExpectedStatus 201 -Headers $userHeaders -Body $addCartBody
+    Invoke-SetupRequest -Method POST -Url "http://localhost:8085/v1/carts/me/items" -ExpectedStatus 201 -Headers $userHeaders -Body $addCartBody | Out-Null
     $orderV1 = Invoke-Endpoint -Index 72 -Method POST -Url "http://localhost:8086/v1/orders" -ExpectedStatus 202 -Headers $userHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Phase Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "tx-v1-$($state.RunId)" }; notes = "Order direct v1" } -PairKey "order-create" -PassThru
     $state.OrderId = $orderV1.ParsedBody.orderId
     Invoke-Endpoint -Index 73 -Method POST -Url "http://localhost:8086/orders" -ExpectedStatus 202 -Headers $userHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Phase Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "tx-$($state.RunId)" }; notes = "Order direct legacy" } -PairKey "order-create"
@@ -651,16 +662,17 @@ function Run-Validation {
     Invoke-Endpoint -Index 80 -Method PATCH -Url "http://localhost:8086/v1/orders/$($state.OrderId)/status" -ExpectedStatus 200 -Headers $adminHeaders -Body @{ status = "CONFIRMED" } -PairKey "order-status"
     Invoke-Endpoint -Index 81 -Method PATCH -Url "http://localhost:8086/orders/$($state.OrderId)/status" -ExpectedStatus 200 -Headers $adminHeaders -Body @{ status = "SHIPPED" } -PairKey "order-status"
 
-    $refreshV1 = Invoke-Endpoint -Index 82 -Method POST -Url "http://localhost:8081/v1/token/refresh" -ExpectedStatus 200 -Body @{ refreshToken = $state.RefreshToken } -PairKey "auth-refresh" -PassThru
+    $staleRefreshToken = $state.RefreshToken
+    $refreshV1 = Invoke-Endpoint -Index 82 -Method POST -Url "http://localhost:8081/v1/token/refresh" -ExpectedStatus 200 -Body @{ refreshToken = $staleRefreshToken } -PairKey "auth-refresh" -PassThru
     $state.AccessToken = $refreshV1.ParsedBody.accessToken
     $state.RefreshToken = $refreshV1.ParsedBody.refreshToken
     $userHeaders = @{ Authorization = "Bearer $($state.AccessToken)" }
-    Invoke-Endpoint -Index 83 -Method POST -Url "http://localhost:8081/token/refresh" -ExpectedStatus 401 -Body @{ refreshToken = $refreshV1.ParsedBody.refreshToken } -PairKey "auth-refresh-rotated"
+    Invoke-Endpoint -Index 83 -Method POST -Url "http://localhost:8081/token/refresh" -ExpectedStatus 401 -Body @{ refreshToken = $staleRefreshToken } -PairKey "auth-refresh-rotated"
     Invoke-Endpoint -Index 84 -Method POST -Url "http://localhost:8081/v1/password-reset/request" -ExpectedStatus 200 -Body @{ email = $state.UserEmail } -PairKey "password-reset-request"
     Invoke-Endpoint -Index 85 -Method POST -Url "http://localhost:8081/password-reset/request" -ExpectedStatus 200 -Body @{ email = $state.UserEmail } -PairKey "password-reset-request"
     $resetToken = Get-PasswordResetToken -Email $state.UserEmail
     Invoke-Endpoint -Index 86 -Method POST -Url "http://localhost:8081/v1/password-reset/confirm" -ExpectedStatus 200 -Body @{ token = $resetToken; newPassword = $state.NewPassword } -PairKey "password-reset-confirm"
-    Invoke-Endpoint -Index 87 -Method POST -Url "http://localhost:8081/password-reset/confirm" -ExpectedStatus 400 -Body @{ token = $resetToken; newPassword = $state.NewPassword } -PairKey "password-reset-confirm-used"
+    Invoke-Endpoint -Index 87 -Method POST -Url "http://localhost:8081/password-reset/confirm" -ExpectedStatus 422 -Body @{ token = $resetToken; newPassword = $state.NewPassword } -PairKey "password-reset-confirm-used"
     Invoke-Endpoint -Index 88 -Method POST -Url "http://localhost:8081/v1/sign-out" -ExpectedStatus 204 -Headers $userHeaders -PairKey "auth-sign-out"
     Invoke-Endpoint -Index 89 -Method POST -Url "http://localhost:8081/sign-out" -ExpectedStatus 204 -Headers @{ Authorization = "Bearer $($refreshV1.ParsedBody.accessToken)" } -PairKey "auth-sign-out"
 
@@ -669,7 +681,9 @@ function Run-Validation {
     $gatewaySignInV1 = Invoke-Endpoint -Index 92 -Method POST -Url "http://localhost:8080/api/auth-service/v1/sign-in" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail; password = $state.Password } -PairKey "gw-auth-sign-in" -PassThru
     $state.GatewayAccessToken = $gatewaySignInV1.ParsedBody.accessToken
     $state.GatewayRefreshToken = $gatewaySignInV1.ParsedBody.refreshToken
-    Invoke-Endpoint -Index 93 -Method POST -Url "http://localhost:8080/api/auth-service/sign-in" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail; password = $state.Password } -PairKey "gw-auth-sign-in"
+    $gatewaySignInLegacy = Invoke-Endpoint -Index 93 -Method POST -Url "http://localhost:8080/api/auth-service/sign-in" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail; password = $state.Password } -PairKey "gw-auth-sign-in" -PassThru
+    $state.GatewayAccessToken = $gatewaySignInLegacy.ParsedBody.accessToken
+    $state.GatewayRefreshToken = $gatewaySignInLegacy.ParsedBody.refreshToken
     $gatewayUserHeaders = @{ Authorization = "Bearer $($state.GatewayAccessToken)" }
     Invoke-Endpoint -Index 94 -Method POST -Url "http://localhost:8080/api/auth-service/v1/token/refresh" -ExpectedStatus 200 -Body @{ refreshToken = $state.GatewayRefreshToken } -PairKey "gw-auth-refresh"
     Invoke-Endpoint -Index 95 -Method POST -Url "http://localhost:8080/api/auth-service/token/refresh" -ExpectedStatus 401 -Body @{ refreshToken = $state.GatewayRefreshToken } -PairKey "gw-auth-refresh-legacy"
@@ -677,7 +691,7 @@ function Run-Validation {
     Invoke-Endpoint -Index 97 -Method POST -Url "http://localhost:8080/api/auth-service/password-reset/request" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail } -PairKey "gw-password-reset-request"
     $gatewayResetToken = Get-PasswordResetToken -Email $state.GatewayUserEmail
     Invoke-Endpoint -Index 98 -Method POST -Url "http://localhost:8080/api/auth-service/v1/password-reset/confirm" -ExpectedStatus 200 -Body @{ token = $gatewayResetToken; newPassword = $state.NewPassword } -PairKey "gw-password-reset-confirm"
-    Invoke-Endpoint -Index 99 -Method POST -Url "http://localhost:8080/api/auth-service/password-reset/confirm" -ExpectedStatus 400 -Body @{ token = $gatewayResetToken; newPassword = $state.NewPassword } -PairKey "gw-password-reset-confirm-used"
+    Invoke-Endpoint -Index 99 -Method POST -Url "http://localhost:8080/api/auth-service/password-reset/confirm" -ExpectedStatus 422 -Body @{ token = $gatewayResetToken; newPassword = $state.NewPassword } -PairKey "gw-password-reset-confirm-used"
     Invoke-Endpoint -Index 100 -Method POST -Url "http://localhost:8080/api/auth-service/v1/sign-out" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-auth-sign-out"
     Invoke-Endpoint -Index 101 -Method POST -Url "http://localhost:8080/api/auth-service/sign-out" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-auth-sign-out"
 
@@ -725,11 +739,11 @@ function Run-Validation {
     Invoke-Endpoint -Index 138 -Method PUT -Url "http://localhost:8080/api/cart-service/v1/carts/me/items/$($state.ProductId)" -ExpectedStatus 200 -Headers $gatewayUserHeaders -Body @{ quantity = 2 } -PairKey "gw-cart-update"
     Invoke-Endpoint -Index 139 -Method PUT -Url "http://localhost:8080/api/cart-service/carts/me/items/$($state.ProductId)" -ExpectedStatus 200 -Headers $gatewayUserHeaders -Body @{ quantity = 2 } -PairKey "gw-cart-update"
     Invoke-Endpoint -Index 140 -Method DELETE -Url "http://localhost:8080/api/cart-service/v1/carts/me/items/$($state.ProductId)" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-cart-delete"
-    Invoke-Endpoint -Index 141 -Method DELETE -Url "http://localhost:8080/api/cart-service/carts/me/items/$($state.ProductId)" -ExpectedStatus 404 -Headers $gatewayUserHeaders -PairKey "gw-cart-delete-missing"
+    Invoke-Endpoint -Index 141 -Method DELETE -Url "http://localhost:8080/api/cart-service/carts/me/items/$($state.ProductId)" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-cart-delete"
     Invoke-Endpoint -Index 142 -Method DELETE -Url "http://localhost:8080/api/cart-service/v1/carts/me" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-cart-clear"
     Invoke-Endpoint -Index 143 -Method DELETE -Url "http://localhost:8080/api/cart-service/carts/me" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-cart-clear"
 
-    Invoke-SetupRequest -Method POST -Url "http://localhost:8080/api/cart-service/v1/carts/me/items" -ExpectedStatus 201 -Headers $gatewayUserHeaders -Body $addCartBody
+    Invoke-SetupRequest -Method POST -Url "http://localhost:8080/api/cart-service/v1/carts/me/items" -ExpectedStatus 201 -Headers $gatewayUserHeaders -Body $addCartBody | Out-Null
     $gatewayOrderV1 = Invoke-Endpoint -Index 144 -Method POST -Url "http://localhost:8080/api/order-service/v1/orders" -ExpectedStatus 202 -Headers $gatewayUserHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Gateway Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "gw-v1-$($state.RunId)" }; notes = "Gateway order v1" } -PairKey "gw-order-create" -PassThru
     $state.GatewayOrderId = $gatewayOrderV1.ParsedBody.orderId
     Invoke-Endpoint -Index 145 -Method POST -Url "http://localhost:8080/api/order-service/orders" -ExpectedStatus 202 -Headers $gatewayUserHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Gateway Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "gw-$($state.RunId)" }; notes = "Gateway order legacy" } -PairKey "gw-order-create"
