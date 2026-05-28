@@ -15,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -117,6 +120,7 @@ public class OrderContractService {
 	}
 
 	public PagedResponseDto<OrderDto> listAllOrders(int page, int size, String status) {
+		requireAdmin();
 		Pageable pageable = pageable(page, size, "createdAt", "desc");
 		if (status == null || status.isBlank()) {
 			return toPagedResponse(orderRepository.findAll(pageable));
@@ -125,6 +129,7 @@ public class OrderContractService {
 	}
 
 	public OrderDto updateStatus(String orderId, OrderStatusUpdateRequest request) {
+		requireAdmin();
 		OrderDocument order = loadOrder(orderId);
 		String status = normalizeStatus(request.status());
 		OrderDocument updated = orderRepository.save(new OrderDocument(
@@ -278,6 +283,15 @@ public class OrderContractService {
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Missing authenticated user email.");
+	}
+
+	private void requireAdmin() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.noneMatch("ROLE_ADMIN"::equals)) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Administrator role is required.");
+		}
 	}
 
 	private record ValidatedOrderItem(OrderItem item, String currency) {

@@ -1,6 +1,7 @@
 package md.services.order_service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,6 +34,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -60,10 +65,16 @@ class OrderContractServiceTests {
 	@AfterEach
 	void resetRequestContext() {
 		RequestContextHolder.resetRequestAttributes();
+		SecurityContextHolder.clearContext();
 	}
 
 	@Test
 	void createOrderPersistsValidatedCartAndPublishesEvent() {
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+				"user-1",
+				"N/A",
+				List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+
 		MockHttpServletRequest requestContext = new MockHttpServletRequest();
 		requestContext.addHeader("X-User-Id", "user-1");
 		requestContext.addHeader("X-User-Email", "customer@example.com");
@@ -118,6 +129,30 @@ class OrderContractServiceTests {
 		assertThat(orderCaptor.getValue().items().getFirst().name()).isEqualTo("Canonical name");
 		assertThat(eventCaptor.getValue().totalAmount()).isEqualByComparingTo("200.00");
 		assertThat(eventCaptor.getValue().currency()).isEqualTo("MDL");
+	}
+
+	@Test
+	void listAllOrdersRejectsNonAdminIdentity() {
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+				"user-1",
+				"N/A",
+				List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+
+		assertThatThrownBy(() -> service().listAllOrders(0, 20, null))
+				.isInstanceOf(ResponseStatusException.class)
+				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value()).isEqualTo(403));
+	}
+
+	@Test
+	void updateStatusRejectsNonAdminIdentity() {
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+				"user-1",
+				"N/A",
+				List.of(new SimpleGrantedAuthority("ROLE_USER"))));
+
+		assertThatThrownBy(() -> service().updateStatus("order-1", new md.services.order_service.api.OrderStatusUpdateRequest("CONFIRMED")))
+				.isInstanceOf(ResponseStatusException.class)
+				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value()).isEqualTo(403));
 	}
 
 	private OrderContractService service() {

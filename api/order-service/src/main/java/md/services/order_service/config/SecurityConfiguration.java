@@ -3,6 +3,7 @@ package md.services.order_service.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
@@ -34,6 +35,10 @@ public class SecurityConfiguration {
 								"/swagger-ui.html",
 								"/swagger-ui/**")
 						.permitAll()
+						.requestMatchers(HttpMethod.GET, "/orders/all", "/v1/orders/all")
+						.hasRole("ADMIN")
+						.requestMatchers(HttpMethod.PATCH, "/orders/*/status", "/v1/orders/*/status")
+						.hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.logout(AbstractHttpConfigurer::disable)
 				.rememberMe(AbstractHttpConfigurer::disable)
