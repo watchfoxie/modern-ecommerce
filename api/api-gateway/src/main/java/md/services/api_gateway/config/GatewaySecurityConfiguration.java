@@ -152,11 +152,16 @@ class GatewaySecurityWebFilter implements WebFilter {
 				|| path.startsWith("/actuator/health/")
 				|| path.startsWith("/swagger-ui")
 				|| path.startsWith("/v3/api-docs")
-				|| path.endsWith("/v3/api-docs")
+				|| isProxiedDocumentationPath(path)
 				|| (path.startsWith("/api/auth-service/")
 						&& (path.endsWith("/sign-up") || path.endsWith("/sign-in") || path.contains("/password-reset/")
 								|| path.endsWith("/token/refresh")))
 				|| (HttpMethod.GET.equals(method) && isPublicCatalogPath(path));
+	}
+
+	private boolean isProxiedDocumentationPath(String path) {
+		return path.matches("^/api/[^/]+/swagger-ui(?:/.*|\\.html)?$")
+				|| path.matches("^/api/[^/]+/v3/api-docs(?:/.*)?$");
 	}
 
 	private boolean isAuthorized(ServerWebExchange exchange, List<String> roles) {

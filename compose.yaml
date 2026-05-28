@@ -48,6 +48,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${SERVICE_REGISTRY_PORT:-8761}"
+    ports:
+      - "127.0.0.1:${SERVICE_REGISTRY_PORT:-8761}:${SERVICE_REGISTRY_PORT:-8761}"
     healthcheck:
       test:
         [
@@ -97,6 +99,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${AUTH_SERVICE_PORT:-8081}"
+    ports:
+      - "127.0.0.1:${AUTH_SERVICE_PORT:-8081}:${AUTH_SERVICE_PORT:-8081}"
     healthcheck:
       test:
         [
@@ -146,6 +150,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${USER_SERVICE_PORT:-8082}"
+    ports:
+      - "127.0.0.1:${USER_SERVICE_PORT:-8082}:${USER_SERVICE_PORT:-8082}"
     healthcheck:
       test:
         [
@@ -196,6 +202,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${CATEGORY_SERVICE_PORT:-8083}"
+    ports:
+      - "127.0.0.1:${CATEGORY_SERVICE_PORT:-8083}:${CATEGORY_SERVICE_PORT:-8083}"
     healthcheck:
       test:
         [
@@ -248,6 +256,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${PRODUCT_SERVICE_PORT:-8084}"
+    ports:
+      - "127.0.0.1:${PRODUCT_SERVICE_PORT:-8084}:${PRODUCT_SERVICE_PORT:-8084}"
     healthcheck:
       test:
         [
@@ -299,6 +309,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${CART_SERVICE_PORT:-8085}"
+    ports:
+      - "127.0.0.1:${CART_SERVICE_PORT:-8085}:${CART_SERVICE_PORT:-8085}"
     healthcheck:
       test:
         [
@@ -364,6 +376,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${NOTIFICATION_SERVICE_PORT:-8087}"
+    ports:
+      - "127.0.0.1:${NOTIFICATION_SERVICE_PORT:-8087}:${NOTIFICATION_SERVICE_PORT:-8087}"
     healthcheck:
       test:
         [
@@ -421,6 +435,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${ORDER_SERVICE_PORT:-8086}"
+    ports:
+      - "127.0.0.1:${ORDER_SERVICE_PORT:-8086}:${ORDER_SERVICE_PORT:-8086}"
     healthcheck:
       test:
         [
@@ -481,6 +497,8 @@ services:
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "${EUREKA_INSTANCE_PREFER_IP_ADDRESS:-false}"
     expose:
       - "${API_GATEWAY_PORT:-8080}"
+    ports:
+      - "127.0.0.1:${API_GATEWAY_PORT:-8080}:${API_GATEWAY_PORT:-8080}"
     healthcheck:
       test:
         [

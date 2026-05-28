@@ -31,42 +31,49 @@ spring:
                 - Path=/api/auth-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/auth-service/swagger-ui/index.html
             - id: user-service
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/api/user-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/user-service/swagger-ui/index.html
             - id: category-service
               uri: lb://CATEGORY-SERVICE
               predicates:
                 - Path=/api/category-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/category-service/swagger-ui/index.html
             - id: product-service
               uri: lb://PRODUCT-SERVICE
               predicates:
                 - Path=/api/product-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/product-service/swagger-ui/index.html
             - id: cart-service
               uri: lb://CART-SERVICE
               predicates:
                 - Path=/api/cart-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/cart-service/swagger-ui/index.html
             - id: order-service
               uri: lb://ORDER-SERVICE
               predicates:
                 - Path=/api/order-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/order-service/swagger-ui/index.html
             - id: notification-service
               uri: lb://NOTIFICATION-SERVICE
               predicates:
                 - Path=/api/notification-service/**
               filters:
                 - StripPrefix=2
+                - RewriteResponseHeader=Location, ^/swagger-ui/index\.html$, /api/notification-service/swagger-ui/index.html
     inetutils:
       timeout-seconds: ${SPRING_CLOUD_INETUTILS_TIMEOUT_SECONDS:1}
       preferred-networks:

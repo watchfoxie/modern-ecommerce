@@ -103,6 +103,23 @@ class GatewaySecurityWebFilterTest {
 	}
 
 	@Test
+	void permitsProxiedSwaggerUiAndApiDocsWithoutBearerToken() {
+		List<String> paths = List.of(
+				"/api/auth-service/swagger-ui.html",
+				"/api/notification-service/swagger-ui/index.html",
+				"/api/order-service/v3/api-docs",
+				"/api/cart-service/v3/api-docs/swagger-config");
+
+		for (String path : paths) {
+			MockServerWebExchange exchange = exchange(path, null);
+
+			filter(120).filter(exchange, successChain()).block();
+
+			assertThat(exchange.getResponse().getStatusCode()).isEqualTo(HttpStatus.OK);
+		}
+	}
+
+	@Test
 	void hidesInternalRoutesFromPublicGatewaySurface() {
 		List<String> paths = List.of(
 				"/api/notification-service/internal/notifications",
