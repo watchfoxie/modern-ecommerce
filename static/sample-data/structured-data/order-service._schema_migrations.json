@@ -1,0 +1,35 @@
+[
+    {
+        "_id": {
+            "$oid": "69f31e91f49bbe427ce1306c"
+        },
+        "version": "001",
+        "description": "Create order collection with history and dashboard indexes.",
+        "checksum": "702f923a28f91208adf6bc1abb2bfd09ada10b4c23797abbacf8eda23cc891d0",
+        "appliedAt": {
+            "$date": "2026-04-30T09:19:13.676Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69f31e91f49bbe427ce1306d"
+        },
+        "version": "002",
+        "description": "Normalize order monetary fields to Decimal128-compatible values.",
+        "checksum": "f2018e783c03c0c5f8270d37778c71e63d90d1b2cea37fcd6e28aaad18f0dd73",
+        "appliedAt": {
+            "$date": "2026-04-30T09:19:13.989Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6a11dc38fcf4d20ec97805f6"
+        },
+        "version": "003",
+        "description": "Create order event outbox collection with dispatch indexes.",
+        "checksum": "3009b2b6c3f422ebd5a4470275bf78ee60bad0765d863bfa46e2488922d04611",
+        "appliedAt": {
+            "$date": "2026-05-23T16:56:24.976Z"
+        }
+    }
+]

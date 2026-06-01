@@ -1,0 +1,11 @@
+{
+    "_id": {
+        "$oid": "string (UUID/Hex)"
+    },
+    "version": "string",
+    "description": "string",
+    "checksum": "string",
+    "appliedAt": {
+        "$date": "string (ISO-8601 UTC)"
+    }
+}

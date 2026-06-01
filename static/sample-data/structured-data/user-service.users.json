@@ -1,1 +1,46 @@
-[]
+[
+    {
+        "_id": {
+            "$oid": "6a1d79e976dbf0cdef2ebd42"
+        },
+        "authId": "6a1d79e94e6f2f647c7dcb1f",
+        "email": "janedoe@gmail.com",
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "addresses": [],
+        "preferences": {
+            "language": "ro",
+            "currency": "MDL"
+        },
+        "active": true,
+        "createdAt": {
+            "$date": "2026-06-01T12:24:09.288Z"
+        },
+        "updatedAt": {
+            "$date": "2026-06-01T12:24:09.288Z"
+        },
+        "_class": "md.services.user_service.domain.UserProfileDocument"
+    },
+    {
+        "_id": {
+            "$oid": "6a1d872976dbf0cdef2ebd43"
+        },
+        "authId": "6a1d87294e6f2f647c7dcb20",
+        "email": "johndoe@gmail.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "addresses": [],
+        "preferences": {
+            "language": "ro",
+            "currency": "MDL"
+        },
+        "active": true,
+        "createdAt": {
+            "$date": "2026-06-01T13:20:41.490Z"
+        },
+        "updatedAt": {
+            "$date": "2026-06-01T13:20:41.490Z"
+        },
+        "_class": "md.services.user_service.domain.UserProfileDocument"
+    }
+]

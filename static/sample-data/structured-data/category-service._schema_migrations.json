@@ -1,0 +1,24 @@
+[
+    {
+        "_id": {
+            "$oid": "69f31e99eefcde48a0b8e5e8"
+        },
+        "version": "001",
+        "description": "Create category collection with catalog navigation indexes.",
+        "checksum": "e45eec5c883b7666f1faede71e7811694498aaff2d49cc610b3a9b6aef7de4a8",
+        "appliedAt": {
+            "$date": "2026-04-30T09:19:21.355Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "6a10af81b14c56ac798e1fb7"
+        },
+        "version": "002",
+        "description": "Seed category sample data with slug-based upserts.",
+        "checksum": "12bf5a82c66bd7d86250d07067814b2b5d3173cbbd24c3af5eab3cd16150cc9c",
+        "appliedAt": {
+            "$date": "2026-05-22T19:33:21.017Z"
+        }
+    }
+]

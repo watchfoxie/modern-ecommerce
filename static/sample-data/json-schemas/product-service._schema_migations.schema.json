@@ -1,0 +1,62 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://modern-ecommerce.local/schemas/product-service._schema_migations.schema.json",
+    "title": "product-service _schema_migations document",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "_id",
+        "version",
+        "description",
+        "checksum",
+        "appliedAt"
+    ],
+    "properties": {
+        "_id": {
+            "$ref": "#/$defs/objectId"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+        },
+        "description": {
+            "type": "string",
+            "minLength": 1
+        },
+        "checksum": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]+$"
+        },
+        "appliedAt": {
+            "$ref": "#/$defs/date"
+        }
+    },
+    "$defs": {
+        "objectId": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "$oid"
+            ],
+            "properties": {
+                "$oid": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{24}$"
+                }
+            }
+        },
+        "date": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "$date"
+            ],
+            "properties": {
+                "$date": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        }
+    }
+}

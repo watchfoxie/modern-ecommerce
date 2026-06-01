@@ -1,1 +1,53 @@
-[]
+[
+    {
+        "_id": {
+            "$oid": "6a1d79e94e6f2f647c7dcb1f"
+        },
+        "email": "janedoe@gmail.com",
+        "passwordHash": "$2a$10$XwcRWm9jNYMqWvLVKW7bueX0D4CCJDEIn1GJDncQnR/lJWAfhG91C",
+        "roleIds": [
+            "69f120f201ae28f988119e74"
+        ],
+        "status": "ACTIVE",
+        "refreshTokenHash": "$2a$10$Q7vXhQoJT3UcJqejAlW.mehw3eufQeIFNlAi3Q6Puqe9m.LgoPs5.",
+        "refreshTokenExpiry": {
+            "$date": "2026-06-08T12:24:26.599Z"
+        },
+        "createdAt": {
+            "$date": "2026-06-01T12:24:09.130Z"
+        },
+        "updatedAt": {
+            "$date": "2026-06-01T12:24:26.599Z"
+        },
+        "lastLoginAt": {
+            "$date": "2026-06-01T12:24:26.175Z"
+        },
+        "_class": "md.services.auth_service.domain.AuthUserDocument"
+    },
+    {
+        "_id": {
+            "$oid": "6a1d87294e6f2f647c7dcb20"
+        },
+        "email": "johndoe@gmail.com",
+        "passwordHash": "$2a$10$f7NwKM7m71lHtA6ULG8uJOStHBCAEA7Frw0oqzfAhyO7OAV1ubjqO",
+        "roleIds": [
+            "69f120f201ae28f988119e74",
+            "69f120f201ae28f988119e75"
+        ],
+        "status": "ACTIVE",
+        "refreshTokenHash": "$2a$10$SnjAXPD/JP5Utd0dhwo.8uLlddkJOxb7oQGGk88J9Wf0Mc8.xaWua",
+        "refreshTokenExpiry": {
+            "$date": "2026-06-08T13:20:49.335Z"
+        },
+        "createdAt": {
+            "$date": "2026-06-01T13:20:41.259Z"
+        },
+        "updatedAt": {
+            "$date": "2026-06-01T13:20:49.335Z"
+        },
+        "lastLoginAt": {
+            "$date": "2026-06-01T13:20:49.101Z"
+        },
+        "_class": "md.services.auth_service.domain.AuthUserDocument"
+    }
+]

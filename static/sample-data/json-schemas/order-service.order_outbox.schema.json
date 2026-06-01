@@ -1,0 +1,137 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://modern-ecommerce.local/schemas/order-service.order_outbox.schema.json",
+    "title": "order-service order_outbox document",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "_id",
+        "eventType",
+        "aggregateId",
+        "payload",
+        "status",
+        "attempts",
+        "createdAt",
+        "updatedAt"
+    ],
+    "properties": {
+        "_id": {
+            "$ref": "#/$defs/objectId"
+        },
+        "eventType": {
+            "type": "string",
+            "minLength": 1
+        },
+        "aggregateId": {
+            "$ref": "#/$defs/objectId"
+        },
+        "payload": {
+            "$ref": "#/$defs/payload"
+        },
+        "status": {
+            "type": "string",
+            "minLength": 1
+        },
+        "attempts": {
+            "type": "integer",
+            "minimum": 0
+        },
+        "createdAt": {
+            "$ref": "#/$defs/date"
+        },
+        "updatedAt": {
+            "$ref": "#/$defs/date"
+        },
+        "_class": {
+            "type": "string"
+        }
+    },
+    "$defs": {
+        "objectId": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "$oid"
+            ],
+            "properties": {
+                "$oid": {
+                    "type": "string",
+                    "pattern": "^[a-fA-F0-9]{24}$"
+                }
+            }
+        },
+        "date": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "$date"
+            ],
+            "properties": {
+                "$date": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            }
+        },
+        "money": {
+            "anyOf": [
+                {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "$numberDecimal"
+                    ],
+                    "properties": {
+                        "$numberDecimal": {
+                            "type": "string",
+                            "pattern": "^[0-9]+(\\.[0-9]{1,2})?$"
+                        }
+                    }
+                }
+            ]
+        },
+        "payload": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "eventId",
+                "orderId",
+                "userId",
+                "customerEmail",
+                "totalAmount",
+                "currency",
+                "occurredAt"
+            ],
+            "properties": {
+                "eventId": {
+                    "type": "string",
+                    "format": "uuid"
+                },
+                "orderId": {
+                    "$ref": "#/$defs/objectId"
+                },
+                "userId": {
+                    "$ref": "#/$defs/objectId"
+                },
+                "customerEmail": {
+                    "type": "string",
+                    "format": "email"
+                },
+                "totalAmount": {
+                    "$ref": "#/$defs/money"
+                },
+                "currency": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                },
+                "occurredAt": {
+                    "$ref": "#/$defs/date"
+                }
+            }
+        }
+    }
+}

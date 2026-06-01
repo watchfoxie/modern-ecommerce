@@ -1,0 +1,24 @@
+[
+    {
+        "_id": {
+            "$oid": "69f31c02fdfff4311c929b68"
+        },
+        "version": "001",
+        "description": "Create auth users and roles collections with canonical indexes.",
+        "checksum": "774b364064a94d0da33a4e0563686f3ad798b469eb27c26b3a4f2b82e5973d99",
+        "appliedAt": {
+            "$date": "2026-04-30T09:08:18.243Z"
+        }
+    },
+    {
+        "_id": {
+            "$oid": "69f31c02fdfff4311c929b69"
+        },
+        "version": "002",
+        "description": "Seed canonical Spring Security roles.",
+        "checksum": "e939621fa3507d55b31df66382866213263aedeb9b27ed2f8a30e23155e5ceed",
+        "appliedAt": {
+            "$date": "2026-04-30T09:08:18.660Z"
+        }
+    }
+]

@@ -15,7 +15,8 @@
         },
         "updatedAt": {
             "$date": "2026-04-23T01:40:00.000Z"
-        }
+        },
+        "_class": "md.services.category_service.domain.CategoryDocument"
     },
     {
         "_id": {
@@ -35,7 +36,8 @@
         },
         "updatedAt": {
             "$date": "2026-04-23T01:40:03.000Z"
-        }
+        },
+        "_class": "md.services.category_service.domain.CategoryDocument"
     },
     {
         "_id": {
@@ -55,7 +57,8 @@
         },
         "updatedAt": {
             "$date": "2026-04-23T01:40:06.000Z"
-        }
+        },
+        "_class": "md.services.category_service.domain.CategoryDocument"
     },
     {
         "_id": {
@@ -75,6 +78,7 @@
         },
         "updatedAt": {
             "$date": "2026-04-23T01:40:09.000Z"
-        }
+        },
+        "_class": "md.services.category_service.domain.CategoryDocument"
     }
 ]

@@ -1,1 +1,24 @@
-[]
+[
+    {
+        "_id": {
+            "$oid": "69f120f201ae28f988119e74"
+        },
+        "name": "ROLE_USER",
+        "description": "Authenticated customer role.",
+        "createdAt": {
+            "$date": "2026-04-28T21:04:50.559Z"
+        },
+        "_class": "md.services.auth_service.domain.RoleDocument"
+    },
+    {
+        "_id": {
+            "$oid": "69f120f201ae28f988119e75"
+        },
+        "name": "ROLE_ADMIN",
+        "description": "Administrator role for catalog and order management.",
+        "createdAt": {
+            "$date": "2026-04-28T21:04:50.850Z"
+        },
+        "_class": "md.services.auth_service.domain.RoleDocument"
+    }
+]

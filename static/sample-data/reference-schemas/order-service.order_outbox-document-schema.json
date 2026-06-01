@@ -1,0 +1,32 @@
+{
+    "_id": {
+        "$oid": "string (UUID/Hex)"
+    },
+    "eventType": "string",
+    "aggregateId": {
+        "$oid": "string (UUID/Hex/Foreign Key)"
+    },
+    "payload": {
+        "eventId": "string (UUID)",
+        "orderId": {
+            "$oid": "string (UUID/Hex/Foreign Key)"
+        },
+        "userId": {
+            "$oid": "string (UUID/Hex/Foreign Key)"
+        },
+        "customerEmail": "string",
+        "totalAmount": "number",
+        "currency": "string",
+        "occurredAt": {
+            "$date": "string (ISO-8601 UTC)"
+        }
+    },
+    "status": "string",
+    "attempts": "number",
+    "createdAt": {
+        "$date": "string (ISO-8601 UTC)"
+    },
+    "updatedAt": {
+        "$date": "string (ISO-8601 UTC)"
+    }
+}
