@@ -39,6 +39,7 @@ export const OrderHistoryPage = lazy(() =>
 export const ExpenseDashboardPage = lazy(() =>
   import('@/pages/profile/ProfilePages').then((module) => ({ default: module.ExpenseDashboardPage })),
 )
+export const AdminConsolePage = lazy(() => import('@/pages/admin/AdminConsolePage'))
 export const SupportPage = lazy(() =>
   import('@/pages/static/StaticPages').then((module) => ({ default: module.SupportPage })),
 )

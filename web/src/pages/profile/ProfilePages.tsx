@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { BarChart3, Eye, Package, Pencil, Trash2, User } from 'lucide-react'
+import { BarChart3, Eye, Package, Pencil, ShieldCheck, Trash2, User } from 'lucide-react'
 import {
   Bar,
   BarChart,
@@ -23,7 +23,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
@@ -34,6 +34,7 @@ import { userService, type UpsertUserAddressRequest } from '@/contracts/user'
 import { assetUrl } from '@/lib/assets'
 import { formatDateTime, formatMoney, initials, orderStatusLabel } from '@/lib/format'
 import { queryKeys } from '@/lib/queryKeys'
+import { clearSessionState } from '@/lib/session'
 import { useAuthStore } from '@/stores/authStore'
 
 const profileSchema = z.object({
@@ -63,7 +64,14 @@ export function ProfileLandingPage() {
 
 export function AccountLayout() {
   const profileQuery = useProfileQuery()
-  const clearAuth = useAuthStore((state) => state.clearAuth)
+  const hasAdminRole = useAuthStore((state) => state.hasRole('ROLE_ADMIN'))
+
+  const navigationItems = [
+    { to: '/profile/account/personal', label: 'Date personale', icon: User },
+    { to: '/profile/account/order-history', label: 'Istoric comenzi', icon: Package },
+    { to: '/profile/account/expense-dashboard', label: 'Cheltuieli', icon: BarChart3 },
+    ...(hasAdminRole ? [{ to: '/profile/account/admin', label: 'Administrare', icon: ShieldCheck }] : []),
+  ]
 
   return (
     <PageShell>
@@ -80,11 +88,7 @@ export function AccountLayout() {
           </div>
           <Separator className="my-4" />
           <nav className="grid gap-1">
-            {[
-              { to: '/profile/account/personal', label: 'Date personale', icon: User },
-              { to: '/profile/account/order-history', label: 'Istoric comenzi', icon: Package },
-              { to: '/profile/account/expense-dashboard', label: 'Cheltuieli', icon: BarChart3 },
-            ].map((item) => (
+            {navigationItems.map((item) => (
               <Button key={item.to} asChild variant="ghost" className="justify-start">
                 <NavLink to={item.to} className={({ isActive }) => (isActive ? 'bg-accent text-accent-foreground' : '')}>
                   <item.icon />
@@ -99,7 +103,7 @@ export function AccountLayout() {
             variant="outline"
             className="w-full"
             onClick={() => {
-              clearAuth()
+              clearSessionState()
               window.location.assign('/home')
             }}
           >
@@ -224,7 +228,10 @@ export function PersonalPage() {
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Adresă</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Adresă</DialogTitle>
+                <DialogDescription>Configurează o adresă de livrare persistentă pentru checkout.</DialogDescription>
+              </DialogHeader>
               <form onSubmit={addressForm.handleSubmit((values) => upsertAddress.mutate(values))} className="space-y-3">
                 {(['label', 'street', 'city', 'district', 'postalCode'] as const).map((name) => (
                   <Field key={name}>

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate, type RouteObject } from 'react-router-dom'
 import App from './App'
 import {
+  AdminConsolePage,
   AboutPage,
   AccountLayout,
   AccountOverviewPage,
@@ -26,18 +27,18 @@ import {
   SignUpPage,
   SupportPage,
 } from './route-elements'
-import { RequireAuth, RequireGuest } from '@/components/app/RouteGuards'
+import { RequireAuth, RequireGuest, RequireRole } from '@/components/app/RouteGuards'
 
 const developmentRoutes: RouteObject[] = import.meta.env.DEV
   ? [
-      {
-        path: 'demo',
-        lazy: async () => {
-          const { default: DemoPage } = await import('@/pages/DemoPage')
-          return { Component: DemoPage }
-        },
+    {
+      path: 'demo',
+      lazy: async () => {
+        const { default: DemoPage } = await import('@/pages/DemoPage')
+        return { Component: DemoPage }
       },
-    ]
+    },
+  ]
   : []
 
 export const router = createBrowserRouter([
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
               { path: 'order-history', element: <LazyRoute><OrderHistoryPage /></LazyRoute> },
               { path: 'expense-dashboard', element: <LazyRoute><ExpenseDashboardPage /></LazyRoute> },
               { path: 'personal', element: <LazyRoute><PersonalPage /></LazyRoute> },
+              {
+                path: 'admin',
+                element: <RequireRole role="ROLE_ADMIN"><LazyRoute><AdminConsolePage /></LazyRoute></RequireRole>,
+              },
             ],
           },
         ],

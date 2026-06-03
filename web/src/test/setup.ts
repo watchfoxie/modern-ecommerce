@@ -21,6 +21,33 @@ Object.defineProperty(window, 'matchMedia', {
 
 window.scrollTo = vi.fn()
 
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root = null
+  readonly rootMargin = '0px'
+  readonly thresholds = []
+
+  disconnect = vi.fn()
+  observe = vi.fn()
+  takeRecords = vi.fn(() => [])
+  unobserve = vi.fn()
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  value: MockIntersectionObserver,
+})
+
+class MockResizeObserver implements ResizeObserver {
+  observe = vi.fn()
+  unobserve = vi.fn()
+  disconnect = vi.fn()
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  value: MockResizeObserver,
+})
+
 afterEach(() => {
   cleanup()
   localStorage.clear()

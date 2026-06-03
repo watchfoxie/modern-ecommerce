@@ -2,6 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { API_BASE_URL } from './api'
 import { useAuthStore } from '@/stores/authStore'
 import type { AuthTokenResponse } from '@/contracts/auth'
+import { clearSessionState } from '@/lib/session'
 
 interface RetryableRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
@@ -74,12 +75,12 @@ api.interceptors.response.use(
           return api(originalRequest)
         }
       } catch {
-        useAuthStore.getState().clearAuth()
+        clearSessionState()
       }
     }
 
     if (error.response?.status === 401 && !isAuthEndpoint(originalRequest?.url)) {
-      useAuthStore.getState().clearAuth()
+      clearSessionState()
       const redirectTo = `${window.location.pathname}${window.location.search}`
       window.location.assign(`/profile/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`)
     }

@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ApiErrorAlert, EmptyState, LoadingRows, PageShell, SectionHeader } from '@/components/app/PageState'
 import { cartService } from '@/contracts/cart'
 import { orderService } from '@/contracts/order'
-import { userService } from '@/contracts/user'
+import { userService, type UserProfileDto } from '@/contracts/user'
 import { formatMoney } from '@/lib/format'
 import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -44,21 +44,48 @@ const paymentSchema = z.object({
   notes: z.string().max(500).optional(),
 })
 
+type DeliveryFormValues = z.infer<typeof addressSchema>
+
+function buildDeliveryDefaults(saved: DeliveryFormValues | { postalCode?: string | null } | null, profile?: UserProfileDto) {
+  if (saved) {
+    return { ...saved, postalCode: saved.postalCode ?? '' }
+  }
+
+  const defaultAddress = profile?.addresses?.find((address) => address.isDefault)
+  const recipientName = [profile?.firstName, profile?.lastName]
+    .filter((value) => Boolean(value?.trim()))
+    .join(' ')
+
+  return {
+    recipientName,
+    recipientPhone: profile?.phone ?? '',
+    city: defaultAddress?.city ?? '',
+    district: defaultAddress?.district ?? '',
+    street: defaultAddress?.street ?? '',
+    postalCode: defaultAddress?.postalCode ?? '',
+  }
+}
+
 export function DeliveryPage() {
   const navigate = useNavigate()
+  const userId = useAuthStore((state) => state.user?.userId)
   const saved = useCheckoutStore((state) => state.deliveryAddress)
   const setDeliveryAddress = useCheckoutStore((state) => state.setDeliveryAddress)
+  const profileQuery = useQuery({
+    queryKey: queryKeys.profile,
+    queryFn: () => userService.getMe(),
+    enabled: Boolean(userId),
+  })
   const form = useForm<z.infer<typeof addressSchema>>({
     resolver: zodResolver(addressSchema),
-    defaultValues: saved ? { ...saved, postalCode: saved.postalCode ?? '' } : {
-      recipientName: '',
-      recipientPhone: '',
-      city: 'Chișinău',
-      district: 'Chișinău',
-      street: '',
-      postalCode: '',
-    },
+    defaultValues: buildDeliveryDefaults(saved, profileQuery.data),
   })
+
+  useEffect(() => {
+    if (!saved) {
+      form.reset(buildDeliveryDefaults(null, profileQuery.data))
+    }
+  }, [form, profileQuery.data, saved])
 
   const submit = form.handleSubmit((values) => {
     setDeliveryAddress({ ...values, postalCode: values.postalCode || null })
@@ -68,6 +95,8 @@ export function DeliveryPage() {
   return (
     <PageShell>
       <SectionHeader title="Livrare" description="Adresa este transmisă către `order-service` ca snapshot de checkout." />
+      {profileQuery.isLoading && <LoadingRows count={2} />}
+      {profileQuery.isError && <ApiErrorAlert error={profileQuery.error} onRetry={() => profileQuery.refetch()} />}
       <Card className="mx-auto max-w-2xl rounded-lg">
         <CardHeader>
           <CardTitle>Adresă livrare</CardTitle>

@@ -52,7 +52,10 @@ export default function ProductDetailPage({ promotional = false }: { promotional
   const product = productQuery.data
   const imageUrls = product?.imageUrls.map(assetUrl) ?? []
   const effectivePrice = Number(product?.promotionalPrice ?? product?.price ?? 0)
+  const basePrice = Number(product?.price ?? 0)
   const discount = discountPercent(Number(product?.price), product?.promotionalPrice ? Number(product.promotionalPrice) : null)
+  const totalEffectivePrice = effectivePrice * quantity
+  const totalBasePrice = basePrice * quantity
 
   const addMutation = useMutation({
     mutationFn: () =>
@@ -158,13 +161,14 @@ export default function ProductDetailPage({ promotional = false }: { promotional
           <div className="space-y-2">
             {product.promotionalPrice ? (
               <div className="flex flex-wrap items-end gap-3">
-                <span className="text-3xl font-semibold text-destructive">{formatMoney(product.promotionalPrice, product.currency)}</span>
-                <span className="text-lg text-muted-foreground line-through">{formatMoney(product.price, product.currency)}</span>
+                <span className="text-3xl font-semibold text-destructive">{formatMoney(totalEffectivePrice, product.currency)}</span>
+                <span className="text-lg text-muted-foreground line-through">{formatMoney(totalBasePrice, product.currency)}</span>
                 {discount && <Badge variant="destructive">-{discount}%</Badge>}
               </div>
             ) : (
-              <span className="text-3xl font-semibold">{formatMoney(product.price, product.currency)}</span>
+              <span className="text-3xl font-semibold">{formatMoney(totalBasePrice, product.currency)}</span>
             )}
+            <p className="text-sm text-muted-foreground">Total pentru {quantity} {quantity === 1 ? 'unitate' : 'unități'}</p>
             <Badge variant={product.stock > 0 ? 'secondary' : 'destructive'}>
               {product.stock > 0 ? `${product.stock} în stoc` : 'Stoc epuizat'}
             </Badge>

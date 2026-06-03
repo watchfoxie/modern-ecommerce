@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CartDto } from '@/contracts/cart'
+import { clearSessionState } from '@/lib/session'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useCheckoutStore } from '@/stores/checkoutStore'
@@ -109,5 +110,34 @@ describe('Zustand stores', () => {
     expect(useCheckoutStore.getState().deliveryAddress).toBeNull()
     expect(useCheckoutStore.getState().payment).toEqual({ method: 'CARD' })
     expect(useCheckoutStore.getState().notes).toBe('')
+  })
+
+  it('clears auth, cart and checkout state when the session is invalidated', () => {
+    useAuthStore.getState().setAuth({
+      accessToken: makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) + 3600 }),
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+    useCartStore.getState().applyOptimisticItem({
+      productId: 'product-1',
+      name: 'Phone Pro',
+      price: 1000,
+      quantity: 2,
+    })
+    useCheckoutStore.getState().setDeliveryAddress({
+      recipientName: 'Ana Popescu',
+      recipientPhone: '+37360000000',
+      city: 'Chișinău',
+      district: 'Chișinău',
+      street: 'Stefan cel Mare 1',
+      postalCode: null,
+    })
+
+    clearSessionState()
+
+    expect(useAuthStore.getState().accessToken).toBeNull()
+    expect(useCartStore.getState().items).toEqual([])
+    expect(useCheckoutStore.getState().deliveryAddress).toBeNull()
   })
 })

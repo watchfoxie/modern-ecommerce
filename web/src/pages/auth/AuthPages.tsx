@@ -16,6 +16,20 @@ import { ApiErrorAlert, PageShell } from '@/components/app/PageState'
 import { authService } from '@/contracts/auth'
 import { useAuthStore } from '@/stores/authStore'
 
+function resolveRedirectTo(locationState: unknown, params: URLSearchParams) {
+  return (locationState as { redirectTo?: string } | null)?.redirectTo
+    ?? params.get('redirectTo')
+    ?? null
+}
+
+function withRedirectTo(path: string, redirectTo: string | null) {
+  if (!redirectTo) {
+    return path
+  }
+
+  return `${path}?redirectTo=${encodeURIComponent(redirectTo)}`
+}
+
 const signUpSchema = z.object({
   firstName: z.string().min(2, 'Prenumele este obligatoriu'),
   lastName: z.string().min(2, 'Numele este obligatoriu'),
@@ -56,12 +70,15 @@ function PasswordInput<T extends FieldValues>({ register, name }: { register: Us
 
 export function SignUpPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [params] = useSearchParams()
+  const redirectTo = resolveRedirectTo(location.state, params)
   const form = useForm<z.infer<typeof signUpSchema>>({ resolver: zodResolver(signUpSchema) })
   const mutation = useMutation({
     mutationFn: authService.signUp,
     onSuccess: () => {
       toast.success('Cont creat. Autentificați-vă pentru a continua.')
-      navigate('/profile/sign-in')
+      navigate(withRedirectTo('/profile/sign-in', redirectTo), { replace: true })
     },
   })
 
@@ -91,7 +108,7 @@ export function SignUpPage() {
           </form>
           <Separator className="my-4" />
           <Button asChild variant="link" className="w-full">
-            <Link to="/profile/sign-in">Ai deja cont? Autentifică-te</Link>
+            <Link to={withRedirectTo('/profile/sign-in', redirectTo)}>Ai deja cont? Autentifică-te</Link>
           </Button>
         </CardContent>
       </Card>
@@ -103,16 +120,14 @@ export function SignInPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()
+  const redirectTo = resolveRedirectTo(location.state, params)
   const setAuth = useAuthStore((state) => state.setAuth)
   const form = useForm<z.infer<typeof signInSchema>>({ resolver: zodResolver(signInSchema) })
   const mutation = useMutation({
     mutationFn: authService.signIn,
     onSuccess: (response) => {
-      const redirectTo = (location.state as { redirectTo?: string } | null)?.redirectTo
-        ?? params.get('redirectTo')
-        ?? '/home'
       setAuth(response)
-      navigate(redirectTo, { replace: true, flushSync: true })
+      navigate(redirectTo ?? '/home', { replace: true, flushSync: true })
     },
   })
 
@@ -140,7 +155,7 @@ export function SignInPage() {
             <Field>
               <div className="flex items-center justify-between">
                 <FieldLabel>Parolă</FieldLabel>
-                <Link to="/profile/password-reset" className="text-xs text-primary hover:underline">Ai uitat parola?</Link>
+                <Link to={withRedirectTo('/profile/password-reset', redirectTo)} className="text-xs text-primary hover:underline">Ai uitat parola?</Link>
               </div>
               <PasswordInput register={form.register} name="password" />
               <FieldError>{form.formState.errors.password?.message}</FieldError>
@@ -149,7 +164,7 @@ export function SignInPage() {
           </form>
           <Separator className="my-4" />
           <Button asChild variant="link" className="w-full">
-            <Link to="/profile/sign-up">Nu ai cont? Înregistrează-te</Link>
+            <Link to={withRedirectTo('/profile/sign-up', redirectTo)}>Nu ai cont? Înregistrează-te</Link>
           </Button>
         </CardContent>
       </Card>
@@ -158,7 +173,9 @@ export function SignInPage() {
 }
 
 export function PasswordResetPage() {
+  const location = useLocation()
   const [params] = useSearchParams()
+  const redirectTo = resolveRedirectTo(location.state, params)
   const [step, setStep] = useState<'request' | 'confirm'>(params.get('token') ? 'confirm' : 'request')
   const navigate = useNavigate()
   const requestForm = useForm<z.infer<typeof resetRequestSchema>>({ resolver: zodResolver(resetRequestSchema) })
@@ -174,7 +191,7 @@ export function PasswordResetPage() {
     mutationFn: ({ token, newPassword }: z.infer<typeof resetConfirmSchema>) => authService.confirmPasswordReset({ token, newPassword }),
     onSuccess: () => {
       toast.success('Parola a fost resetată')
-      navigate('/profile/sign-in')
+      navigate(withRedirectTo('/profile/sign-in', redirectTo), { replace: true })
     },
   })
 

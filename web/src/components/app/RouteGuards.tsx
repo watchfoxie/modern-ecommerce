@@ -22,3 +22,19 @@ export function RequireGuest({ children }: { children: ReactNode }) {
 
   return children
 }
+
+export function RequireRole({ children, role, fallbackTo = '/profile/account' }: { children: ReactNode; role: string; fallbackTo?: string }) {
+  const location = useLocation()
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated())
+  const hasRole = useAuthStore((state) => state.hasRole(role))
+
+  if (!isAuthenticated) {
+    return <Navigate to="/profile/sign-in" replace state={{ redirectTo: location.pathname + location.search }} />
+  }
+
+  if (!hasRole) {
+    return <Navigate to={fallbackTo} replace />
+  }
+
+  return children
+}

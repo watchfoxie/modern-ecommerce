@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import { RequireAuth, RequireGuest } from '@/components/app/RouteGuards'
+import { RequireAuth, RequireGuest, RequireRole } from '@/components/app/RouteGuards'
 import { useAuthStore } from '@/stores/authStore'
 import { makeJwt, renderWithProviders } from './test-utils'
 
@@ -12,6 +12,21 @@ function authenticate() {
       userId: 'user-1',
       email: 'customer@example.com',
       roles: ['ROLE_USER'],
+      exp: Math.floor(Date.now() / 1000) + 3600,
+    }),
+    refreshToken: 'refresh-token',
+    tokenType: 'Bearer',
+    expiresIn: 3600,
+  })
+}
+
+function authenticateAdmin() {
+  useAuthStore.getState().setAuth({
+    accessToken: makeJwt({
+      authId: 'auth-1',
+      userId: 'user-1',
+      email: 'admin@example.com',
+      roles: ['ROLE_USER', 'ROLE_ADMIN'],
       exp: Math.floor(Date.now() / 1000) + 3600,
     }),
     refreshToken: 'refresh-token',
@@ -85,5 +100,33 @@ describe('route guards', () => {
 
     expect(await screen.findByText('Account route')).toBeInTheDocument()
     expect(screen.queryByText('Guest sign-in')).not.toBeInTheDocument()
+  })
+
+  it('redirects authenticated users without the required role away from admin routes', async () => {
+    authenticate()
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/account/admin" element={<RequireRole role="ROLE_ADMIN"><div>Admin route</div></RequireRole>} />
+        <Route path="/profile/account" element={<div>Account route</div>} />
+      </Routes>,
+      { route: '/profile/account/admin' },
+    )
+
+    expect(await screen.findByText('Account route')).toBeInTheDocument()
+    expect(screen.queryByText('Admin route')).not.toBeInTheDocument()
+  })
+
+  it('renders admin routes for users with ROLE_ADMIN', () => {
+    authenticateAdmin()
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/account/admin" element={<RequireRole role="ROLE_ADMIN"><div>Admin route</div></RequireRole>} />
+      </Routes>,
+      { route: '/profile/account/admin' },
+    )
+
+    expect(screen.getByText('Admin route')).toBeInTheDocument()
   })
 })

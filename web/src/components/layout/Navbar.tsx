@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { clearSessionState } from '@/lib/session'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 
@@ -67,10 +68,9 @@ export default function Navbar() {
   const totalItems = useCartStore((state) => state.totalItems())
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated())
   const email = useAuthStore((state) => state.user?.email)
-  const clearAuth = useAuthStore((state) => state.clearAuth)
 
   const logout = () => {
-    clearAuth()
+    clearSessionState()
     navigate('/home')
   }
 

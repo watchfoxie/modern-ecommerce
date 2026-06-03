@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { authService } from '@/contracts/auth'
-import { SignInPage } from '@/pages/auth/AuthPages'
+import { SignInPage, SignUpPage } from '@/pages/auth/AuthPages'
 import { useAuthStore } from '@/stores/authStore'
 import { makeJwt, renderWithProviders } from './test-utils'
 
@@ -13,6 +13,7 @@ vi.mock('@/contracts/auth', async (importOriginal) => {
     ...actual,
     authService: {
       ...actual.authService,
+      signUp: vi.fn(),
       signIn: vi.fn(),
     },
   }
@@ -22,6 +23,7 @@ const mockedAuthService = vi.mocked(authService)
 
 describe('SignInPage', () => {
   beforeEach(() => {
+    mockedAuthService.signUp.mockReset()
     mockedAuthService.signIn.mockReset()
   })
 
@@ -73,5 +75,65 @@ describe('SignInPage', () => {
       email: 'customer@example.com',
       password: 'Password123!',
     })
+  })
+
+  it('redirects to the preserved target from query parameters after successful sign-in', async () => {
+    const user = userEvent.setup()
+    mockedAuthService.signIn.mockResolvedValue({
+      accessToken: makeJwt({
+        authId: 'auth-1',
+        userId: 'user-1',
+        email: 'customer@example.com',
+        roles: ['ROLE_USER'],
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      }),
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/sign-in" element={<SignInPage />} />
+        <Route path="/cart" element={<div>Cart route</div>} />
+      </Routes>,
+      { route: '/profile/sign-in?redirectTo=%2Fcart' },
+    )
+
+    await user.type(screen.getByRole('textbox'), 'customer@example.com')
+    await user.type(document.querySelector('input[type="password"]') as HTMLInputElement, 'Password123!')
+    await user.click(screen.getByRole('button', { name: 'Autentifică-te' }))
+
+    expect(await screen.findByText('Cart route')).toBeInTheDocument()
+  })
+
+  it('preserves redirectTo when linking from sign-in to sign-up', () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/sign-in" element={<SignInPage />} />
+      </Routes>,
+      { route: '/profile/sign-in?redirectTo=%2Fcart%3Fstep%3Ddelivery' },
+    )
+
+    expect(screen.getByRole('link', { name: 'Nu ai cont? Înregistrează-te' })).toHaveAttribute(
+      'href',
+      '/profile/sign-up?redirectTo=%2Fcart%3Fstep%3Ddelivery',
+    )
+  })
+})
+
+describe('SignUpPage', () => {
+  it('preserves redirectTo when linking back to sign-in', () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/sign-up" element={<SignUpPage />} />
+      </Routes>,
+      { route: '/profile/sign-up?redirectTo=%2Fcart%3Fstep%3Ddelivery' },
+    )
+
+    expect(screen.getByRole('link', { name: 'Ai deja cont? Autentifică-te' })).toHaveAttribute(
+      'href',
+      '/profile/sign-in?redirectTo=%2Fcart%3Fstep%3Ddelivery',
+    )
   })
 })
