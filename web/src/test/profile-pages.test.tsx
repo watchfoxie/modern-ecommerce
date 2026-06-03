@@ -16,10 +16,12 @@ vi.mock('recharts', async (importOriginal) => {
         CartesianGrid: () => null,
         XAxis: () => null,
         YAxis: ({ tick }: { tick?: { fill?: string } }) => <span data-testid="chart-y-axis" data-tick-fill={tick?.fill} />,
-        Tooltip: ({ contentStyle, itemStyle, labelStyle }: { contentStyle?: { color?: string }; itemStyle?: { color?: string }; labelStyle?: { color?: string } }) => (
+        Tooltip: ({ contentStyle, itemStyle, labelStyle }: { contentStyle?: { color?: string; backgroundColor?: string; borderColor?: string }; itemStyle?: { color?: string }; labelStyle?: { color?: string } }) => (
             <div
                 data-testid="chart-tooltip"
                 data-content-color={contentStyle?.color}
+                data-content-background={contentStyle?.backgroundColor}
+                data-content-border={contentStyle?.borderColor}
                 data-item-color={itemStyle?.color}
                 data-label-color={labelStyle?.color}
             />
@@ -135,10 +137,12 @@ describe('ExpenseDashboardPage', () => {
         expect(container.querySelector('[data-fill="#80ebff"]')).not.toBeNull()
         expect(container.querySelector('[data-fill="#00ddff"]')).not.toBeNull()
         expect(container.querySelector('[data-stroke="#0090ed"]')).not.toBeNull()
-        expect(container.querySelector('[data-label-fill="#000000"]')).not.toBeNull()
-        expect(container.querySelector('[data-content-color="#000000"]')).not.toBeNull()
-        expect(container.querySelector('[data-item-color="#000000"]')).not.toBeNull()
-        expect(container.querySelector('[data-label-color="#000000"]')).not.toBeNull()
-        expect(container.querySelectorAll('[data-tick-fill="#000000"]').length).toBe(2)
+        expect(container.querySelector('[data-label-fill="var(--foreground)"]')).not.toBeNull()
+        expect(container.querySelector('[data-content-color="var(--foreground)"]')).not.toBeNull()
+        expect(container.querySelector('[data-content-background="var(--popover)"]')).not.toBeNull()
+        expect(container.querySelector('[data-content-border="var(--border)"]')).not.toBeNull()
+        expect(container.querySelector('[data-item-color="var(--foreground)"]')).not.toBeNull()
+        expect(container.querySelector('[data-label-color="var(--foreground)"]')).not.toBeNull()
+        expect(container.querySelectorAll('[data-tick-fill="var(--foreground)"]').length).toBe(2)
     })
 })

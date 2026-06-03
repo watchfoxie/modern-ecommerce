@@ -54,8 +54,13 @@ const addressSchema = z.object({
 })
 
 const CHART_BLUE_PALETTE = ['#aaf2ff', '#80ebff', '#00ddff', '#00b3f4', '#0090ed'] as const
-const CHART_TEXT_COLOR = '#000000'
-const CHART_TOOLTIP_STYLE = {
+const CHART_TEXT_COLOR = 'var(--foreground)'
+const CHART_TOOLTIP_CONTENT_STYLE = {
+  backgroundColor: 'var(--popover)',
+  borderColor: 'var(--border)',
+  color: CHART_TEXT_COLOR,
+}
+const CHART_TOOLTIP_TEXT_STYLE = {
   color: CHART_TEXT_COLOR,
 }
 
@@ -412,9 +417,9 @@ export function ExpenseDashboardPage() {
             <Card className="rounded-lg"><CardContent className="pt-4"><p className="text-sm text-muted-foreground">Medie comandă</p><p className="text-2xl font-semibold">{formatMoney(total / orders.length)}</p></CardContent></Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /><Line type="monotone" dataKey="amount" stroke={CHART_BLUE_PALETTE[4]} strokeWidth={3} dot={{ fill: CHART_BLUE_PALETTE[3], stroke: CHART_BLUE_PALETTE[4] }} activeDot={{ r: 6, fill: CHART_BLUE_PALETTE[4] }} /></LineChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" label={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /></PieChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 640, height: 288 }}><BarChart data={monthlyOrderCounts}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /><Bar dataKey="count" fill={CHART_BLUE_PALETTE[2]} /></BarChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /><Line type="monotone" dataKey="amount" stroke={CHART_BLUE_PALETTE[4]} strokeWidth={3} dot={{ fill: CHART_BLUE_PALETTE[3], stroke: CHART_BLUE_PALETTE[4] }} activeDot={{ r: 6, fill: CHART_BLUE_PALETTE[4] }} /></LineChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" label={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /></PieChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 640, height: 288 }}><BarChart data={monthlyOrderCounts}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /><Bar dataKey="count" fill={CHART_BLUE_PALETTE[2]} /></BarChart></ResponsiveContainer></CardContent></Card>
           </div>
         </>
       )}
