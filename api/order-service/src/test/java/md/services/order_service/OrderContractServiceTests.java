@@ -123,6 +123,7 @@ class OrderContractServiceTests {
 
 		verify(orderRepository).save(orderCaptor.capture());
 		verify(orderOutboxService).enqueueAndDispatchOrderCreated(eventCaptor.capture());
+		verify(cartInternalClient).clearCurrentCart("user-1");
 		assertThat(response.status()).isEqualTo("ACCEPTED");
 		assertThat(response.orderId()).isEqualTo("order-1");
 		assertThat(orderCaptor.getValue().totalAmount()).isEqualByComparingTo("200.00");
@@ -140,7 +141,8 @@ class OrderContractServiceTests {
 
 		assertThatThrownBy(() -> service().listAllOrders(0, 20, null))
 				.isInstanceOf(ResponseStatusException.class)
-				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value()).isEqualTo(403));
+				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value())
+						.isEqualTo(403));
 	}
 
 	@Test
@@ -150,9 +152,11 @@ class OrderContractServiceTests {
 				"N/A",
 				List.of(new SimpleGrantedAuthority("ROLE_USER"))));
 
-		assertThatThrownBy(() -> service().updateStatus("order-1", new md.services.order_service.api.OrderStatusUpdateRequest("CONFIRMED")))
+		assertThatThrownBy(() -> service().updateStatus("order-1",
+				new md.services.order_service.api.OrderStatusUpdateRequest("CONFIRMED")))
 				.isInstanceOf(ResponseStatusException.class)
-				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value()).isEqualTo(403));
+				.satisfies(exception -> assertThat(((ResponseStatusException) exception).getStatusCode().value())
+						.isEqualTo(403));
 	}
 
 	private OrderContractService service() {

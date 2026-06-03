@@ -1,11 +1,16 @@
 import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
-import { DeliveryPage } from '@/pages/cart/CheckoutPages'
+import { DeliveryPage, PayPage } from '@/pages/cart/CheckoutPages'
+import { cartService } from '@/contracts/cart'
+import { orderService } from '@/contracts/order'
 import { userService } from '@/contracts/user'
+import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
+import { useCartStore } from '@/stores/cartStore'
 import { useCheckoutStore } from '@/stores/checkoutStore'
-import { makeJwt, renderWithProviders } from './test-utils'
+import { createTestQueryClient, makeJwt, renderWithProviders } from './test-utils'
 
 vi.mock('@/contracts/user', async (importOriginal) => {
     const actual = await importOriginal<typeof import('@/contracts/user')>()
@@ -18,7 +23,31 @@ vi.mock('@/contracts/user', async (importOriginal) => {
     }
 })
 
+vi.mock('@/contracts/cart', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@/contracts/cart')>()
+    return {
+        ...actual,
+        cartService: {
+            ...actual.cartService,
+            getMe: vi.fn(),
+        },
+    }
+})
+
+vi.mock('@/contracts/order', async (importOriginal) => {
+    const actual = await importOriginal<typeof import('@/contracts/order')>()
+    return {
+        ...actual,
+        orderService: {
+            ...actual.orderService,
+            create: vi.fn(),
+        },
+    }
+})
+
 const mockedUserService = vi.mocked(userService)
+const mockedCartService = vi.mocked(cartService)
+const mockedOrderService = vi.mocked(orderService)
 
 function authenticate() {
     useAuthStore.getState().setAuth({
@@ -155,5 +184,81 @@ describe('DeliveryPage', () => {
             expect(screen.getByLabelText('recipientName')).toHaveValue('Manual Recipient')
         })
         expect(screen.getByLabelText('city')).toHaveValue('Bălți')
+    })
+})
+
+describe('PayPage', () => {
+    it('replaces the cart query cache with an empty snapshot after a successful order', async () => {
+        authenticate()
+        useCheckoutStore.getState().setDeliveryAddress({
+            recipientName: 'Ana Ionescu',
+            recipientPhone: '+37369000111',
+            city: 'Chișinău',
+            district: 'Centru',
+            street: 'Ștefan cel Mare 1',
+            postalCode: 'MD-2001',
+        })
+
+        const queryClient = createTestQueryClient()
+        queryClient.setQueryData(queryKeys.cart('user-1'), {
+            id: 'cart-1',
+            userId: 'user-1',
+            createdAt: '2026-06-03T10:00:00Z',
+            updatedAt: '2026-06-03T10:00:00Z',
+            items: [
+                {
+                    productId: 'product-1',
+                    quantity: 1,
+                    priceAtAdd: 1200,
+                    productSnapshot: {
+                        name: 'Telefon',
+                        imageUrl: '/phone.png',
+                        categorySlug: 'smartphones',
+                    },
+                },
+            ],
+        })
+        mockedCartService.getMe.mockResolvedValue({
+            id: 'cart-1',
+            userId: 'user-1',
+            createdAt: '2026-06-03T10:00:00Z',
+            updatedAt: '2026-06-03T10:00:00Z',
+            items: [
+                {
+                    productId: 'product-1',
+                    quantity: 1,
+                    priceAtAdd: 1200,
+                    productSnapshot: {
+                        name: 'Telefon',
+                        imageUrl: '/phone.png',
+                        categorySlug: 'smartphones',
+                    },
+                },
+            ],
+        })
+        mockedOrderService.create.mockResolvedValue({
+            status: 'ACCEPTED',
+            orderId: 'order-1',
+            orderNumber: 'ORD-1',
+            message: 'accepted',
+        })
+
+        renderWithProviders(
+            <Routes>
+                <Route path="/cart/delivery" element={<div>Livrare</div>} />
+                <Route path="/cart/pay" element={<PayPage />} />
+                <Route path="/profile/account/order-history" element={<div>Istoric</div>} />
+            </Routes>,
+            { route: '/cart/pay', queryClient },
+        )
+
+        await userEvent.click(screen.getByRole('button', { name: /plasează comanda/i }))
+
+        await waitFor(() => {
+            expect(mockedOrderService.create).toHaveBeenCalledTimes(1)
+        })
+
+        expect(queryClient.getQueryData(queryKeys.cart('user-1'))).toMatchObject({ items: [] })
+        expect(useCartStore.getState().items).toEqual([])
     })
 })

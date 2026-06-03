@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { ApiErrorAlert, EmptyState, LoadingRows, PageShell, SectionHeader } from '@/components/app/PageState'
-import { cartService } from '@/contracts/cart'
+import { cartService, type CartDto } from '@/contracts/cart'
 import { orderService } from '@/contracts/order'
 import { userService, type UserProfileDto } from '@/contracts/user'
 import { formatMoney } from '@/lib/format'
@@ -45,6 +45,17 @@ const paymentSchema = z.object({
 })
 
 type DeliveryFormValues = z.infer<typeof addressSchema>
+
+function emptyCartSnapshot(userId: string, cart?: CartDto | null): CartDto {
+  const timestamp = new Date().toISOString()
+  return {
+    id: cart?.id ?? `cart-${userId}`,
+    userId,
+    items: [],
+    createdAt: cart?.createdAt ?? timestamp,
+    updatedAt: timestamp,
+  }
+}
 
 function buildDeliveryDefaults(saved: DeliveryFormValues | { postalCode?: string | null } | null, profile?: UserProfileDto) {
   if (saved) {
@@ -197,10 +208,14 @@ export function PayPage() {
         notes: values.notes || undefined,
       }),
     onSuccess: (response) => {
-      navigate('/profile/account/order-history', { flushSync: true })
+      if (userId) {
+        queryClient.setQueryData(queryKeys.cart(userId), emptyCartSnapshot(userId, cartQuery.data))
+        queryClient.invalidateQueries({ queryKey: queryKeys.cart(userId), refetchType: 'none' })
+      }
+
       clearLocalCart()
       resetCheckout()
-      queryClient.invalidateQueries({ queryKey: queryKeys.cart(userId) })
+      navigate('/profile/account/order-history', { flushSync: true })
       queryClient.invalidateQueries({ queryKey: queryKeys.orders() })
       toast.success(`Comanda ${response.orderNumber} a fost acceptată`)
     },

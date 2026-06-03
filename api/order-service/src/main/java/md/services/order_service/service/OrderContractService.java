@@ -49,8 +49,10 @@ public class OrderContractService {
 	private static final String STATUS_CREATED = "CREATED";
 	private static final String PAYMENT_PENDING = "PENDING";
 	private static final String DEFAULT_CURRENCY = "MDL";
-	private static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "updatedAt", "orderNumber", "status", "totalAmount");
-	private static final Set<String> ALLOWED_STATUSES = Set.of("CREATED", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED");
+	private static final Set<String> ALLOWED_SORTS = Set.of("createdAt", "updatedAt", "orderNumber", "status",
+			"totalAmount");
+	private static final Set<String> ALLOWED_STATUSES = Set.of("CREATED", "CONFIRMED", "PROCESSING", "SHIPPED",
+			"DELIVERED", "CANCELLED");
 
 	private final OrderRepository orderRepository;
 	private final CartInternalClient cartInternalClient;
@@ -103,6 +105,7 @@ public class OrderContractService {
 				order.customerEmail(),
 				order.totalAmount(),
 				order.currency()));
+		cartInternalClient.clearCurrentCart(userId);
 
 		return new OrderAcceptedResponse("ACCEPTED", order.id(), order.orderNumber(), "Order command accepted.");
 	}

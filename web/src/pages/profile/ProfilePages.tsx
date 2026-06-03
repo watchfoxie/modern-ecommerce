@@ -53,6 +53,12 @@ const addressSchema = z.object({
   isDefault: z.boolean(),
 })
 
+const CHART_BLUE_PALETTE = ['#aaf2ff', '#80ebff', '#00ddff', '#00b3f4', '#0090ed'] as const
+const CHART_TEXT_COLOR = '#000000'
+const CHART_TOOLTIP_STYLE = {
+  color: CHART_TEXT_COLOR,
+}
+
 function useProfileQuery() {
   return useQuery({ queryKey: queryKeys.profile, queryFn: () => userService.getMe() })
 }
@@ -104,7 +110,7 @@ export function AccountLayout() {
             className="w-full"
             onClick={() => {
               clearSessionState()
-              window.location.assign('/home')
+              globalThis.location.assign('/home')
             }}
           >
             Deconectare
@@ -242,7 +248,7 @@ export function PersonalPage() {
                 ))}
                 <label className="flex items-center gap-2 text-sm">
                   <input type="checkbox" {...addressForm.register('isDefault')} />
-                  Adresă implicită
+                  <span>Adresă implicită</span>
                 </label>
                 <Button type="submit" className="w-full">Salvează</Button>
               </form>
@@ -324,7 +330,7 @@ export function OrderHistoryPage() {
   )
 }
 
-function OrderDialog({ order }: { order: OrderDto }) {
+function OrderDialog({ order }: Readonly<{ order: OrderDto }>) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -365,12 +371,21 @@ export function ExpenseDashboardPage() {
     monthlyMap.set(month, (monthlyMap.get(month) ?? 0) + Number(order.totalAmount))
   })
   const monthly = [...monthlyMap.entries()].map(([month, amount]) => ({ month, amount }))
+  const monthlyOrderCounts = monthly.map((item, index) => ({
+    ...item,
+    count: orders.filter((order) => order.createdAt.startsWith(item.month)).length,
+    fill: CHART_BLUE_PALETTE[(index + 2) % CHART_BLUE_PALETTE.length],
+  }))
   const categoryMap = new Map<string, number>()
   orders.flatMap((order) => order.items).forEach((item) => {
     const key = item.name.toLowerCase().includes('book') || item.name.toLowerCase().includes('matebook') ? 'Laptopuri' : 'Smartphone-uri'
     categoryMap.set(key, (categoryMap.get(key) ?? 0) + Number(item.unitPrice) * item.quantity)
   })
-  const byCategory = [...categoryMap.entries()].map(([name, value]) => ({ name, value }))
+  const byCategory = [...categoryMap.entries()].map(([name, value], index) => ({
+    name,
+    value,
+    fill: CHART_BLUE_PALETTE[index % CHART_BLUE_PALETTE.length],
+  }))
 
   return (
     <div className="space-y-6">
@@ -397,9 +412,9 @@ export function ExpenseDashboardPage() {
             <Card className="rounded-lg"><CardContent className="pt-4"><p className="text-sm text-muted-foreground">Medie comandă</p><p className="text-2xl font-semibold">{formatMoney(total / orders.length)}</p></CardContent></Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis /><ChartTooltip /><Line type="monotone" dataKey="amount" stroke="var(--primary)" /></LineChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" fill="var(--primary)" label /><ChartTooltip /></PieChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer><BarChart data={monthly.map((item) => ({ ...item, count: orders.filter((order) => order.createdAt.startsWith(item.month)).length }))}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis /><ChartTooltip /><Bar dataKey="count" fill="var(--primary)" /></BarChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /><Line type="monotone" dataKey="amount" stroke={CHART_BLUE_PALETTE[4]} strokeWidth={3} dot={{ fill: CHART_BLUE_PALETTE[3], stroke: CHART_BLUE_PALETTE[4] }} activeDot={{ r: 6, fill: CHART_BLUE_PALETTE[4] }} /></LineChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" label={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /></PieChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 640, height: 288 }}><BarChart data={monthlyOrderCounts}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_STYLE} itemStyle={CHART_TOOLTIP_STYLE} labelStyle={CHART_TOOLTIP_STYLE} /><Bar dataKey="count" fill={CHART_BLUE_PALETTE[2]} /></BarChart></ResponsiveContainer></CardContent></Card>
           </div>
         </>
       )}

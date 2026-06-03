@@ -14,7 +14,11 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { ApiErrorAlert, PageShell } from '@/components/app/PageState'
 import { authService } from '@/contracts/auth'
+import { cartService } from '@/contracts/cart'
+import { queryClient } from '@/config/queryClient'
+import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
+import { useCartStore } from '@/stores/cartStore'
 
 function resolveRedirectTo(locationState: unknown, params: URLSearchParams) {
   return (locationState as { redirectTo?: string } | null)?.redirectTo
@@ -55,7 +59,7 @@ const resetConfirmSchema = z.object({
   message: 'Parolele nu coincid',
 })
 
-function PasswordInput<T extends FieldValues>({ register, name }: { register: UseFormRegister<T>; name: Path<T> }) {
+function PasswordInput<T extends FieldValues>({ register, name }: Readonly<{ register: UseFormRegister<T>; name: Path<T> }>) {
   const [visible, setVisible] = useState(false)
   return (
     <div className="relative">
@@ -127,7 +131,24 @@ export function SignInPage() {
     mutationFn: authService.signIn,
     onSuccess: (response) => {
       setAuth(response)
+
       navigate(redirectTo ?? '/home', { replace: true, flushSync: true })
+
+      const userId = useAuthStore.getState().user?.userId
+      if (userId) {
+        void queryClient.fetchQuery({
+          queryKey: queryKeys.cart(userId),
+          queryFn: () => cartService.getMe(),
+          staleTime: 0,
+        })
+          .then((cart) => {
+            useCartStore.getState().syncFromCart(cart)
+          })
+          .catch(() => {
+            useCartStore.getState().clearCart()
+            toast.error('Sesiunea a fost pornită, dar coșul nu a putut fi sincronizat.')
+          })
+      }
     },
   })
 

@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -13,6 +14,9 @@ public interface CartInternalClient {
 
 	@GetMapping("/carts/me")
 	CartDto getCurrentCart(@RequestHeader("X-User-Id") String userId);
+
+	@DeleteMapping("/v1/carts/me")
+	void clearCurrentCart(@RequestHeader("X-User-Id") String userId);
 
 	record CartDto(
 			String id,
