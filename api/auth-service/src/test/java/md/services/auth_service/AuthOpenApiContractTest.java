@@ -34,6 +34,8 @@ class AuthOpenApiContractTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.paths['/sign-up'].post").exists())
 				.andExpect(jsonPath("$.paths['/sign-in'].post").exists())
+				.andExpect(jsonPath("$.paths['/password-reset/request'].post").exists())
+				.andExpect(jsonPath("$.paths['/password-reset/confirm'].post").exists())
 				.andExpect(jsonPath("$.paths['/token/refresh'].post").exists())
 				.andExpect(jsonPath("$.components.securitySchemes.bearerAuth.type").value("http"));
 	}

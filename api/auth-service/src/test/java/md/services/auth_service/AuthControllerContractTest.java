@@ -21,6 +21,8 @@ import md.services.auth_service.api.AuthIdentityDto;
 import md.services.auth_service.api.AuthSignInRequest;
 import md.services.auth_service.api.AuthSignUpRequest;
 import md.services.auth_service.api.AuthTokenResponse;
+import md.services.auth_service.api.PasswordResetConfirmRequest;
+import md.services.auth_service.api.PasswordResetRequest;
 import md.services.auth_service.exception.ApiExceptionHandler;
 import md.services.auth_service.exception.ConflictException;
 import md.services.auth_service.exception.UnauthorizedException;
@@ -46,15 +48,15 @@ class AuthControllerContractTest {
 				"auth-1", "customer@example.com", "ACTIVE", Instant.parse("2026-05-01T12:00:00Z")));
 
 		mockMvc.perform(post("/sign-up")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "firstName": "Ana",
-								  "lastName": "Popescu",
-								  "email": "customer@example.com",
-								  "password": "Password123!"
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "firstName": "Ana",
+						  "lastName": "Popescu",
+						  "email": "customer@example.com",
+						  "password": "Password123!"
+						}
+						"""))
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.id").value("auth-1"))
 				.andExpect(jsonPath("$.email").value("customer@example.com"))
@@ -67,13 +69,13 @@ class AuthControllerContractTest {
 				.thenReturn(new AuthTokenResponse("access-token", "refresh-token", 3600, "Bearer"));
 
 		mockMvc.perform(post("/sign-in")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "email": "customer@example.com",
-								  "password": "Password123!"
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "email": "customer@example.com",
+						  "password": "Password123!"
+						}
+						"""))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.accessToken").value("access-token"))
 				.andExpect(jsonPath("$.refreshToken").value("refresh-token"))
@@ -83,15 +85,15 @@ class AuthControllerContractTest {
 	@Test
 	void invalidSignUpPayloadReturnsProblemDetail() throws Exception {
 		mockMvc.perform(post("/sign-up")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "firstName": "",
-								  "lastName": "P",
-								  "email": "not-email",
-								  "password": "short"
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "firstName": "",
+						  "lastName": "P",
+						  "email": "not-email",
+						  "password": "short"
+						}
+						"""))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(400))
@@ -104,15 +106,15 @@ class AuthControllerContractTest {
 				.thenThrow(new ConflictException("Email address is already registered."));
 
 		mockMvc.perform(post("/sign-up")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "firstName": "Ana",
-								  "lastName": "Popescu",
-								  "email": "customer@example.com",
-								  "password": "Password123!"
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "firstName": "Ana",
+						  "lastName": "Popescu",
+						  "email": "customer@example.com",
+						  "password": "Password123!"
+						}
+						"""))
 				.andExpect(status().isConflict())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(409))
@@ -125,16 +127,41 @@ class AuthControllerContractTest {
 				.thenThrow(new UnauthorizedException("Email or password is incorrect."));
 
 		mockMvc.perform(post("/sign-in")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "email": "customer@example.com",
-								  "password": "Password123!"
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "email": "customer@example.com",
+						  "password": "Password123!"
+						}
+						"""))
 				.andExpect(status().isUnauthorized())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(401))
 				.andExpect(jsonPath("$.title").value("Authentication failed"));
+	}
+
+	@Test
+	void passwordResetRequestReturnsOkWithoutExposingAccountExistence() throws Exception {
+		mockMvc.perform(post("/password-reset/request")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "email": "customer@example.com"
+						}
+						"""))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void passwordResetConfirmReturnsOkForValidPayload() throws Exception {
+		mockMvc.perform(post("/password-reset/confirm")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "token": "reset-token",
+						  "newPassword": "Password123!"
+						}
+						"""))
+				.andExpect(status().isOk());
 	}
 }

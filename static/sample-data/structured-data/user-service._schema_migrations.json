@@ -4,7 +4,7 @@
             "$oid": "69f31c1f0ae24be315cedb68"
         },
         "version": "001",
-        "description": "Create user profile collection with canonical identity indexes.",
+        "description": "Creează colecția profiluri de utilizatori cu indexuri canonice de identitate.  ",
         "checksum": "157532c6ac05bbff797b55a356637fb217dd72e074c70d5de99b4807ba7e90a9",
         "appliedAt": {
             "$date": "2026-04-30T09:08:47.641Z"
@@ -15,7 +15,7 @@
             "$oid": "69f31c1f0ae24be315cedb69"
         },
         "version": "002",
-        "description": "Backfill active flag for existing user profile documents.",
+        "description": "Completează retroactiv câmpul activ pentru documentele existente din colecția profilurilor de utilizatori.",
         "checksum": "338844a37838f0aa55ad4f6114cb77487d46fb1564e8a41a48f8800d060b917d",
         "appliedAt": {
             "$date": "2026-04-30T09:08:47.961Z"

@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import md.services.notification_service.api.PasswordResetNotificationRequest;
 import md.services.notification_service.domain.OrderCreatedEvent;
 import md.services.notification_service.service.NotificationDispatchService;
 
@@ -50,6 +51,20 @@ class NotificationDispatchServiceTests {
 	}
 
 	@Test
+	void dispatchPasswordResetNotificationSendsMailWhenEnabled() {
+		NotificationDispatchService service = new NotificationDispatchService(
+				javaMailSender,
+				true,
+				"sales@example.com",
+				"app-password");
+
+		String status = service.dispatchPasswordResetNotification(samplePasswordResetRequest());
+
+		assertThat(status).isEqualTo("MAIL_SENT");
+		verify(javaMailSender).send(any(SimpleMailMessage.class));
+	}
+
+	@Test
 	void dispatchOrderCreatedNotificationFailsFastWhenSenderAddressMissing() {
 		assertThatThrownBy(() -> new NotificationDispatchService(javaMailSender, true, "", "app-password"))
 				.isInstanceOf(IllegalStateException.class)
@@ -63,6 +78,14 @@ class NotificationDispatchServiceTests {
 				.hasMessageContaining("spring.mail.password");
 	}
 
+	@Test
+	void dispatchOrderCreatedNotificationFailsFastWhenCredentialsExistButMailIsDisabled() {
+		assertThatThrownBy(
+				() -> new NotificationDispatchService(javaMailSender, false, "sales@example.com", "app-password"))
+				.isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("notification.mail.enabled must be true");
+	}
+
 	private OrderCreatedEvent sampleEvent() {
 		return new OrderCreatedEvent(
 				"evt-1",
@@ -72,6 +95,14 @@ class NotificationDispatchServiceTests {
 				new BigDecimal("2499.99"),
 				"EUR",
 				Instant.parse("2026-04-02T11:45:00Z"));
+	}
+
+	private PasswordResetNotificationRequest samplePasswordResetRequest() {
+		return new PasswordResetNotificationRequest(
+				"auth-1",
+				"customer@example.com",
+				"reset-token",
+				Instant.parse("2026-06-04T10:45:00Z"));
 	}
 
 }

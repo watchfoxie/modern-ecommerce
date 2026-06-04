@@ -5,6 +5,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import md.services.notification_service.api.PasswordResetNotificationRequest;
 import md.services.notification_service.domain.OrderCreatedEvent;
 
 @Service
@@ -13,7 +14,6 @@ public class NotificationDispatchService {
 	private final JavaMailSender javaMailSender;
 	private final boolean mailEnabled;
 	private final String senderAddress;
-	private final String senderPassword;
 
 	public NotificationDispatchService(JavaMailSender javaMailSender,
 			@Value("${notification.mail.enabled:false}") boolean mailEnabled,
@@ -22,7 +22,13 @@ public class NotificationDispatchService {
 		this.javaMailSender = javaMailSender;
 		this.mailEnabled = mailEnabled;
 		this.senderAddress = senderAddress;
-		this.senderPassword = senderPassword;
+
+		boolean senderConfigured = senderAddress != null && !senderAddress.isBlank();
+		boolean passwordConfigured = senderPassword != null && !senderPassword.isBlank();
+		if (!mailEnabled && senderConfigured && passwordConfigured) {
+			throw new IllegalStateException(
+					"notification.mail.enabled must be true when spring.mail.username and spring.mail.password are configured.");
+		}
 
 		if (mailEnabled) {
 			if (senderAddress == null || senderAddress.isBlank()) {
@@ -34,6 +40,33 @@ public class NotificationDispatchService {
 						"spring.mail.password must be configured when notification.mail.enabled=true.");
 			}
 		}
+	}
+
+	public String dispatchPasswordResetNotification(PasswordResetNotificationRequest request) {
+		if (!mailEnabled) {
+			return "MAIL_DISABLED";
+		}
+
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setFrom(senderAddress);
+		message.setTo(request.email());
+		message.setSubject("Password reset requested");
+		message.setText("""
+				We received a request to reset the password for your account.
+
+				Auth ID: %s
+				Reset token: %s
+				Expires at: %s
+
+				Use the token on the password reset page in modern-ecommerce.
+				If you did not request this change, you can ignore this email.
+				""".formatted(
+				request.authId(),
+				request.token(),
+				request.expiresAt()));
+
+		javaMailSender.send(message);
+		return "MAIL_SENT";
 	}
 
 	public String dispatchOrderCreatedNotification(OrderCreatedEvent event) {

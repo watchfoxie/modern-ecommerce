@@ -4,7 +4,7 @@
             "$oid": "69f31e9ae6dda8b960dba5bf"
         },
         "version": "001",
-        "description": "Create product collection with catalog, promotion, and search indexes.",
+        "description": "Creează colecția produse cu indexuri pentru catalog, promoții și căutare.",
         "checksum": "01a796046b96dcd247aad0bdede8363d5ec5c41c4c75692f6598ebcf8507d14c",
         "appliedAt": {
             "$date": "2026-04-30T09:19:22.194Z"
@@ -15,7 +15,7 @@
             "$oid": "69f31e9ae6dda8b960dba5c0"
         },
         "version": "002",
-        "description": "Normalize product monetary fields to Decimal128-compatible values.",
+        "description": "Normalizează câmpurile monetare ale produselor la valori compatibile cu Decimal128.",
         "checksum": "fe39040bbc42f9899be85973a923ade8046d7078fbc77c79e5c054ee5a43d253",
         "appliedAt": {
             "$date": "2026-04-30T09:19:22.638Z"
@@ -26,7 +26,7 @@
             "$oid": "6a10af86d20dde470d621ec5"
         },
         "version": "003",
-        "description": "Seed product sample data with slug-based upserts.",
+        "description": "Populează cu date de exemplu pentru produse, utilizând actualizări condiționate pe baza câmpului slug.",
         "checksum": "cb3e2a8bd5fe380c475dfe3c6044a03894ecafb7b2115f4b48b34c0af79c69b6",
         "appliedAt": {
             "$date": "2026-05-22T19:33:26.142Z"

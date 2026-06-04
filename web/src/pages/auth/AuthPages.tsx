@@ -37,17 +37,17 @@ function withRedirectTo(path: string, redirectTo: string | null) {
 const signUpSchema = z.object({
   firstName: z.string().min(2, 'Prenumele este obligatoriu'),
   lastName: z.string().min(2, 'Numele este obligatoriu'),
-  email: z.string().email('Email invalid'),
+  email: z.string().email({ message: 'Email invalid' }),
   password: z.string().min(8, 'Parola trebuie să aibă cel puțin 8 caractere'),
 })
 
 const signInSchema = z.object({
-  email: z.string().email('Email invalid'),
+  email: z.string().email({ message: 'Email invalid' }),
   password: z.string().min(1, 'Parola este obligatorie'),
 })
 
 const resetRequestSchema = z.object({
-  email: z.string().email('Email invalid'),
+  email: z.string().email({ message: 'Email invalid' }),
 })
 
 const resetConfirmSchema = z.object({
@@ -206,7 +206,7 @@ export function PasswordResetPage() {
   })
   const requestMutation = useMutation({
     mutationFn: authService.requestPasswordReset,
-    onSettled: () => setStep('confirm'),
+    onSuccess: () => setStep('confirm'),
   })
   const confirmMutation = useMutation({
     mutationFn: ({ token, newPassword }: z.infer<typeof resetConfirmSchema>) => authService.confirmPasswordReset({ token, newPassword }),
@@ -225,14 +225,17 @@ export function PasswordResetPage() {
         </CardHeader>
         <CardContent>
           {step === 'request' ? (
-            <form onSubmit={requestForm.handleSubmit((values) => requestMutation.mutate(values))} className="space-y-4">
-              <Field>
-                <FieldLabel>Email</FieldLabel>
-                <Input {...requestForm.register('email')} />
-                <FieldError>{requestForm.formState.errors.email?.message}</FieldError>
-              </Field>
-              <Button type="submit" className="w-full" disabled={requestMutation.isPending}>Solicită resetare</Button>
-            </form>
+            <div className="space-y-4">
+              {requestMutation.isError && <ApiErrorAlert error={requestMutation.error} />}
+              <form onSubmit={requestForm.handleSubmit((values) => requestMutation.mutate(values))} className="space-y-4">
+                <Field>
+                  <FieldLabel>Email</FieldLabel>
+                  <Input {...requestForm.register('email')} />
+                  <FieldError>{requestForm.formState.errors.email?.message}</FieldError>
+                </Field>
+                <Button type="submit" className="w-full" disabled={requestMutation.isPending}>Solicită resetare</Button>
+              </form>
+            </div>
           ) : (
             <form onSubmit={confirmForm.handleSubmit((values) => confirmMutation.mutate(values))} className="space-y-4">
               <Alert>

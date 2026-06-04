@@ -3,10 +3,10 @@
         "_id": {
             "$oid": "69e9f54f9ef154d26c17ef19"
         },
-        "name": "Electronics",
+        "name": "Electronice",
         "slug": "electronics",
         "parentId": null,
-        "description": "All electronic products available on modern e-commerce platform (smartphones and laptops)",
+        "description": "Toate produsele electronice disponibile pe o platformă modernă de comerț electronic (smartphone-uri și laptopuri).",
         "imageUrl": null,
         "displayOrder": 1,
         "isActive": true,
@@ -22,12 +22,12 @@
         "_id": {
             "$oid": "69e9f54f9ef154d26c17ef1a"
         },
-        "name": "Smartphones",
+        "name": "Smartphone-uri",
         "slug": "smartphones",
         "parentId": {
             "$oid": "69e9f54f9ef154d26c17ef19"
         },
-        "description": "All smartphone products available on modern e-commerce platform",
+        "description": "Toate produsele de tip smartphone disponibile pe o platformă modernă de comerț electronic.",
         "imageUrl": "static/assets/images/prod-images/categories-offers/generic-smartphones-1.png",
         "displayOrder": 2,
         "isActive": true,
@@ -43,12 +43,12 @@
         "_id": {
             "$oid": "69e9f54f9ef154d26c17ef1b"
         },
-        "name": "Laptops",
+        "name": "Laptop-uri",
         "slug": "laptops",
         "parentId": {
             "$oid": "69e9f54f9ef154d26c17ef19"
         },
-        "description": "All laptop products available on modern e-commerce platform",
+        "description": "Toate produsele de tip laptop disponibile pe o platformă modernă de comerț electronic.",
         "imageUrl": "static/assets/images/prod-images/categories-offers/generic-laptops-1.png",
         "displayOrder": 3,
         "isActive": true,
@@ -64,12 +64,12 @@
         "_id": {
             "$oid": "69e9f54f9ef154d26c17ef1c"
         },
-        "name": "Offers",
+        "name": "Oferte",
         "slug": "offers",
         "parentId": {
             "$oid": "69e9f54f9ef154d26c17ef19"
         },
-        "description": "Special offers and discounts on various products",
+        "description": "Oferte speciale și reduceri aplicate asupra diverselor produse.",
         "imageUrl": null,
         "displayOrder": 4,
         "isActive": true,

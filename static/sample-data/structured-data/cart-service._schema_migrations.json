@@ -4,7 +4,7 @@
             "$oid": "69f31e98872951e92b419124"
         },
         "version": "001",
-        "description": "Create cart collection with one-cart-per-user unique index.",
+        "description": "Creează colecția coșuri de cumpărături cu un index unic care asigură existența unui singur coș per utilizator.",
         "checksum": "7fd043659a221bf05ce3a27a2bee05f0876628422c9a1bd4600304bf705239b0",
         "appliedAt": {
             "$date": "2026-04-30T09:19:20.967Z"
@@ -15,7 +15,7 @@
             "$oid": "69f31e99872951e92b419125"
         },
         "version": "002",
-        "description": "Normalize embedded cart item priceAtAdd fields to Decimal128-compatible values.",
+        "description": "Normalizează câmpurile priceAtAdd ale elementelor din coș pentru a fi compatibile cu Decimal128.",
         "checksum": "72eab018cd5e9ac0e3a580dc082929007fc91a42f06a0732a0aec1d57f28b989",
         "appliedAt": {
             "$date": "2026-04-30T09:19:21.303Z"

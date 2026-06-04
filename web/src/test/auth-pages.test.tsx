@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { authService } from '@/contracts/auth'
 import { cartService } from '@/contracts/cart'
-import { SignInPage, SignUpPage } from '@/pages/auth/AuthPages'
+import { PasswordResetPage, SignInPage, SignUpPage } from '@/pages/auth/AuthPages'
 import { queryClient } from '@/config/queryClient'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -18,6 +18,8 @@ vi.mock('@/contracts/auth', async (importOriginal) => {
       ...actual.authService,
       signUp: vi.fn(),
       signIn: vi.fn(),
+      requestPasswordReset: vi.fn(),
+      confirmPasswordReset: vi.fn(),
     },
   }
 })
@@ -40,6 +42,8 @@ describe('SignInPage', () => {
   beforeEach(() => {
     mockedAuthService.signUp.mockReset()
     mockedAuthService.signIn.mockReset()
+    mockedAuthService.requestPasswordReset.mockReset()
+    mockedAuthService.confirmPasswordReset.mockReset()
     mockedCartService.getMe.mockReset()
     queryClient.clear()
   })
@@ -268,5 +272,54 @@ describe('SignUpPage', () => {
       'href',
       '/profile/sign-in?redirectTo=%2Fcart%3Fstep%3Ddelivery',
     )
+  })
+})
+
+describe('PasswordResetPage', () => {
+  beforeEach(() => {
+    mockedAuthService.requestPasswordReset.mockReset()
+    mockedAuthService.confirmPasswordReset.mockReset()
+    queryClient.clear()
+  })
+
+  it('moves to the confirmation step only after a successful password reset request', async () => {
+    const user = userEvent.setup()
+    mockedAuthService.requestPasswordReset.mockResolvedValue()
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/password-reset" element={<PasswordResetPage />} />
+      </Routes>,
+      { route: '/profile/password-reset' },
+    )
+
+    await user.type(screen.getByRole('textbox'), 'customer@example.com')
+    await user.click(screen.getByRole('button', { name: 'Solicită resetare' }))
+
+    expect(mockedAuthService.requestPasswordReset).toHaveBeenCalledWith(
+      { email: 'customer@example.com' },
+      expect.anything(),
+    )
+    expect(await screen.findByText('Verificați emailul')).toBeInTheDocument()
+  })
+
+  it('stays on the request step and shows the operational error when the request fails', async () => {
+    const user = userEvent.setup()
+    mockedAuthService.requestPasswordReset.mockRejectedValue(new Error('Notification service unavailable'))
+
+    renderWithProviders(
+      <Routes>
+        <Route path="/profile/password-reset" element={<PasswordResetPage />} />
+      </Routes>,
+      { route: '/profile/password-reset' },
+    )
+
+    await user.type(screen.getByRole('textbox'), 'customer@example.com')
+    await user.click(screen.getByRole('button', { name: 'Solicită resetare' }))
+
+    expect(await screen.findByText('Request failed')).toBeInTheDocument()
+    expect(screen.getByText('Notification service unavailable')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Solicită resetare' })).toBeInTheDocument()
+    expect(screen.queryByText('Verificați emailul')).not.toBeInTheDocument()
   })
 })

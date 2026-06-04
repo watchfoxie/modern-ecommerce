@@ -30,6 +30,7 @@ class NotificationOpenApiContractTest {
 	void apiDocsHideInternalNotificationDiagnostics() throws Exception {
 		mockMvc.perform(get("/v3/api-docs"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.paths['/internal/notifications']").doesNotExist());
+				.andExpect(jsonPath("$.paths['/internal/notifications']").doesNotExist())
+				.andExpect(jsonPath("$.paths['/internal/notifications/password-reset']").doesNotExist());
 	}
 }

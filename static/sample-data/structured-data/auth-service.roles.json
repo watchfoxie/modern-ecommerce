@@ -4,7 +4,7 @@
             "$oid": "69f120f201ae28f988119e74"
         },
         "name": "ROLE_USER",
-        "description": "Authenticated customer role.",
+        "description": "Rolul client autentificat.",
         "createdAt": {
             "$date": "2026-04-28T21:04:50.559Z"
         },
@@ -15,7 +15,7 @@
             "$oid": "69f120f201ae28f988119e75"
         },
         "name": "ROLE_ADMIN",
-        "description": "Administrator role for catalog and order management.",
+        "description": "Rolul administrator pentru gestionarea catalogului și a comenzilor.",
         "createdAt": {
             "$date": "2026-04-28T21:04:50.850Z"
         },
