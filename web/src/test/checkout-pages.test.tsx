@@ -2,9 +2,10 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Route, Routes } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
+import type { PagedResponseDto } from '@/contracts/common'
 import { DeliveryPage, PayPage } from '@/pages/cart/CheckoutPages'
 import { cartService } from '@/contracts/cart'
-import { orderService } from '@/contracts/order'
+import { orderService, type OrderDto } from '@/contracts/order'
 import { userService } from '@/contracts/user'
 import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
@@ -218,6 +219,24 @@ describe('PayPage', () => {
                 },
             ],
         })
+        queryClient.setQueryData<PagedResponseDto<OrderDto>>(queryKeys.orders('user-1', 0), {
+            data: [],
+            page: 0,
+            size: 10,
+            totalElements: 0,
+            totalPages: 0,
+            first: true,
+            last: true,
+        })
+        queryClient.setQueryData<PagedResponseDto<OrderDto>>(queryKeys.ordersDashboard('user-1'), {
+            data: [],
+            page: 0,
+            size: 100,
+            totalElements: 0,
+            totalPages: 0,
+            first: true,
+            last: true,
+        })
         mockedCartService.getMe.mockResolvedValue({
             id: 'cart-1',
             userId: 'user-1',
@@ -260,5 +279,7 @@ describe('PayPage', () => {
 
         expect(queryClient.getQueryData(queryKeys.cart('user-1'))).toMatchObject({ items: [] })
         expect(useCartStore.getState().items).toEqual([])
+        expect(queryClient.getQueryState(queryKeys.orders('user-1', 0))?.isInvalidated).toBe(true)
+        expect(queryClient.getQueryState(queryKeys.ordersDashboard('user-1'))?.isInvalidated).toBe(true)
     })
 })

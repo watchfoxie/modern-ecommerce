@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ComponentPropsWithoutRef } from 'react'
 import { Link, Navigate, NavLink, Outlet } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -55,6 +55,10 @@ const addressSchema = z.object({
 
 const CHART_BLUE_PALETTE = ['#aaf2ff', '#80ebff', '#00ddff', '#00b3f4', '#0090ed'] as const
 const CHART_TEXT_COLOR = 'var(--foreground)'
+const PIE_LABEL_TEXT_COLOR = '#000000'
+const PIE_LABEL_HORIZONTAL_PADDING = 12
+const LINE_Y_AXIS_WIDTH = 92
+const BAR_Y_AXIS_WIDTH = 48
 const CHART_TOOLTIP_CONTENT_STYLE = {
   backgroundColor: 'var(--popover)',
   borderColor: 'var(--border)',
@@ -64,8 +68,53 @@ const CHART_TOOLTIP_TEXT_STYLE = {
   color: CHART_TEXT_COLOR,
 }
 
-function useProfileQuery() {
-  return useQuery({ queryKey: queryKeys.profile, queryFn: () => userService.getMe() })
+function formatChartMoney(value: number | string) {
+  return formatMoney(value)
+}
+
+function estimateSvgTextWidth(text: string) {
+  return text.length * 7.2
+}
+
+function renderDistributionLabel({
+  name,
+  value,
+  ...labelProps
+}: {
+  name?: string
+  value?: number | string
+  x?: number | string
+  textAnchor?: string
+  cx?: number | string
+} & ComponentPropsWithoutRef<'text'>) {
+  const labelText = `${name ?? ''}: ${formatChartMoney(typeof value === 'number' || typeof value === 'string' ? value : 0)}`
+  const numericX = typeof labelProps.x === 'number' ? labelProps.x : Number(labelProps.x ?? 0)
+  const numericCx = typeof labelProps.cx === 'number' ? labelProps.cx : Number(labelProps.cx ?? 0)
+  const estimatedWidth = estimateSvgTextWidth(labelText)
+  const chartWidth = numericCx > 0 ? numericCx * 2 : 320
+  let adjustedX = numericX
+
+  if (labelProps.textAnchor === 'end') {
+    adjustedX = Math.max(numericX, estimatedWidth + PIE_LABEL_HORIZONTAL_PADDING)
+  }
+
+  if (labelProps.textAnchor === 'start') {
+    adjustedX = Math.min(numericX, chartWidth - estimatedWidth - PIE_LABEL_HORIZONTAL_PADDING)
+  }
+
+  return (
+    <text {...labelProps} x={adjustedX} fill={PIE_LABEL_TEXT_COLOR}>
+      {labelText}
+    </text>
+  )
+}
+
+function useProfileQuery(userId?: string | null) {
+  return useQuery({
+    queryKey: queryKeys.profile(userId),
+    queryFn: () => userService.getMe(),
+    enabled: Boolean(userId),
+  })
 }
 
 export function ProfileLandingPage() {
@@ -74,7 +123,8 @@ export function ProfileLandingPage() {
 }
 
 export function AccountLayout() {
-  const profileQuery = useProfileQuery()
+  const userId = useAuthStore((state) => state.user?.userId)
+  const profileQuery = useProfileQuery(userId)
   const hasAdminRole = useAuthStore((state) => state.hasRole('ROLE_ADMIN'))
 
   const navigationItems = [
@@ -134,8 +184,9 @@ export function AccountOverviewPage() {
 }
 
 export function PersonalPage() {
+  const userId = useAuthStore((state) => state.user?.userId)
   const queryClient = useQueryClient()
-  const profileQuery = useProfileQuery()
+  const profileQuery = useProfileQuery(userId)
   const [editingAddress, setEditingAddress] = useState<{ index: number | null; values: UpsertUserAddressRequest } | null>(null)
   const profileForm = useForm<z.infer<typeof profileSchema>>({ resolver: zodResolver(profileSchema) })
   const addressForm = useForm<z.infer<typeof addressSchema>>({
@@ -173,7 +224,7 @@ export function PersonalPage() {
         birthDate: values.birthDate || null,
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
       toast.success('Profil actualizat')
     },
   })
@@ -185,7 +236,7 @@ export function PersonalPage() {
         : userService.updateAddress(editingAddress!.index, { ...values, label: values.label || null, postalCode: values.postalCode || null }),
     onSuccess: () => {
       setEditingAddress(null)
-      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
       toast.success('Adresa a fost salvată')
     },
   })
@@ -193,7 +244,7 @@ export function PersonalPage() {
   const deleteAddress = useMutation({
     mutationFn: (index: number) => userService.deleteAddress(index),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
       toast.success('Adresa a fost ștearsă')
     },
   })
@@ -285,10 +336,12 @@ export function PersonalPage() {
 }
 
 export function OrderHistoryPage() {
+  const userId = useAuthStore((state) => state.user?.userId)
   const [page, setPage] = useState(0)
   const ordersQuery = useQuery({
-    queryKey: queryKeys.orders(page),
+    queryKey: queryKeys.orders(userId, page),
     queryFn: () => orderService.listMine({ page, size: 10, sort: 'createdAt', direction: 'desc' }),
+    enabled: Boolean(userId),
   })
 
   return (
@@ -364,9 +417,11 @@ function OrderDialog({ order }: Readonly<{ order: OrderDto }>) {
 }
 
 export function ExpenseDashboardPage() {
+  const userId = useAuthStore((state) => state.user?.userId)
   const ordersQuery = useQuery({
-    queryKey: queryKeys.ordersDashboard,
+    queryKey: queryKeys.ordersDashboard(userId),
     queryFn: () => orderService.listMine({ page: 0, size: 100, sort: 'createdAt', direction: 'desc' }),
+    enabled: Boolean(userId),
   })
   const orders = ordersQuery.data?.data ?? []
   const total = orders.reduce((sum, order) => sum + Number(order.totalAmount), 0)
@@ -417,9 +472,9 @@ export function ExpenseDashboardPage() {
             <Card className="rounded-lg"><CardContent className="pt-4"><p className="text-sm text-muted-foreground">Medie comandă</p><p className="text-2xl font-semibold">{formatMoney(total / orders.length)}</p></CardContent></Card>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /><Line type="monotone" dataKey="amount" stroke={CHART_BLUE_PALETTE[4]} strokeWidth={3} dot={{ fill: CHART_BLUE_PALETTE[3], stroke: CHART_BLUE_PALETTE[4] }} activeDot={{ r: 6, fill: CHART_BLUE_PALETTE[4] }} /></LineChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" label={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /></PieChart></ResponsiveContainer></CardContent></Card>
-            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 640, height: 288 }}><BarChart data={monthlyOrderCounts}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /><Bar dataKey="count" fill={CHART_BLUE_PALETTE[2]} /></BarChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Cheltuieli lunare</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><LineChart data={monthly}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis width={LINE_Y_AXIS_WIDTH} tick={{ fill: CHART_TEXT_COLOR }} tickFormatter={formatChartMoney} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} formatter={(value) => formatChartMoney(typeof value === 'number' || typeof value === 'string' ? value : 0)} /><Line type="monotone" dataKey="amount" stroke={CHART_BLUE_PALETTE[4]} strokeWidth={3} dot={{ fill: CHART_BLUE_PALETTE[3], stroke: CHART_BLUE_PALETTE[4] }} activeDot={{ r: 6, fill: CHART_BLUE_PALETTE[4] }} /></LineChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg"><CardHeader><CardTitle>Distribuție</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 320, height: 288 }}><PieChart><Pie data={byCategory} dataKey="value" nameKey="name" label={renderDistributionLabel} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} formatter={(value) => formatChartMoney(typeof value === 'number' || typeof value === 'string' ? value : 0)} /></PieChart></ResponsiveContainer></CardContent></Card>
+            <Card className="rounded-lg lg:col-span-2"><CardHeader><CardTitle>Număr comenzi</CardTitle></CardHeader><CardContent className="h-72"><ResponsiveContainer initialDimension={{ width: 640, height: 288 }}><BarChart data={monthlyOrderCounts}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="month" /><YAxis width={BAR_Y_AXIS_WIDTH} tick={{ fill: CHART_TEXT_COLOR }} /><ChartTooltip contentStyle={CHART_TOOLTIP_CONTENT_STYLE} itemStyle={CHART_TOOLTIP_TEXT_STYLE} labelStyle={CHART_TOOLTIP_TEXT_STYLE} /><Bar dataKey="count" fill={CHART_BLUE_PALETTE[2]} /></BarChart></ResponsiveContainer></CardContent></Card>
           </div>
         </>
       )}

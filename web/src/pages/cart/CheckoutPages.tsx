@@ -83,7 +83,7 @@ export function DeliveryPage() {
   const saved = useCheckoutStore((state) => state.deliveryAddress)
   const setDeliveryAddress = useCheckoutStore((state) => state.setDeliveryAddress)
   const profileQuery = useQuery({
-    queryKey: queryKeys.profile,
+    queryKey: queryKeys.profile(userId),
     queryFn: () => userService.getMe(),
     enabled: Boolean(userId),
   })
@@ -137,7 +137,7 @@ export function PersonalDataPage() {
   const setContact = useCheckoutStore((state) => state.setContact)
   const saved = useCheckoutStore((state) => state.contact)
   const profileQuery = useQuery({
-    queryKey: queryKeys.profile,
+    queryKey: queryKeys.profile(userId),
     queryFn: () => userService.getMe(),
     enabled: Boolean(userId),
   })
@@ -216,7 +216,7 @@ export function PayPage() {
       clearLocalCart()
       resetCheckout()
       navigate('/profile/account/order-history', { flushSync: true })
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders(userId).slice(0, 2) })
       toast.success(`Comanda ${response.orderNumber} a fost acceptată`)
     },
   })

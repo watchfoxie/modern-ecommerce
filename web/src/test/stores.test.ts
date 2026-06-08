@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { CartDto } from '@/contracts/cart'
+import { queryClient } from '@/config/queryClient'
 import { clearSessionState } from '@/lib/session'
+import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useCheckoutStore } from '@/stores/checkoutStore'
@@ -133,11 +135,15 @@ describe('Zustand stores', () => {
       street: 'Stefan cel Mare 1',
       postalCode: null,
     })
+    queryClient.setQueryData(queryKeys.profile('user-1'), { email: 'customer@example.com' })
+    queryClient.setQueryData(queryKeys.orders('user-1', 0), { data: [] })
 
     clearSessionState()
 
     expect(useAuthStore.getState().accessToken).toBeNull()
     expect(useCartStore.getState().items).toEqual([])
     expect(useCheckoutStore.getState().deliveryAddress).toBeNull()
+    expect(queryClient.getQueryState(queryKeys.profile('user-1'))).toBeUndefined()
+    expect(queryClient.getQueryState(queryKeys.orders('user-1', 0))).toBeUndefined()
   })
 })
