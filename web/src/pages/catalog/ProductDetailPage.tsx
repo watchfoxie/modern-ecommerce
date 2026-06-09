@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Minus, Plus, ShoppingCart, Tag } from 'lucide-react'
 import { toast } from 'sonner'
@@ -16,7 +16,7 @@ import { ApiErrorAlert, EmptyState, PageShell, LoadingRows } from '@/components/
 import { cartService } from '@/contracts/cart'
 import { productService } from '@/contracts/product'
 import { assetUrl } from '@/lib/assets'
-import { discountPercent, formatMoney } from '@/lib/format'
+import { discountPercent, formatMoney, hasActivePromotion } from '@/lib/format'
 import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -33,7 +33,15 @@ function categoryListHref(categorySlug: string) {
   return '/categories'
 }
 
-export default function ProductDetailPage({ promotional = false }: { promotional?: boolean }) {
+function canonicalProductHref(categorySlug: string, productSlug: string) {
+  if (categorySlug === 'laptops' || categorySlug === 'smartphones') {
+    return `/categories/${categorySlug}/${productSlug}`
+  }
+
+  return `/categories/${productSlug}`
+}
+
+export default function ProductDetailPage({ promotional = false }: Readonly<{ promotional?: boolean }>) {
   const { slug = '', productId = '' } = useParams()
   const productSlug = slug || productId
   const navigate = useNavigate()
@@ -51,11 +59,13 @@ export default function ProductDetailPage({ promotional = false }: { promotional
 
   const product = productQuery.data
   const imageUrls = product?.imageUrls.map(assetUrl) ?? []
-  const effectivePrice = Number(product?.promotionalPrice ?? product?.price ?? 0)
   const basePrice = Number(product?.price ?? 0)
+  const promotionActive = hasActivePromotion(basePrice, product?.promotionalPrice ?? null)
+  const effectivePrice = Number(promotionActive ? product?.promotionalPrice ?? 0 : basePrice)
   const discount = discountPercent(Number(product?.price), product?.promotionalPrice ? Number(product.promotionalPrice) : null)
   const totalEffectivePrice = effectivePrice * quantity
   const totalBasePrice = basePrice * quantity
+  const maxQuantity = Math.max(product?.stock ?? 0, 1)
 
   const addMutation = useMutation({
     mutationFn: () =>
@@ -79,7 +89,7 @@ export default function ProductDetailPage({ promotional = false }: { promotional
 
   const addToCart = () => {
     if (!isAuthenticated) {
-      navigate('/profile/sign-in', { state: { redirectTo: window.location.pathname } })
+      navigate('/profile/sign-in', { state: { redirectTo: globalThis.location.pathname } })
       return
     }
     addMutation.mutate()
@@ -117,6 +127,10 @@ export default function ProductDetailPage({ promotional = false }: { promotional
     )
   }
 
+  if (promotional && !promotionActive) {
+    return <Navigate to={canonicalProductHref(product.categorySlug, product.slug)} replace />
+  }
+
   return (
     <PageShell>
       <Button asChild variant="ghost" className="mb-5">
@@ -126,7 +140,7 @@ export default function ProductDetailPage({ promotional = false }: { promotional
         </Link>
       </Button>
 
-      {promotional && product.promotionalPrice && (
+      {promotional && promotionActive && (
         <Alert className="mb-6 border-destructive/20 bg-destructive/10 text-destructive">
           <Tag />
           <AlertTitle>Produs în ofertă specială</AlertTitle>
@@ -159,7 +173,7 @@ export default function ProductDetailPage({ promotional = false }: { promotional
           </div>
 
           <div className="space-y-2">
-            {product.promotionalPrice ? (
+            {promotionActive && product.promotionalPrice ? (
               <div className="flex flex-wrap items-end gap-3">
                 <span className="text-3xl font-semibold text-destructive">{formatMoney(totalEffectivePrice, product.currency)}</span>
                 <span className="text-lg text-muted-foreground line-through">{formatMoney(totalBasePrice, product.currency)}</span>
@@ -181,13 +195,13 @@ export default function ProductDetailPage({ promotional = false }: { promotional
             </Button>
             <Input
               className="w-20 text-center"
-              type="number"
-              min={1}
-              max={product.stock}
+              type="text"
+              inputMode="numeric"
+              readOnly
+              aria-label="Cantitate selectată"
               value={quantity}
-              onChange={(event) => setQuantity(Math.max(1, Math.min(product.stock, Number(event.target.value) || 1)))}
             />
-            <Button type="button" variant="outline" size="icon" onClick={() => setQuantity((value) => Math.min(product.stock, value + 1))}>
+            <Button type="button" variant="outline" size="icon" onClick={() => setQuantity((value) => Math.min(maxQuantity, value + 1))}>
               <Plus />
               <span className="sr-only">Crește cantitatea</span>
             </Button>

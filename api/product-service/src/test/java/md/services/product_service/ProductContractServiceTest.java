@@ -28,6 +28,7 @@ import md.services.product_service.api.ProductDto;
 import md.services.product_service.api.ProductUpsertRequest;
 import md.services.product_service.domain.ProductDocument;
 import md.services.product_service.exception.DuplicateResourceException;
+import md.services.product_service.exception.ProductValidationException;
 import md.services.product_service.exception.ResourceNotFoundException;
 import md.services.product_service.repository.ProductRepository;
 import md.services.product_service.service.ProductContractService;
@@ -61,7 +62,7 @@ class ProductContractServiceTest {
 	@Test
 	void createsProductWhenSlugIsUnique() {
 		when(productRepository.existsBySlug("phone")).thenReturn(false);
-		when(productRepository.save(any(ProductDocument.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(productRepository.save(any(ProductDocument.class))).thenAnswer(ProductContractServiceTest::savedProduct);
 
 		productContractService.createProduct(request("phone"));
 
@@ -73,10 +74,34 @@ class ProductContractServiceTest {
 	}
 
 	@Test
+	void normalizesPromotionalPriceWhenItMatchesStandardPrice() {
+		when(productRepository.existsBySlug("phone")).thenReturn(false);
+		when(productRepository.save(any(ProductDocument.class))).thenAnswer(ProductContractServiceTest::savedProduct);
+
+		productContractService.createProduct(request("phone", "laptops", BigDecimal.TEN));
+
+		ArgumentCaptor<ProductDocument> productCaptor = ArgumentCaptor.forClass(ProductDocument.class);
+		verify(productRepository).save(productCaptor.capture());
+		assertThat(productCaptor.getValue().categorySlug()).isEqualTo("laptops");
+		assertThat(productCaptor.getValue().promotionalPrice()).isNull();
+	}
+
+	@Test
+	void rejectsOffersAsPersistentProductCategory() {
+		ProductUpsertRequest invalidRequest = request("phone", "offers", new BigDecimal("9.99"));
+
+		assertThatThrownBy(() -> productContractService.createProduct(invalidRequest))
+				.isInstanceOf(ProductValidationException.class)
+				.hasMessageContaining("categorySlug");
+		verify(productRepository, never()).save(any());
+	}
+
+	@Test
 	void rejectsDuplicateSlugOnCreate() {
 		when(productRepository.existsBySlug("phone")).thenReturn(true);
+		ProductUpsertRequest duplicateRequest = request("phone");
 
-		assertThatThrownBy(() -> productContractService.createProduct(request("phone")))
+		assertThatThrownBy(() -> productContractService.createProduct(duplicateRequest))
 				.isInstanceOf(DuplicateResourceException.class);
 		verify(productRepository, never()).save(any());
 	}
@@ -90,20 +115,24 @@ class ProductContractServiceTest {
 	}
 
 	private ProductUpsertRequest request(String slug) {
+		return request(slug, "smartphones", null);
+	}
+
+	private ProductUpsertRequest request(String slug, String categorySlug, BigDecimal promotionalPrice) {
 		return new ProductUpsertRequest(
 				"category-1",
-				"phones",
+				categorySlug,
 				"Phone",
 				slug,
 				"Brand",
 				"Model",
 				"MD",
 				BigDecimal.TEN,
-				null,
+				promotionalPrice,
 				"MDL",
 				5,
 				List.of("https://example.test/phone.png"),
-				Map.of("screen", "6.1"),
+				Map.of("screenSize", "6.1"),
 				true);
 	}
 
@@ -112,7 +141,7 @@ class ProductContractServiceTest {
 		return new ProductDocument(
 				id,
 				"category-1",
-				"phones",
+				"smartphones",
 				"Phone",
 				slug,
 				"Brand",
@@ -123,10 +152,14 @@ class ProductContractServiceTest {
 				"MDL",
 				5,
 				List.of("https://example.test/phone.png"),
-				Map.of("screen", "6.1"),
+				Map.of("screenSize", "6.1"),
 				active,
 				now,
 				now);
+	}
+
+	private static ProductDocument savedProduct(org.mockito.invocation.InvocationOnMock invocation) {
+		return invocation.getArgument(0);
 	}
 
 }

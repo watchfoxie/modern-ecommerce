@@ -26,6 +26,7 @@ import md.services.product_service.api.ProductDto;
 import md.services.product_service.api.ProductUpsertRequest;
 import md.services.product_service.exception.ApiExceptionHandler;
 import md.services.product_service.exception.DuplicateResourceException;
+import md.services.product_service.exception.ProductValidationException;
 import md.services.product_service.exception.ResourceNotFoundException;
 import md.services.product_service.service.ProductContractService;
 
@@ -62,15 +63,16 @@ class ProductControllerContractTest {
 				.thenReturn(new PagedResponseDto<>(List.of(product()), 0, 12, 1, 1, true, true));
 
 		mockMvc.perform(get("/v1/products")
-						.param("categorySlug", "smartphones")
-						.param("hasPromotion", "true"))
+				.param("categorySlug", "smartphones")
+				.param("hasPromotion", "true"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.data[0].slug").value("phone-pro"));
 	}
 
 	@Test
 	void missingProductReturnsNotFoundProblemDetail() throws Exception {
-		when(productContractService.getProduct("missing")).thenThrow(new ResourceNotFoundException("Product was not found."));
+		when(productContractService.getProduct("missing"))
+				.thenThrow(new ResourceNotFoundException("Product was not found."));
 
 		mockMvc.perform(get("/products/missing"))
 				.andExpect(status().isNotFound())
@@ -84,33 +86,63 @@ class ProductControllerContractTest {
 				.thenThrow(new DuplicateResourceException("Product slug already exists."));
 
 		mockMvc.perform(post("/products")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "categoryId": "cat-1",
-								  "categorySlug": "smartphones",
-								  "name": "Phone Pro",
-								  "slug": "phone-pro",
-								  "brand": "Modern",
-								  "model": "Pro",
-								  "country": "Moldova",
-								  "price": 1000,
-								  "currency": "MDL",
-								  "stock": 4,
-								  "imageUrls": ["/static/assets/images/prod-images/products/phone.png"],
-								  "specs": {"memory": "256GB"},
-								  "isActive": true
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "categoryId": "cat-1",
+						  "categorySlug": "smartphones",
+						  "name": "Phone Pro",
+						  "slug": "phone-pro",
+						  "brand": "Modern",
+						  "model": "Pro",
+						  "country": "Moldova",
+						  "price": 1000,
+						  "currency": "MDL",
+						  "stock": 4,
+						  "imageUrls": ["/static/assets/images/prod-images/products/phone.png"],
+						  "specs": {"memory": "256GB"},
+						  "isActive": true
+						}
+						"""))
 				.andExpect(status().isConflict())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(409));
+	}
+
+	@Test
+	void invalidProductCategoryReturnsBadRequestProblemDetail() throws Exception {
+		when(productContractService.createProduct(any(ProductUpsertRequest.class)))
+				.thenThrow(new ProductValidationException("categorySlug: Categoria produsului este invalidă."));
+
+		mockMvc.perform(post("/products")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "categoryId": "cat-1",
+						  "categorySlug": "offers",
+						  "name": "Phone Pro",
+						  "slug": "phone-pro",
+						  "brand": "Modern",
+						  "model": "Pro",
+						  "country": "Moldova",
+						  "price": 1000,
+						  "currency": "MDL",
+						  "stock": 4,
+						  "imageUrls": ["/static/assets/images/prod-images/products/phone.png"],
+						  "specs": {"screenSize": "256GB"},
+						  "isActive": true
+						}
+						"""))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.status").value(400));
 	}
 
 	private ProductDto product() {
 		Instant now = Instant.parse("2026-05-01T12:00:00Z");
 		return new ProductDto("prod-1", "cat-1", "smartphones", "Phone Pro", "phone-pro", "Modern", "Pro",
 				"Moldova", new BigDecimal("1000.00"), new BigDecimal("900.00"), "MDL", 4,
-				List.of("/static/assets/images/prod-images/products/phone.png"), Map.of("memory", "256GB"), true, now, now);
+				List.of("/static/assets/images/prod-images/products/phone.png"), Map.of("memory", "256GB"), true, now,
+				now);
 	}
 }

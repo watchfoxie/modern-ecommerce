@@ -10,21 +10,21 @@ import { Spinner } from '@/components/ui/spinner'
 import type { ProductDto } from '@/contracts/product'
 import { cartService } from '@/contracts/cart'
 import { firstAsset } from '@/lib/assets'
-import { discountPercent, formatMoney } from '@/lib/format'
+import { discountPercent, formatMoney, hasActivePromotion } from '@/lib/format'
 import { queryKeys } from '@/lib/queryKeys'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 
 function productHref(product: ProductDto) {
   const categoryRoute = product.categorySlug === 'laptops' || product.categorySlug === 'smartphones' ? product.categorySlug : null
-  if (product.promotionalPrice) {
+  if (hasActivePromotion(product.price, product.promotionalPrice ?? null)) {
     return categoryRoute ? `/categories/offers/${categoryRoute}/${product.slug}` : `/categories/offers/${product.slug}`
   }
 
   return categoryRoute ? `/categories/${categoryRoute}/${product.slug}` : `/categories/${product.slug}`
 }
 
-export function ProductCard({ product, compact = false }: { product: ProductDto; compact?: boolean }) {
+export function ProductCard({ product, compact = false }: Readonly<{ product: ProductDto; compact?: boolean }>) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated())
@@ -33,7 +33,8 @@ export function ProductCard({ product, compact = false }: { product: ProductDto;
   const optimisticAdd = useCartStore((state) => state.applyOptimisticItem)
   const restoreOptimisticItems = useCartStore((state) => state.replaceOptimisticItems)
   const imageUrl = firstAsset(product.imageUrls)
-  const effectivePrice = Number(product.promotionalPrice ?? product.price)
+  const promotionActive = hasActivePromotion(product.price, product.promotionalPrice ?? null)
+  const effectivePrice = Number(promotionActive ? product.promotionalPrice : product.price)
   const discount = discountPercent(Number(product.price), product.promotionalPrice ? Number(product.promotionalPrice) : null)
 
   const addMutation = useMutation({
@@ -47,7 +48,7 @@ export function ProductCard({ product, compact = false }: { product: ProductDto;
           imageUrl,
           categorySlug: product.categorySlug,
         },
-    }),
+      }),
     onMutate: () => {
       const previousItems = useCartStore.getState().items
       optimisticAdd({
@@ -109,7 +110,7 @@ export function ProductCard({ product, compact = false }: { product: ProductDto;
           </p>
         )}
         <div className="mt-auto">
-          {product.promotionalPrice ? (
+          {promotionActive && product.promotionalPrice ? (
             <div className="flex flex-wrap items-baseline gap-2">
               <span className="font-semibold text-destructive">{formatMoney(product.promotionalPrice, product.currency)}</span>
               <span className="text-sm text-muted-foreground line-through">{formatMoney(product.price, product.currency)}</span>

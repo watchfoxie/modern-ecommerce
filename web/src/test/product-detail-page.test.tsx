@@ -74,5 +74,38 @@ describe('ProductDetailPage', () => {
 
         expect(screen.getByText(hasFormattedMoney(750, 'MDL'))).toBeInTheDocument()
         expect(screen.getByText('Total pentru 1 unitate')).toBeInTheDocument()
+        expect(screen.getByRole('textbox', { name: 'Cantitate selectată' })).toHaveAttribute('readonly')
+    })
+
+    it('redirects promotional routes back to the canonical product route when no active discount exists', async () => {
+        mockedProductService.getBySlug.mockResolvedValue({
+            id: 'product-2',
+            categoryId: 'cat-2',
+            categorySlug: 'laptops',
+            slug: 'matebook-d-16-2024',
+            name: 'MateBook D 16 (2024)',
+            brand: 'Huawei',
+            model: 'MateBook D 16',
+            country: 'China',
+            price: 28357.73,
+            promotionalPrice: null,
+            currency: 'MDL',
+            stock: 60,
+            imageUrls: [],
+            specs: { screenSize: '16 inch' },
+            isActive: true,
+            createdAt: '2026-06-01T10:00:00Z',
+            updatedAt: '2026-06-01T10:00:00Z',
+        })
+
+        renderWithProviders(
+            <Routes>
+                <Route path="/categories/offers/laptops/:productId" element={<ProductDetailPage promotional />} />
+                <Route path="/categories/laptops/:productId" element={<div>canonical route reached</div>} />
+            </Routes>,
+            { route: '/categories/offers/laptops/matebook-d-16-2024' },
+        )
+
+        expect(await screen.findByText('canonical route reached')).toBeInTheDocument()
     })
 })

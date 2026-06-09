@@ -29,6 +29,10 @@ export function discountPercent(price?: number | null, promotionalPrice?: number
   return Math.round((1 - promotionalPrice / price) * 100)
 }
 
+export function hasActivePromotion(price?: number | null, promotionalPrice?: number | null) {
+  return Boolean(price && promotionalPrice && promotionalPrice > 0 && promotionalPrice < price)
+}
+
 export function orderStatusLabel(status: string) {
   const labels: Record<string, string> = {
     CREATED: 'Creată',

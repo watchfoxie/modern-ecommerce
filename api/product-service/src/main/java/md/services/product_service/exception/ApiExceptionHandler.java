@@ -22,6 +22,11 @@ public class ApiExceptionHandler {
 		return problem(HttpStatus.BAD_REQUEST, "Validation failed", detail);
 	}
 
+	@ExceptionHandler(ProductValidationException.class)
+	ProblemDetail handleProductValidation(ProductValidationException exception) {
+		return problem(HttpStatus.BAD_REQUEST, "Validation failed", exception.getMessage());
+	}
+
 	@ExceptionHandler(ResourceNotFoundException.class)
 	ProblemDetail handleResourceNotFound(ResourceNotFoundException exception) {
 		return problem(HttpStatus.NOT_FOUND, "Resource not found", exception.getMessage());

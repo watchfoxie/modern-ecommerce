@@ -21,23 +21,17 @@ import type { PagedResponseDto } from '@/contracts/common'
 import { orderService, type OrderDto, type OrderStatus } from '@/contracts/order'
 import { productService, type ProductDto } from '@/contracts/product'
 import { assetUrl } from '@/lib/assets'
-import { formatDateTime, formatMoney, orderStatusLabel } from '@/lib/format'
-
-const productFormSchema = z.object({
-    categoryId: z.string().min(1, 'Selectează categoria.'),
-    slug: z.string().min(2, 'Slug-ul trebuie să aibă cel puțin 2 caractere.'),
-    name: z.string().min(2, 'Numele trebuie să aibă cel puțin 2 caractere.'),
-    brand: z.string().min(2, 'Brandul trebuie să aibă cel puțin 2 caractere.'),
-    model: z.string().min(1, 'Modelul este obligatoriu.'),
-    country: z.string().min(2, 'Țara este obligatorie.'),
-    price: z.coerce.number().positive('Prețul trebuie să fie pozitiv.'),
-    promotionalPrice: z.string().optional(),
-    currency: z.string().min(3, 'Moneda este obligatorie.'),
-    stock: z.coerce.number().int().min(0, 'Stocul nu poate fi negativ.'),
-    imageUrlsText: z.string().min(1, 'Adaugă cel puțin un URL de imagine.'),
-    specsText: z.string().optional(),
-    isActive: z.boolean(),
-})
+import { formatDateTime, formatMoney, hasActivePromotion, orderStatusLabel } from '@/lib/format'
+import { problemDetail } from '@/lib/problem'
+import {
+    buildProductUpsertRequest,
+    emptyProductFormValues,
+    getSelectableProductCategories,
+    productFormSchema,
+    productToFormValues,
+    type ProductFormInput,
+    type ProductFormValues,
+} from './productForm'
 
 const categoryFormSchema = z.object({
     slug: z.string().min(2, 'Slug-ul trebuie să aibă cel puțin 2 caractere.'),
@@ -51,52 +45,8 @@ const categoryFormSchema = z.object({
 
 const orderStatuses: OrderStatus[] = ['CREATED', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
 
-type ProductFormInput = z.input<typeof productFormSchema>
-type ProductFormValues = z.output<typeof productFormSchema>
 type CategoryFormInput = z.input<typeof categoryFormSchema>
 type CategoryFormValues = z.output<typeof categoryFormSchema>
-
-function parseLines(value: string) {
-    return value
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean)
-}
-
-function parseSpecs(value: string) {
-    return Object.fromEntries(
-        parseLines(value)
-            .map((line) => {
-                const [key, ...rest] = line.split(/[:=]/)
-                return [key?.trim(), rest.join(':').trim()] as const
-            })
-            .filter(([key, specValue]) => Boolean(key) && Boolean(specValue)),
-    )
-}
-
-function stringifySpecs(specs: Record<string, string>) {
-    return Object.entries(specs)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join('\n')
-}
-
-function productToFormValues(product: ProductDto, categories: CategoryDto[]) {
-    return {
-        categoryId: product.categoryId ?? categories.find((category) => category.slug === product.categorySlug)?.id ?? '',
-        slug: product.slug,
-        name: product.name,
-        brand: product.brand,
-        model: product.model,
-        country: product.country,
-        price: product.price,
-        promotionalPrice: product.promotionalPrice?.toString() ?? '',
-        currency: product.currency,
-        stock: product.stock,
-        imageUrlsText: product.imageUrls.join('\n'),
-        specsText: stringifySpecs(product.specs),
-        isActive: product.isActive,
-    }
-}
 
 function categoryToFormValues(category: CategoryDto) {
     return {
@@ -110,7 +60,7 @@ function categoryToFormValues(category: CategoryDto) {
     }
 }
 
-function AdminOrderDetails({ order }: { order: OrderDto }) {
+function AdminOrderDetails({ order }: Readonly<{ order: OrderDto }>) {
     return (
         <div className="space-y-3 rounded-lg border p-4">
             <div className="grid gap-2 sm:grid-cols-2">
@@ -190,23 +140,10 @@ export default function AdminConsolePage() {
     })
 
     const categories = categoriesQuery.data?.data ?? []
+    const productCategories = useMemo(() => getSelectableProductCategories(categories), [categories])
     const productForm = useForm<ProductFormInput, undefined, ProductFormValues>({
         resolver: zodResolver(productFormSchema),
-        defaultValues: {
-            categoryId: '',
-            slug: '',
-            name: '',
-            brand: '',
-            model: '',
-            country: '',
-            price: 1,
-            promotionalPrice: '',
-            currency: 'MDL',
-            stock: 0,
-            imageUrlsText: '',
-            specsText: '',
-            isActive: true,
-        },
+        defaultValues: emptyProductFormValues(),
     })
     const categoryForm = useForm<CategoryFormInput, undefined, CategoryFormValues>({
         resolver: zodResolver(categoryFormSchema),
@@ -236,22 +173,8 @@ export default function AdminConsolePage() {
             return
         }
 
-        productForm.reset({
-            categoryId: categories[0]?.id ?? '',
-            slug: '',
-            name: '',
-            brand: '',
-            model: '',
-            country: '',
-            price: 1,
-            promotionalPrice: '',
-            currency: 'MDL',
-            stock: 0,
-            imageUrlsText: '',
-            specsText: '',
-            isActive: true,
-        })
-    }, [categories, editingProduct, productDialogOpen, productForm])
+        productForm.reset(emptyProductFormValues(productCategories[0]?.id ?? ''))
+    }, [categories, editingProduct, productCategories, productDialogOpen, productForm])
 
     useEffect(() => {
         if (!categoryDialogOpen) {
@@ -276,28 +199,7 @@ export default function AdminConsolePage() {
 
     const upsertProduct = useMutation({
         mutationFn: async (values: ProductFormValues) => {
-            const category = categories.find((item) => item.id === values.categoryId)
-            if (!category) {
-                throw new Error('Categoria selectată nu mai este disponibilă.')
-            }
-
-            const payload = {
-                categoryId: category.id,
-                categorySlug: category.slug,
-                slug: values.slug,
-                name: values.name,
-                brand: values.brand,
-                model: values.model,
-                country: values.country,
-                price: values.price,
-                promotionalPrice: values.promotionalPrice?.trim() ? Number(values.promotionalPrice) : null,
-                currency: values.currency,
-                stock: values.stock,
-                imageUrls: parseLines(values.imageUrlsText),
-                specs: parseSpecs(values.specsText ?? ''),
-                isActive: values.isActive,
-            }
-
+            const payload = buildProductUpsertRequest(values, productCategories)
             return editingProduct
                 ? productService.update(editingProduct.slug, payload)
                 : productService.create(payload)
@@ -305,11 +207,14 @@ export default function AdminConsolePage() {
         onSuccess: () => {
             setProductDialogOpen(false)
             setEditingProduct(null)
+            productForm.reset(emptyProductFormValues(productCategories[0]?.id ?? ''))
             queryClient.invalidateQueries({ queryKey: ['admin-products'] })
             toast.success(editingProduct ? 'Produs actualizat' : 'Produs creat')
         },
         onError: (error) => {
-            toast.error(error instanceof Error ? error.message : 'Operațiunea pe produs a eșuat.')
+            const detail = problemDetail(error, 'Operațiunea pe produs a eșuat.')
+            productForm.setError('root.serverError', { message: detail })
+            toast.error(detail)
         },
     })
 
@@ -404,7 +309,7 @@ export default function AdminConsolePage() {
                                     setEditingProduct(null)
                                     setProductDialogOpen(true)
                                 }}
-                                disabled={categories.length === 0}
+                                disabled={productCategories.length === 0}
                             >
                                 Adaugă produs
                             </Button>
@@ -413,7 +318,7 @@ export default function AdminConsolePage() {
                             {categoriesQuery.isLoading || productsQuery.isLoading ? <LoadingRows count={5} /> : null}
                             {categoriesQuery.isError ? <ApiErrorAlert error={categoriesQuery.error} onRetry={() => categoriesQuery.refetch()} /> : null}
                             {productsQuery.isError ? <ApiErrorAlert error={productsQuery.error} onRetry={() => productsQuery.refetch()} /> : null}
-                            {!categoriesQuery.isLoading && categories.length === 0 ? (
+                            {!categoriesQuery.isLoading && productCategories.length === 0 ? (
                                 <EmptyState icon={<FolderTree />} title="Nu există categorii" description="Creează mai întâi o categorie activă pentru a putea adăuga produse." />
                             ) : null}
                             {productsQuery.data?.data.length ? (
@@ -444,8 +349,8 @@ export default function AdminConsolePage() {
                                                     <TableCell>{categoriesBySlug.get(product.categorySlug) ?? product.categorySlug}</TableCell>
                                                     <TableCell>
                                                         <div>
-                                                            <p>{formatMoney(product.promotionalPrice ?? product.price, product.currency)}</p>
-                                                            {product.promotionalPrice ? <p className="text-xs text-muted-foreground line-through">{formatMoney(product.price, product.currency)}</p> : null}
+                                                            <p>{formatMoney(hasActivePromotion(product.price, product.promotionalPrice ?? null) ? product.promotionalPrice : product.price, product.currency)}</p>
+                                                            {hasActivePromotion(product.price, product.promotionalPrice ?? null) ? <p className="text-xs text-muted-foreground line-through">{formatMoney(product.price, product.currency)}</p> : null}
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>{product.stock}</TableCell>
@@ -472,7 +377,7 @@ export default function AdminConsolePage() {
                                                                 size="icon"
                                                                 disabled={deleteProduct.isPending}
                                                                 onClick={() => {
-                                                                    if (window.confirm(`Ștergi produsul ${product.name}?`)) {
+                                                                    if (globalThis.confirm(`Ștergi produsul ${product.name}?`)) {
                                                                         deleteProduct.mutate(product.slug)
                                                                     }
                                                                 }}
@@ -569,7 +474,7 @@ export default function AdminConsolePage() {
                                                                 size="icon"
                                                                 disabled={deleteCategory.isPending}
                                                                 onClick={() => {
-                                                                    if (window.confirm(`Ștergi categoria ${category.name}?`)) {
+                                                                    if (globalThis.confirm(`Ștergi categoria ${category.name}?`)) {
                                                                         deleteCategory.mutate(category.slug)
                                                                     }
                                                                 }}
@@ -707,11 +612,16 @@ export default function AdminConsolePage() {
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={productForm.handleSubmit((values) => upsertProduct.mutate(values))} className="grid gap-4 md:grid-cols-2">
+                        {productForm.formState.errors.root?.serverError?.message ? (
+                            <div className="md:col-span-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+                                {productForm.formState.errors.root.serverError.message}
+                            </div>
+                        ) : null}
                         <Field>
                             <FieldLabel>Categorie</FieldLabel>
                             <NativeSelect className="w-full" {...productForm.register('categoryId')}>
                                 <NativeSelectOption value="">Selectează categoria</NativeSelectOption>
-                                {categories.map((category) => (
+                                {productCategories.map((category) => (
                                     <NativeSelectOption key={category.id} value={category.id}>{category.name}</NativeSelectOption>
                                 ))}
                             </NativeSelect>
@@ -744,10 +654,11 @@ export default function AdminConsolePage() {
                         <Field className="md:col-span-2">
                             <FieldLabel>Specificații</FieldLabel>
                             <Textarea rows={5} placeholder="cheie: valoare" {...productForm.register('specsText')} />
+                            <FieldError>{productForm.formState.errors.specsText?.message}</FieldError>
                         </Field>
                         <label className="md:col-span-2 flex items-center gap-2 text-sm">
                             <input type="checkbox" {...productForm.register('isActive')} />
-                            Produs activ în catalog
+                            <span>Produs activ în catalog</span>
                         </label>
                         <div className="md:col-span-2 flex justify-end gap-2">
                             <Button type="button" variant="outline" onClick={() => setProductDialogOpen(false)}>Renunță</Button>
@@ -799,7 +710,7 @@ export default function AdminConsolePage() {
                         </Field>
                         <label className="md:col-span-2 flex items-center gap-2 text-sm">
                             <input type="checkbox" {...categoryForm.register('isActive')} />
-                            Categorie activă
+                            <span>Categorie activă</span>
                         </label>
                         <div className="md:col-span-2 flex justify-end gap-2">
                             <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>Renunță</Button>
