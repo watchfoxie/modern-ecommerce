@@ -76,6 +76,36 @@ describe('typed API layer and Axios interceptors', () => {
     expect(useAuthStore.getState().accessToken).toBe(refreshedToken)
   })
 
+  it('does not attach an expired access token to public catalog requests', async () => {
+    const expiredToken = makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) - 10 })
+    useAuthStore.getState().setAuth({
+      accessToken: expiredToken,
+      refreshToken: 'refresh-token',
+      tokenType: 'Bearer',
+      expiresIn: 3600,
+    })
+
+    apiMock.onGet('/product-service/v1/products').reply((config) => [
+      200,
+      {
+        authorization: config.headers?.Authorization ?? null,
+        data: [],
+        page: 0,
+        size: 12,
+        totalElements: 0,
+        totalPages: 0,
+        first: true,
+        last: true,
+      },
+    ])
+
+    const response = await productService.list({ page: 0, size: 12 })
+
+    expect(response.data).toEqual([])
+    expect((await api.get('/product-service/v1/products')).data.authorization).toBeNull()
+    expect(axiosMock.history.post).toHaveLength(0)
+  })
+
   it('deduplicates concurrent refresh calls after protected requests return 401', async () => {
     const expiredToken = makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) - 10 })
     const refreshedToken = makeJwt({ sub: 'customer@example.com', exp: Math.floor(Date.now() / 1000) + 3600 })

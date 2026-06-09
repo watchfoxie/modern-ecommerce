@@ -18,15 +18,30 @@ const AUTH_ENDPOINTS = [
 
 let refreshPromise: Promise<string | null> | null = null
 
+function currentAccessToken() {
+  const { accessToken, expiresAt } = useAuthStore.getState()
+  if (!accessToken) {
+    return null
+  }
+
+  if (expiresAt && expiresAt <= Date.now()) {
+    return null
+  }
+
+  return accessToken
+}
+
 export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 })
 
 api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().accessToken
+  const token = currentAccessToken()
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  } else if (config.headers.Authorization) {
+    delete config.headers.Authorization
   }
   return config
 })
@@ -81,10 +96,10 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !isAuthEndpoint(originalRequest?.url)) {
       clearSessionState()
-      const redirectTo = `${window.location.pathname}${window.location.search}`
-      window.location.assign(`/profile/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`)
+      const redirectTo = `${globalThis.location.pathname}${globalThis.location.search}`
+      globalThis.location.assign(`/profile/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`)
     }
 
-    return Promise.reject(error)
+    throw error
   },
 )

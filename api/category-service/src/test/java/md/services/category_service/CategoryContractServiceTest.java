@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import md.services.category_service.api.CategoryUpsertRequest;
 import md.services.category_service.domain.CategoryDocument;
+import md.services.category_service.exception.CategoryValidationException;
 import md.services.category_service.exception.DuplicateResourceException;
 import md.services.category_service.exception.ResourceNotFoundException;
 import md.services.category_service.repository.CategoryRepository;
@@ -54,7 +55,8 @@ class CategoryContractServiceTest {
 	@Test
 	void createsCategoryWhenSlugIsUnique() {
 		when(categoryRepository.existsBySlug("phones")).thenReturn(false);
-		when(categoryRepository.save(any(CategoryDocument.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(categoryRepository.save(any(CategoryDocument.class)))
+				.thenAnswer(CategoryContractServiceTest::savedCategory);
 
 		categoryContractService.createCategory(new CategoryUpsertRequest(
 				"Phones", "phones", " ", "Mobile phones", "/phones.png", 10, true));
@@ -62,16 +64,30 @@ class CategoryContractServiceTest {
 		ArgumentCaptor<CategoryDocument> categoryCaptor = ArgumentCaptor.forClass(CategoryDocument.class);
 		verify(categoryRepository).save(categoryCaptor.capture());
 		assertThat(categoryCaptor.getValue().parentId()).isNull();
+		assertThat(categoryCaptor.getValue().imageUrl()).isEqualTo("/phones.png");
 		assertThat(categoryCaptor.getValue().createdAt()).isNotNull();
 		assertThat(categoryCaptor.getValue().updatedAt()).isNotNull();
 	}
 
 	@Test
+	void rejectsUnknownParentCategoryOnCreate() {
+		when(categoryRepository.findById("missing-parent")).thenReturn(Optional.empty());
+		CategoryUpsertRequest invalidParentRequest = new CategoryUpsertRequest(
+				"Phones", "phones", "missing-parent", "Mobile phones", "/phones.png", 10, true);
+
+		assertThatThrownBy(() -> categoryContractService.createCategory(invalidParentRequest))
+				.isInstanceOf(CategoryValidationException.class)
+				.hasMessageContaining("parentId");
+		verify(categoryRepository, never()).save(any());
+	}
+
+	@Test
 	void rejectsDuplicateSlugOnCreate() {
 		when(categoryRepository.existsBySlug("phones")).thenReturn(true);
+		CategoryUpsertRequest duplicateRequest = new CategoryUpsertRequest(
+				"Phones", "phones", null, "Mobile phones", null, 10, true);
 
-		assertThatThrownBy(() -> categoryContractService.createCategory(new CategoryUpsertRequest(
-				"Phones", "phones", null, null, null, 10, true)))
+		assertThatThrownBy(() -> categoryContractService.createCategory(duplicateRequest))
 				.isInstanceOf(DuplicateResourceException.class);
 		verify(categoryRepository, never()).save(any());
 	}
@@ -82,6 +98,10 @@ class CategoryContractServiceTest {
 
 		assertThatThrownBy(() -> categoryContractService.getCategory("phones"))
 				.isInstanceOf(ResourceNotFoundException.class);
+	}
+
+	private static CategoryDocument savedCategory(org.mockito.invocation.InvocationOnMock invocation) {
+		return invocation.getArgument(0);
 	}
 
 }

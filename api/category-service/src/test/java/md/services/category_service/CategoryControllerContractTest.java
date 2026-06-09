@@ -23,6 +23,7 @@ import md.services.category_service.api.CategoryDto;
 import md.services.category_service.api.CategoryUpsertRequest;
 import md.services.category_service.api.PagedResponseDto;
 import md.services.category_service.exception.ApiExceptionHandler;
+import md.services.category_service.exception.CategoryValidationException;
 import md.services.category_service.exception.DuplicateResourceException;
 import md.services.category_service.exception.ResourceNotFoundException;
 import md.services.category_service.service.CategoryContractService;
@@ -65,7 +66,8 @@ class CategoryControllerContractTest {
 
 	@Test
 	void missingCategoryReturnsNotFoundProblemDetail() throws Exception {
-		when(categoryContractService.getCategory("missing")).thenThrow(new ResourceNotFoundException("Category was not found."));
+		when(categoryContractService.getCategory("missing"))
+				.thenThrow(new ResourceNotFoundException("Category was not found."));
 
 		mockMvc.perform(get("/categories/missing"))
 				.andExpect(status().isNotFound())
@@ -80,18 +82,41 @@ class CategoryControllerContractTest {
 				.thenThrow(new DuplicateResourceException("Category slug already exists."));
 
 		mockMvc.perform(post("/categories")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("""
-								{
-								  "name": "Smartphones",
-								  "slug": "smartphones",
-								  "displayOrder": 1,
-								  "isActive": true
-								}
-								"""))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "name": "Smartphones",
+						  "slug": "smartphones",
+						 "description": "Telefoane inteligente",
+						  "displayOrder": 1,
+						  "isActive": true
+						}
+						"""))
 				.andExpect(status().isConflict())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
 				.andExpect(jsonPath("$.status").value(409));
+	}
+
+	@Test
+	void invalidCategoryPayloadReturnsBadRequestProblemDetail() throws Exception {
+		when(categoryContractService.createCategory(any(CategoryUpsertRequest.class)))
+				.thenThrow(new CategoryValidationException("imageUrl: Imaginea este invalidă."));
+
+		mockMvc.perform(post("/categories")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("""
+						{
+						  "name": "Smartphones",
+						  "slug": "smartphones",
+						  "description": "Telefoane inteligente",
+						  "imageUrl": "ftp://invalid-image",
+						  "displayOrder": 1,
+						  "isActive": true
+						}
+						"""))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+				.andExpect(jsonPath("$.status").value(400));
 	}
 
 	private CategoryDto category() {

@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { FolderTree, Package, Pencil, ShieldCheck, ShoppingBag, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ApiErrorAlert, EmptyState, LoadingRows, SectionHeader } from '@/components/app/PageState'
@@ -24,6 +23,14 @@ import { assetUrl } from '@/lib/assets'
 import { formatDateTime, formatMoney, hasActivePromotion, orderStatusLabel } from '@/lib/format'
 import { problemDetail } from '@/lib/problem'
 import {
+    buildCategoryUpsertRequest,
+    categoryFormSchema,
+    categoryToFormValues,
+    emptyCategoryFormValues,
+    type CategoryFormInput,
+    type CategoryFormValues,
+} from './categoryForm'
+import {
     buildProductUpsertRequest,
     emptyProductFormValues,
     getSelectableProductCategories,
@@ -33,32 +40,7 @@ import {
     type ProductFormValues,
 } from './productForm'
 
-const categoryFormSchema = z.object({
-    slug: z.string().min(2, 'Slug-ul trebuie să aibă cel puțin 2 caractere.'),
-    name: z.string().min(2, 'Numele trebuie să aibă cel puțin 2 caractere.'),
-    description: z.string().optional(),
-    parentId: z.string().optional(),
-    imageUrl: z.string().optional(),
-    displayOrder: z.coerce.number().int().min(0, 'Ordinea nu poate fi negativă.'),
-    isActive: z.boolean(),
-})
-
 const orderStatuses: OrderStatus[] = ['CREATED', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
-
-type CategoryFormInput = z.input<typeof categoryFormSchema>
-type CategoryFormValues = z.output<typeof categoryFormSchema>
-
-function categoryToFormValues(category: CategoryDto) {
-    return {
-        slug: category.slug,
-        name: category.name,
-        description: category.description ?? '',
-        parentId: category.parentId ?? '',
-        imageUrl: category.imageUrl ?? '',
-        displayOrder: category.displayOrder,
-        isActive: category.isActive,
-    }
-}
 
 function AdminOrderDetails({ order }: Readonly<{ order: OrderDto }>) {
     return (
@@ -147,15 +129,7 @@ export default function AdminConsolePage() {
     })
     const categoryForm = useForm<CategoryFormInput, undefined, CategoryFormValues>({
         resolver: zodResolver(categoryFormSchema),
-        defaultValues: {
-            slug: '',
-            name: '',
-            description: '',
-            parentId: '',
-            imageUrl: '',
-            displayOrder: 0,
-            isActive: true,
-        },
+        defaultValues: emptyCategoryFormValues(),
     })
 
     const categoriesBySlug = useMemo(
@@ -186,15 +160,7 @@ export default function AdminConsolePage() {
             return
         }
 
-        categoryForm.reset({
-            slug: '',
-            name: '',
-            description: '',
-            parentId: '',
-            imageUrl: '',
-            displayOrder: 0,
-            isActive: true,
-        })
+        categoryForm.reset(emptyCategoryFormValues())
     }, [categoryDialogOpen, categoryForm, editingCategory])
 
     const upsertProduct = useMutation({
@@ -228,15 +194,7 @@ export default function AdminConsolePage() {
 
     const upsertCategory = useMutation({
         mutationFn: (values: CategoryFormValues) => {
-            const payload = {
-                slug: values.slug,
-                name: values.name,
-                description: values.description || undefined,
-                parentId: values.parentId || null,
-                imageUrl: values.imageUrl || undefined,
-                displayOrder: values.displayOrder,
-                isActive: values.isActive,
-            }
+            const payload = buildCategoryUpsertRequest(values, categories, editingCategory?.id)
 
             return editingCategory
                 ? categoryService.update(editingCategory.slug, payload)
@@ -245,8 +203,14 @@ export default function AdminConsolePage() {
         onSuccess: () => {
             setCategoryDialogOpen(false)
             setEditingCategory(null)
+            categoryForm.reset(emptyCategoryFormValues())
             queryClient.invalidateQueries({ queryKey: ['admin-categories'] })
             toast.success(editingCategory ? 'Categorie actualizată' : 'Categorie creată')
+        },
+        onError: (error) => {
+            const detail = problemDetail(error, 'Operațiunea pe categorie a eșuat.')
+            categoryForm.setError('root.serverError', { message: detail })
+            toast.error(detail)
         },
     })
 
@@ -685,6 +649,11 @@ export default function AdminConsolePage() {
                         </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={categoryForm.handleSubmit((values) => upsertCategory.mutate(values))} className="grid gap-4 md:grid-cols-2">
+                        {categoryForm.formState.errors.root?.serverError?.message ? (
+                            <div className="md:col-span-2 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+                                {categoryForm.formState.errors.root.serverError.message}
+                            </div>
+                        ) : null}
                         {(['slug', 'name', 'imageUrl', 'displayOrder'] as const).map((name) => (
                             <Field key={name}>
                                 <FieldLabel>{name}</FieldLabel>
@@ -702,6 +671,7 @@ export default function AdminConsolePage() {
                                         <NativeSelectOption key={category.id} value={category.id}>{category.name}</NativeSelectOption>
                                     ))}
                             </NativeSelect>
+                            <FieldError>{categoryForm.formState.errors.parentId?.message}</FieldError>
                         </Field>
                         <Field className="md:col-span-2">
                             <FieldLabel>Descriere</FieldLabel>
