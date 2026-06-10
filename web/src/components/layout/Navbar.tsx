@@ -1,11 +1,15 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useTheme } from 'next-themes'
+import { useQuery } from '@tanstack/react-query'
 import { Menu, Moon, Search, ShoppingCart, Sun, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { productService, type ProductDto } from '@/contracts/product'
+import { assetUrl } from '@/lib/assets'
+import { queryKeys } from '@/lib/queryKeys'
 import { clearSessionState } from '@/lib/session'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
@@ -16,17 +20,51 @@ const navItems = [
   { to: '/categories/offers', label: 'Oferte' },
 ]
 
+function productHref(product: ProductDto) {
+  if (product.categorySlug === 'laptops' || product.categorySlug === 'smartphones') {
+    return `/categories/${product.categorySlug}/${product.slug}`
+  }
+  return `/categories/${product.slug}`
+}
+
 function SearchForm({ compact = false, onSubmitDone }: { compact?: boolean; onSubmitDone?: () => void }) {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 300)
+    return () => clearTimeout(timer)
+  }, [query])
+
+  const suggestionsQuery = useQuery({
+    queryKey: queryKeys.searchSuggestions(debouncedQuery),
+    queryFn: () => productService.search({ q: debouncedQuery, page: 0, size: 5 }),
+    enabled: debouncedQuery.trim().length > 1,
+    staleTime: 30_000,
+  })
+
+  const suggestions: ProductDto[] = suggestionsQuery.data?.data ?? []
+  const showDropdown = open && query.trim().length > 1 && suggestions.length > 0
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const normalized = query.trim()
     if (normalized) {
+      setOpen(false)
+      setQuery('')
       navigate(`/search?q=${encodeURIComponent(normalized)}`)
       onSubmitDone?.()
     }
+  }
+
+  const selectSuggestion = (product: ProductDto) => {
+    setQuery('')
+    setOpen(false)
+    navigate(productHref(product))
+    onSubmitDone?.()
   }
 
   return (
@@ -34,12 +72,39 @@ function SearchForm({ compact = false, onSubmitDone }: { compact?: boolean; onSu
       <div className="relative">
         <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
+          ref={inputRef}
           value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(event) => { setQuery(event.target.value); setOpen(true) }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
           className="pl-8"
           placeholder="Caută telefoane, laptopuri, branduri"
           aria-label="Caută produse"
+          autoComplete="off"
         />
+        {showDropdown && (
+          <div className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-lg border bg-popover shadow-lg">
+            {suggestions.map((product) => (
+              <button
+                key={product.id}
+                type="button"
+                className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm hover:bg-accent"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => selectSuggestion(product)}
+              >
+                <img
+                  src={assetUrl(product.imageUrls[0] ?? null)}
+                  alt=""
+                  className="h-8 w-8 shrink-0 rounded object-contain"
+                />
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{product.name}</p>
+                  <p className="truncate text-xs text-muted-foreground">{product.brand}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </form>
   )

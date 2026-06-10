@@ -26,6 +26,7 @@ public class SecurityConfiguration {
 						UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.GET, "/internal/products/*").permitAll()
+						.requestMatchers(HttpMethod.POST, "/internal/products/*/stock/decrement").permitAll()
 						.requestMatchers(HttpMethod.GET, "/products", "/products/*", "/products/search",
 								"/v1/products", "/v1/products/*", "/v1/products/search")
 						.permitAll()

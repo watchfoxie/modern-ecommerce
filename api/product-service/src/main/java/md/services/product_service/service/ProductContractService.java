@@ -167,6 +167,31 @@ public class ProductContractService {
 		productRepository.delete(existing);
 	}
 
+	public void decrementStock(String productId, int quantity) {
+		ProductDocument product = productRepository.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException(PRODUCT_PREFIX + productId + NOT_FOUND_SUFFIX));
+		int current = product.stock() != null ? product.stock() : 0;
+		int updated = Math.max(0, current - quantity);
+		productRepository.save(new ProductDocument(
+				product.id(),
+				product.categoryId(),
+				product.categorySlug(),
+				product.name(),
+				product.slug(),
+				product.brand(),
+				product.model(),
+				product.country(),
+				product.price(),
+				product.promotionalPrice(),
+				product.currency(),
+				updated,
+				product.imageUrls(),
+				product.specs(),
+				product.isActive(),
+				product.createdAt(),
+				Instant.now()));
+	}
+
 	private NormalizedProduct normalize(ProductUpsertRequest request) {
 		String categoryId = trim(request.categoryId(), "categoryId: Category id is required.");
 		String categorySlug = trim(request.categorySlug(), "categorySlug: Product category is required.");

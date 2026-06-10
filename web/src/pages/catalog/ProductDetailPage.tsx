@@ -194,12 +194,13 @@ export default function ProductDetailPage({ promotional = false }: Readonly<{ pr
               <span className="sr-only">Scade cantitatea</span>
             </Button>
             <Input
-              className="w-20 text-center"
+              className="w-20 text-center select-none"
               type="text"
               inputMode="numeric"
               readOnly
               aria-label="Cantitate selectată"
               value={quantity}
+              onMouseDown={(e) => e.preventDefault()}
             />
             <Button type="button" variant="outline" size="icon" onClick={() => setQuantity((value) => Math.min(maxQuantity, value + 1))}>
               <Plus />

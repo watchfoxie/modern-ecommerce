@@ -3,6 +3,15 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Filter, Laptop, Percent, Smartphone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -12,6 +21,13 @@ import { productService, type ProductDto } from '@/contracts/product'
 import { queryKeys } from '@/lib/queryKeys'
 
 type CatalogMode = 'all' | 'smartphones' | 'laptops' | 'offers'
+
+function buildPageRange(current: number, total: number): (number | '…start' | '…end')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i)
+  if (current <= 3) return [0, 1, 2, 3, 4, '…end', total - 1]
+  if (current >= total - 4) return [0, '…start', total - 5, total - 4, total - 3, total - 2, total - 1]
+  return [0, '…start', current - 1, current, current + 1, '…end', total - 1]
+}
 
 const categoryInfo: Record<CatalogMode, { title: string; description: string; icon: typeof Smartphone }> = {
   all: {
@@ -177,19 +193,50 @@ export default function CatalogPage({ mode = 'all' }: { mode?: CatalogMode }) {
         ))}
       </div>
 
-      {productsQuery.data && productsQuery.data.totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-center gap-2">
-          <Button variant="outline" disabled={productsQuery.data.first} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            Pagina {productsQuery.data.page + 1} din {productsQuery.data.totalPages}
-          </span>
-          <Button variant="outline" disabled={productsQuery.data.last} onClick={() => setPage(page + 1)}>
-            Următor
-          </Button>
-        </div>
-      )}
+      {productsQuery.isSuccess && productsQuery.data.totalPages > 1 && (() => {
+        const data = productsQuery.data
+        return (
+          <Pagination className="mt-8">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  text="Anterior"
+                  href="#"
+                  aria-disabled={data.first}
+                  onClick={(e) => { e.preventDefault(); if (!data.first) setPage(page - 1) }}
+                  className={data.first ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+              {buildPageRange(data.page, data.totalPages).map((item) =>
+                typeof item === 'string' ? (
+                  <PaginationItem key={item}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={item}>
+                    <PaginationLink
+                      href="#"
+                      isActive={item === data.page}
+                      onClick={(e) => { e.preventDefault(); setPage(item) }}
+                    >
+                      {item + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              )}
+              <PaginationItem>
+                <PaginationNext
+                  text="Următor"
+                  href="#"
+                  aria-disabled={data.last}
+                  onClick={(e) => { e.preventDefault(); if (!data.last) setPage(page + 1) }}
+                  className={data.last ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )
+      })()}
     </PageShell>
   )
 }

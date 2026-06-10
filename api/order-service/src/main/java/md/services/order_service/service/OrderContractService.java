@@ -10,6 +10,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ import md.services.order_service.client.CartInternalClient;
 import md.services.order_service.client.CartInternalClient.CartDto;
 import md.services.order_service.client.ProductInternalClient;
 import md.services.order_service.client.ProductInternalClient.ProductInternalDto;
+import md.services.order_service.client.ProductInternalClient.StockDecrementRequest;
 import md.services.order_service.domain.OrderDocument;
 import md.services.order_service.domain.OrderDocument.DeliveryAddress;
 import md.services.order_service.domain.OrderDocument.OrderItem;
@@ -46,6 +49,7 @@ import md.services.order_service.repository.OrderRepository;
 @Service
 public class OrderContractService {
 
+	private static final Logger log = LoggerFactory.getLogger(OrderContractService.class);
 	private static final String STATUS_CREATED = "CREATED";
 	private static final String PAYMENT_PENDING = "PENDING";
 	private static final String DEFAULT_CURRENCY = "MDL";
@@ -106,6 +110,7 @@ public class OrderContractService {
 				order.totalAmount(),
 				order.currency()));
 		cartInternalClient.clearCurrentCart(userId);
+		decrementStockForItems(validatedItems);
 
 		return new OrderAcceptedResponse("ACCEPTED", order.id(), order.orderNumber(), "Order command accepted.");
 	}
@@ -173,6 +178,20 @@ public class OrderContractService {
 				quantity,
 				product.effectivePrice()),
 				product.currency() == null || product.currency().isBlank() ? DEFAULT_CURRENCY : product.currency());
+	}
+
+	private void decrementStockForItems(List<ValidatedOrderItem> items) {
+		for (ValidatedOrderItem validatedItem : items) {
+			String productId = validatedItem.item().productId();
+			int quantity = validatedItem.item().quantity();
+			try {
+				productInternalClient.decrementStock(productId, new StockDecrementRequest(quantity));
+				log.info("Decremented stock for product {} by {}", productId, quantity);
+			} catch (Exception exception) {
+				log.warn("Failed to decrement stock for product {} by {}: {}", productId, quantity,
+						exception.getMessage());
+			}
+		}
 	}
 
 	private DeliveryAddress toDocument(DeliveryAddressRequest request) {
