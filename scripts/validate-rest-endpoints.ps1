@@ -195,18 +195,18 @@ function Add-Result {
     )
 
     $script:Results.Add([pscustomobject]@{
-        index          = $Index
-        method         = $Method
-        path           = $Url
-        expectedStatus = $ExpectedStatus
-        actualStatus   = $ActualStatus
-        response       = $Summary
-        verdict        = $Verdict
-        causeLayer     = $CauseLayer
-        comparison     = $Comparison
-        remediation    = $Remediation
-        rerunResult    = $RerunResult
-    }) | Out-Null
+            index          = $Index
+            method         = $Method
+            path           = $Url
+            expectedStatus = $ExpectedStatus
+            actualStatus   = $ActualStatus
+            response       = $Summary
+            verdict        = $Verdict
+            causeLayer     = $CauseLayer
+            comparison     = $Comparison
+            remediation    = $Remediation
+            rerunResult    = $RerunResult
+        }) | Out-Null
 }
 
 function Invoke-TrackedRequest {
@@ -219,12 +219,11 @@ function Invoke-TrackedRequest {
     )
 
     $params = @{
-        Uri                = $Url
-        Method             = $Method
-        Headers            = $Headers
-        SkipHttpErrorCheck = $true
-        UseBasicParsing    = $true
-        TimeoutSec         = 30
+        Uri             = $Url
+        Method          = $Method
+        Headers         = $Headers
+        UseBasicParsing = $true
+        TimeoutSec      = 30
     }
 
     if ($null -ne $Body) {
@@ -236,18 +235,51 @@ function Invoke-TrackedRequest {
         throw "Invoke-TrackedRequest does not support -NoRedirect. Use Invoke-NoRedirectRequest instead."
     }
 
-    $response = Invoke-WebRequest @params
+    try {
+        $response = Invoke-WebRequest @params
+        $statusCode = [int]$response.StatusCode
+        $text = Get-ResponseText -Response $response
+        $contentType = [string]$response.Headers["Content-Type"]
+        $responseHeaders = @{}
+        foreach ($header in $response.Headers.GetEnumerator()) {
+            $responseHeaders[[string]$header.Key] = @($header.Value)
+        }
+    }
+    catch [System.Net.WebException] {
+        if ($null -eq $_.Exception.Response) {
+            throw
+        }
 
-    $text = Get-ResponseText -Response $response
+        $errorResponse = [System.Net.HttpWebResponse]$_.Exception.Response
+        try {
+            $statusCode = [int]$errorResponse.StatusCode
+            $contentType = [string]$errorResponse.Headers["Content-Type"]
+            $responseHeaders = @{}
+            foreach ($headerName in $errorResponse.Headers.AllKeys) {
+                $responseHeaders[[string]$headerName] = @($errorResponse.Headers.GetValues($headerName))
+            }
+
+            $reader = New-Object System.IO.StreamReader($errorResponse.GetResponseStream())
+            try {
+                $text = $reader.ReadToEnd()
+            }
+            finally {
+                $reader.Dispose()
+            }
+        }
+        finally {
+            $errorResponse.Dispose()
+        }
+    }
+
     $parsed = $null
-    $contentType = [string]$response.Headers["Content-Type"]
     if ($contentType -match "json") {
         $parsed = ConvertFrom-JsonSafe -Text $text
     }
 
     return [pscustomobject]@{
-        StatusCode  = [int]$response.StatusCode
-        Headers     = $response.Headers
+        StatusCode  = $statusCode
+        Headers     = $responseHeaders
         Text        = $text
         ParsedBody  = $parsed
         ContentType = $contentType
@@ -259,6 +291,10 @@ function Invoke-NoRedirectRequest {
         [Parameter(Mandatory = $true)][string]$Url,
         [hashtable]$Headers = @{}
     )
+
+    if (-not ("System.Net.Http.HttpClient" -as [type])) {
+        Add-Type -AssemblyName System.Net.Http
+    }
 
     $handler = [System.Net.Http.HttpClientHandler]::new()
     $handler.AllowAutoRedirect = $false
@@ -470,31 +506,31 @@ function Get-PasswordResetToken {
 }
 
 function New-RunState {
-	$runId = ([Guid]::NewGuid().ToString('N').Substring(0, 10))
-	$seedCategorySlug = "phase7-category-$runId"
-	$seedProductSlug = "phase7-product-$runId"
+    $runId = ([Guid]::NewGuid().ToString('N').Substring(0, 10))
+    $seedCategorySlug = "phase7-category-$runId"
+    $seedProductSlug = "phase7-product-$runId"
 
-	return [ordered]@{
-		Password                = "Phase7!Pass123"
-		NewPassword             = "Phase7!Pass456"
-		RunId                   = $runId
-        UserEmail               = $null
-        GatewayUserEmail        = $null
-        AccessToken             = $null
-        RefreshToken            = $null
-        GatewayAccessToken      = $null
-        GatewayRefreshToken     = $null
-        AdminAccessToken        = $null
-        AdminRefreshToken       = $null
-        UserProfile             = $null
-        SeedCategorySlug        = $seedCategorySlug
-        SeedProductSlug         = $seedProductSlug
-        CategoryId              = $null
-        CategorySlug            = $seedCategorySlug
-        ProductId               = $null
-        ProductSlug             = $seedProductSlug
-        OrderId                 = $null
-        GatewayOrderId          = $null
+    return [ordered]@{
+        Password            = "Phase7!Pass123"
+        NewPassword         = "Phase7!Pass456"
+        RunId               = $runId
+        UserEmail           = $null
+        GatewayUserEmail    = $null
+        AccessToken         = $null
+        RefreshToken        = $null
+        GatewayAccessToken  = $null
+        GatewayRefreshToken = $null
+        AdminAccessToken    = $null
+        AdminRefreshToken   = $null
+        UserProfile         = $null
+        SeedCategorySlug    = $seedCategorySlug
+        SeedProductSlug     = $seedProductSlug
+        CategoryId          = $null
+        CategorySlug        = $seedCategorySlug
+        ProductId           = $null
+        ProductSlug         = $seedProductSlug
+        OrderId             = $null
+        GatewayOrderId      = $null
     }
 }
 
