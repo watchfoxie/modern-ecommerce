@@ -140,7 +140,8 @@ function Invoke-TransientHttpJson {
     while ((Get-Date) -lt $deadline) {
         try {
             return Invoke-HttpJson -Uri $Uri -Headers $Headers -Method $Method -Body $Body
-        } catch {
+        }
+        catch {
             $lastStatus = Get-HttpStatusFromError -ErrorRecord $_
             if (-not (Test-TransientHttpStatus -StatusCode $lastStatus)) {
                 throw
@@ -165,12 +166,30 @@ function Assert-HttpStatus {
 
     while ((Get-Date) -lt $deadline) {
         try {
-            $response = Invoke-WebRequest -Uri $Uri -UseBasicParsing -SkipHttpErrorCheck
+            $response = Invoke-WebRequest -Uri $Uri -UseBasicParsing
             $lastStatus = [int]$response.StatusCode
             if ($lastStatus -eq $ExpectedStatus) {
                 return
             }
-        } catch {
+        }
+        catch [System.Net.WebException] {
+            if ($null -ne $_.Exception.Response) {
+                $errorResponse = [System.Net.HttpWebResponse]$_.Exception.Response
+                try {
+                    $lastStatus = [int]$errorResponse.StatusCode
+                    if ($lastStatus -eq $ExpectedStatus) {
+                        return
+                    }
+                }
+                finally {
+                    $errorResponse.Dispose()
+                }
+            }
+            else {
+                $lastStatus = $_.Exception.Message
+            }
+        }
+        catch {
             $lastStatus = $_.Exception.Message
         }
 
@@ -186,7 +205,10 @@ function Assert-InternalReadiness {
         [Parameter(Mandatory = $true)][string]$Port
     )
 
-    Invoke-Compose exec -T $Service sh -c "wget -qO- http://127.0.0.1:$Port/actuator/health/readiness | grep -q '""status"":""UP""'"
+    $output = Invoke-ComposeOutput exec -T $Service sh -c "wget -qO- http://127.0.0.1:$Port/actuator/health/readiness"
+    if ($output -notmatch '"status":"UP"') {
+        throw "Service '$Service' readiness response did not report UP. Response: $output"
+    }
 }
 
 function Assert-RabbitMqTopology {
@@ -204,7 +226,8 @@ function Invoke-OrderCreatedFlow {
     param([Parameter(Mandatory = $true)][string]$BaseUrl)
 
     $productPage = Invoke-HttpJson -Uri "$BaseUrl/api/product-service/products?page=0&size=1"
-    $product = @($productPage.content)[0]
+    $products = if ($productPage.PSObject.Properties.Name -contains "data") { @($productPage.data) } else { @($productPage.content) }
+    $product = @($products)[0]
     if ($null -eq $product) {
         throw "Product catalog returned no products. Enable APP_DATA_SEED_ENABLED or provide seeded MongoDB data."
     }
@@ -228,7 +251,8 @@ function Invoke-OrderCreatedFlow {
             } | Out-Null
             $signUpCompleted = $true
             break
-        } catch {
+        }
+        catch {
             $lastStatus = Get-HttpStatusFromError -ErrorRecord $_
             if (-not (Test-TransientHttpStatus -StatusCode $lastStatus)) {
                 throw
@@ -286,10 +310,10 @@ function Invoke-OrderCreatedFlow {
         throw "INTERNAL_SERVICE_TOKEN is required to validate internal notification diagnostics."
     }
 
+    $notificationServicePort = Get-EnvOrDefault -Name "NOTIFICATION_SERVICE_PORT" -DefaultValue "8087"
     $deadline = (Get-Date).AddSeconds(90)
     while ((Get-Date) -lt $deadline) {
-        $overviewJson = Invoke-ComposeOutput exec -T -e "CHECK_TOKEN=$internalToken" notification-service sh -c 'wget -qO- --header "X-Internal-Service-Token: ${CHECK_TOKEN}" http://127.0.0.1:${NOTIFICATION_SERVICE_PORT:-8087}/internal/notifications'
-        $overview = $overviewJson | ConvertFrom-Json
+        $overview = Invoke-HttpJson -Uri "http://127.0.0.1:$notificationServicePort/internal/notifications" -Headers @{ "X-Internal-Service-Token" = $internalToken }
         $match = @($overview.recentNotifications) | Where-Object { $_.orderId -eq $accepted.orderId } | Select-Object -First 1
         if ($null -ne $match) {
             return
@@ -346,7 +370,10 @@ try {
     Assert-InternalReadiness -Service "cart-service" -Port (Get-EnvOrDefault -Name "CART_SERVICE_PORT" -DefaultValue "8085")
     Assert-InternalReadiness -Service "order-service" -Port (Get-EnvOrDefault -Name "ORDER_SERVICE_PORT" -DefaultValue "8086")
     Assert-InternalReadiness -Service "notification-service" -Port (Get-EnvOrDefault -Name "NOTIFICATION_SERVICE_PORT" -DefaultValue "8087")
-    Invoke-Compose exec -T api-gateway sh -c "wget -qO- http://127.0.0.1:$apiGatewayPort/actuator/health | grep -q '""status"":""UP""'"
+    $gatewayHealth = Invoke-ComposeOutput exec -T api-gateway sh -c "wget -qO- http://127.0.0.1:$apiGatewayPort/actuator/health"
+    if ($gatewayHealth -notmatch '"status":"UP"') {
+        throw "api-gateway health response did not report UP. Response: $gatewayHealth"
+    }
     Invoke-Compose exec -T web sh -c "wget -q --spider http://127.0.0.1:$vitePort/"
 
     Assert-HttpStatus -Uri "$baseUrl/" -ExpectedStatus 200

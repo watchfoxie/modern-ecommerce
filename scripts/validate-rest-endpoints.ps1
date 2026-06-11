@@ -54,7 +54,7 @@ function ConvertFrom-JsonSafe {
     }
 
     try {
-        return $Text | ConvertFrom-Json -Depth 20
+        return $Text | ConvertFrom-Json
     }
     catch {
         return $null
@@ -240,6 +240,9 @@ function Invoke-TrackedRequest {
         $statusCode = [int]$response.StatusCode
         $text = Get-ResponseText -Response $response
         $contentType = [string]$response.Headers["Content-Type"]
+        if ([string]::IsNullOrWhiteSpace($contentType) -and $response.PSObject.Properties.Name -contains "ContentType") {
+            $contentType = [string]$response.ContentType
+        }
         $responseHeaders = @{}
         foreach ($header in $response.Headers.GetEnumerator()) {
             $responseHeaders[[string]$header.Key] = @($header.Value)
@@ -254,6 +257,9 @@ function Invoke-TrackedRequest {
         try {
             $statusCode = [int]$errorResponse.StatusCode
             $contentType = [string]$errorResponse.Headers["Content-Type"]
+            if ([string]::IsNullOrWhiteSpace($contentType)) {
+                $contentType = [string]$errorResponse.ContentType
+            }
             $responseHeaders = @{}
             foreach ($headerName in $errorResponse.Headers.AllKeys) {
                 $responseHeaders[[string]$headerName] = @($errorResponse.Headers.GetValues($headerName))
@@ -273,7 +279,8 @@ function Invoke-TrackedRequest {
     }
 
     $parsed = $null
-    if ($contentType -match "json") {
+    $trimmedText = if ($null -eq $text) { "" } else { $text.TrimStart() }
+    if ($contentType -match "json" -or $trimmedText.StartsWith("{") -or $trimmedText.StartsWith("[")) {
         $parsed = ConvertFrom-JsonSafe -Text $text
     }
 
@@ -575,21 +582,43 @@ function Invoke-SetupRequest {
     return $result
 }
 
+function Get-RequiredProperty {
+    param(
+        $Value,
+        [Parameter(Mandatory = $true)][string]$PropertyName,
+        [Parameter(Mandatory = $true)][string]$Context
+    )
+
+    if ($null -eq $Value) {
+        throw "$Context returned an empty body."
+    }
+
+    $property = $Value.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or [string]::IsNullOrWhiteSpace([string]$property.Value)) {
+        $available = @($Value.PSObject.Properties.Name) -join ", "
+        throw "$Context did not return '$PropertyName'. Available properties: $available"
+    }
+
+    return [string]$property.Value
+}
+
 function Run-Validation {
     $state = New-RunState
     $state.UserEmail = "phase7-$($state.RunId)@example.test"
     $state.GatewayUserEmail = "gateway-$($state.RunId)@example.test"
 
-    $adminLoginBody = @{ email = "admin@modern-ecommerce.local"; password = "Admin123!" }
+    $adminLoginBody = @{ email = "johndoe@gmail.com"; password = "Administrator1234*" }
     $userSignUpBody = @{ firstName = "Phase"; lastName = "Seven"; email = $state.UserEmail; password = $state.Password }
     $gatewayUserSignUpBody = @{ firstName = "Gateway"; lastName = "Seven"; email = $state.GatewayUserEmail; password = $state.Password }
     $updateProfileBody = @{ firstName = "Phase"; lastName = "Seven Updated"; phone = "+37360000000"; birthDate = "1999-01-01"; preferences = @{ language = "ro"; currency = "MDL" } }
     $addressBody = @{ label = "Home"; street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; isDefault = $true }
     $replacementAddressBody = @{ label = "Office"; street = "Alba Iulia 10"; city = "Chisinau"; district = "Buiucani"; postalCode = "2069"; isDefault = $true }
+    $productCategorySlug = "smartphones"
+    $productCategoryId = $null
     $categoryBody = @{ name = "Phones"; slug = $state.SeedCategorySlug; parentId = $null; description = "Phones and accessories"; imageUrl = "/static/assets/images/categories/smartphones.png"; displayOrder = 1; isActive = $true }
     $categoryUpdateBody = @{ name = "Phones Updated"; slug = $state.SeedCategorySlug; parentId = $null; description = "Updated phones category"; imageUrl = "/static/assets/images/categories/smartphones.png"; displayOrder = 2; isActive = $true }
-    $productBody = @{ categoryId = ""; categorySlug = $state.SeedCategorySlug; name = "Galaxy A55 5G"; slug = $state.SeedProductSlug; brand = "Samsung"; model = "Galaxy A55"; country = "Moldova"; price = 8999; promotionalPrice = 7999; currency = "MDL"; stock = 10; imageUrls = @('/static/assets/images/prod-images/products/phone.png'); specs = @{ memory = '256GB'; color = 'Blue' }; isActive = $true }
-    $productUpdateBody = @{ categoryId = ""; categorySlug = $state.SeedCategorySlug; name = "Galaxy A55 5G Updated"; slug = $state.SeedProductSlug; brand = "Samsung"; model = "Galaxy A55"; country = "Moldova"; price = 8999; promotionalPrice = 7499; currency = "MDL"; stock = 8; imageUrls = @('/static/assets/images/prod-images/products/phone.png'); specs = @{ memory = '256GB'; color = 'Black' }; isActive = $true }
+    $productBody = @{ categoryId = ""; categorySlug = $state.SeedCategorySlug; name = "Galaxy A55 5G"; slug = $state.SeedProductSlug; brand = "Samsung"; model = "Galaxy A55"; country = "Moldova"; price = 8999; promotionalPrice = 7999; currency = "MDL"; stock = 10; imageUrls = @('/static/assets/images/prod-images/products/phone.png'); specs = @{ storage = '256GB'; ram = '8GB'; os = 'Android' }; isActive = $true }
+    $productUpdateBody = @{ categoryId = ""; categorySlug = $state.SeedCategorySlug; name = "Galaxy A55 5G Updated"; slug = $state.SeedProductSlug; brand = "Samsung"; model = "Galaxy A55"; country = "Moldova"; price = 8999; promotionalPrice = 7499; currency = "MDL"; stock = 8; imageUrls = @('/static/assets/images/prod-images/products/phone.png'); specs = @{ storage = '256GB'; ram = '12GB'; os = 'Android' }; isActive = $true }
 
     Invoke-Endpoint -Index 1 -Method GET -Url "http://localhost:8761" -ExpectedStatus 200 -RepresentativeName "registry-root"
     Invoke-Endpoint -Index 2 -Method GET -Url "http://localhost:8761/eureka/apps" -ExpectedStatus 200 -RepresentativeName "registry-apps" -Validator { param($r) [pscustomobject]@{ Pass = ($r.Text -match '<apps__hashcode>UP_'); Summary = 'eureka-up-count-check' } }
@@ -622,11 +651,11 @@ function Run-Validation {
     Invoke-Endpoint -Index 26 -Method POST -Url "http://localhost:8081/v1/sign-up" -ExpectedStatus 201 -Body $userSignUpBody -PairKey "auth-sign-up"
     Invoke-Endpoint -Index 27 -Method POST -Url "http://localhost:8081/sign-up" -ExpectedStatus 409 -Body $userSignUpBody -PairKey "auth-sign-up-duplicate"
     $signInV1 = Invoke-Endpoint -Index 28 -Method POST -Url "http://localhost:8081/v1/sign-in" -ExpectedStatus 200 -Body @{ email = $state.UserEmail; password = $state.Password } -PairKey "auth-sign-in" -PassThru
-    $state.AccessToken = $signInV1.ParsedBody.accessToken
-    $state.RefreshToken = $signInV1.ParsedBody.refreshToken
+    $state.AccessToken = Get-RequiredProperty -Value $signInV1.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8081/v1/sign-in"
+    $state.RefreshToken = Get-RequiredProperty -Value $signInV1.ParsedBody -PropertyName "refreshToken" -Context "POST http://localhost:8081/v1/sign-in"
     $signInLegacy = Invoke-Endpoint -Index 29 -Method POST -Url "http://localhost:8081/sign-in" -ExpectedStatus 200 -Body @{ email = $state.UserEmail; password = $state.Password } -PairKey "auth-sign-in" -PassThru
-    $state.AccessToken = $signInLegacy.ParsedBody.accessToken
-    $state.RefreshToken = $signInLegacy.ParsedBody.refreshToken
+    $state.AccessToken = Get-RequiredProperty -Value $signInLegacy.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8081/sign-in"
+    $state.RefreshToken = Get-RequiredProperty -Value $signInLegacy.ParsedBody -PropertyName "refreshToken" -Context "POST http://localhost:8081/sign-in"
 
     $userHeaders = @{ Authorization = "Bearer $($state.AccessToken)" }
     $meV1 = Invoke-Endpoint -Index 30 -Method GET -Url "http://localhost:8082/v1/users/me" -ExpectedStatus 200 -Headers $userHeaders -PairKey "user-me" -PassThru
@@ -642,11 +671,11 @@ function Run-Validation {
     Invoke-Endpoint -Index 39 -Method DELETE -Url "http://localhost:8082/users/me/addresses/0" -ExpectedStatus 204 -Headers $userHeaders -PairKey "user-address-delete"
 
     $adminSignIn = Invoke-SetupRequest -Method POST -Url "http://localhost:8081/sign-in" -ExpectedStatus 200 -Body $adminLoginBody
-    $state.AdminAccessToken = $adminSignIn.ParsedBody.accessToken
+    $state.AdminAccessToken = Get-RequiredProperty -Value $adminSignIn.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8081/sign-in (admin)"
     $adminHeaders = @{ Authorization = "Bearer $($state.AdminAccessToken)" }
 
     $categoryV1 = Invoke-Endpoint -Index 40 -Method POST -Url "http://localhost:8083/v1/categories" -ExpectedStatus 201 -Headers $adminHeaders -Body $categoryBody -PairKey "category-create" -PassThru
-    $state.CategoryId = $categoryV1.ParsedBody.id
+    $state.CategoryId = Get-RequiredProperty -Value $categoryV1.ParsedBody -PropertyName "id" -Context "POST http://localhost:8083/v1/categories"
     $productBody.categoryId = $state.CategoryId
     $productUpdateBody.categoryId = $state.CategoryId
     Invoke-Endpoint -Index 41 -Method POST -Url "http://localhost:8083/categories" -ExpectedStatus 409 -Headers $adminHeaders -Body $categoryBody -PairKey "category-create-duplicate"
@@ -659,11 +688,18 @@ function Run-Validation {
     Invoke-Endpoint -Index 48 -Method DELETE -Url "http://localhost:8083/v1/categories/temporary-missing-$($state.RunId)" -ExpectedStatus 404 -Headers $adminHeaders -PairKey "category-delete-missing"
     Invoke-Endpoint -Index 49 -Method DELETE -Url "http://localhost:8083/categories/temporary-missing-$($state.RunId)" -ExpectedStatus 404 -Headers $adminHeaders -PairKey "category-delete-missing"
 
+    $persistableProductCategory = Invoke-SetupRequest -Method GET -Url "http://localhost:8083/v1/categories/$productCategorySlug" -ExpectedStatus 200
+    $productCategoryId = Get-RequiredProperty -Value $persistableProductCategory.ParsedBody -PropertyName "id" -Context "GET http://localhost:8083/v1/categories/$productCategorySlug"
+    $productBody.categoryId = $productCategoryId
+    $productBody.categorySlug = $productCategorySlug
+    $productUpdateBody.categoryId = $productCategoryId
+    $productUpdateBody.categorySlug = $productCategorySlug
+
     $productV1 = Invoke-Endpoint -Index 50 -Method POST -Url "http://localhost:8084/v1/products" -ExpectedStatus 201 -Headers $adminHeaders -Body $productBody -PairKey "product-create" -PassThru
-    $state.ProductId = $productV1.ParsedBody.id
+    $state.ProductId = Get-RequiredProperty -Value $productV1.ParsedBody -PropertyName "id" -Context "POST http://localhost:8084/v1/products"
     Invoke-Endpoint -Index 51 -Method POST -Url "http://localhost:8084/products" -ExpectedStatus 409 -Headers $adminHeaders -Body $productBody -PairKey "product-create-duplicate"
-    Invoke-Endpoint -Index 52 -Method GET -Url "http://localhost:8084/v1/products?page=0&size=12&categorySlug=$($state.CategorySlug)" -ExpectedStatus 200 -PairKey "product-list"
-    Invoke-Endpoint -Index 53 -Method GET -Url "http://localhost:8084/products?page=0&size=12&categorySlug=$($state.CategorySlug)" -ExpectedStatus 200 -PairKey "product-list"
+    Invoke-Endpoint -Index 52 -Method GET -Url "http://localhost:8084/v1/products?page=0&size=12&categorySlug=$productCategorySlug" -ExpectedStatus 200 -PairKey "product-list"
+    Invoke-Endpoint -Index 53 -Method GET -Url "http://localhost:8084/products?page=0&size=12&categorySlug=$productCategorySlug" -ExpectedStatus 200 -PairKey "product-list"
     Invoke-Endpoint -Index 54 -Method GET -Url "http://localhost:8084/v1/products/search?q=Galaxy&page=0&size=12" -ExpectedStatus 200 -PairKey "product-search"
     Invoke-Endpoint -Index 55 -Method GET -Url "http://localhost:8084/products/search?q=Galaxy&page=0&size=12" -ExpectedStatus 200 -PairKey "product-search"
     Invoke-Endpoint -Index 56 -Method GET -Url "http://localhost:8084/v1/products/$($state.ProductSlug)" -ExpectedStatus 200 -PairKey "product-get"
@@ -675,7 +711,7 @@ function Run-Validation {
 
     $cartGetV1 = Invoke-Endpoint -Index 62 -Method GET -Url "http://localhost:8085/v1/carts/me" -ExpectedStatus 200 -Headers $userHeaders -PairKey "cart-get"
     Invoke-Endpoint -Index 63 -Method GET -Url "http://localhost:8085/carts/me" -ExpectedStatus 200 -Headers $userHeaders -PairKey "cart-get"
-    $addCartBody = @{ productId = $state.ProductId; quantity = 1; priceAtAdd = 7499; productSnapshot = @{ name = "Galaxy A55 5G Updated"; imageUrl = "/static/assets/images/prod-images/products/phone.png"; categorySlug = $state.CategorySlug } }
+    $addCartBody = @{ productId = $state.ProductId; quantity = 1; priceAtAdd = 7499; productSnapshot = @{ name = "Galaxy A55 5G Updated"; imageUrl = "/static/assets/images/prod-images/products/phone.png"; categorySlug = $productCategorySlug } }
     Invoke-Endpoint -Index 64 -Method POST -Url "http://localhost:8085/v1/carts/me/items" -ExpectedStatus 201 -Headers $userHeaders -Body $addCartBody -PairKey "cart-add"
     Invoke-Endpoint -Index 65 -Method POST -Url "http://localhost:8085/carts/me/items" -ExpectedStatus 201 -Headers $userHeaders -Body $addCartBody -PairKey "cart-add"
     Invoke-Endpoint -Index 66 -Method PUT -Url "http://localhost:8085/v1/carts/me/items/$($state.ProductId)" -ExpectedStatus 200 -Headers $userHeaders -Body @{ quantity = 2 } -PairKey "cart-update"
@@ -687,7 +723,7 @@ function Run-Validation {
 
     Invoke-SetupRequest -Method POST -Url "http://localhost:8085/v1/carts/me/items" -ExpectedStatus 201 -Headers $userHeaders -Body $addCartBody | Out-Null
     $orderV1 = Invoke-Endpoint -Index 72 -Method POST -Url "http://localhost:8086/v1/orders" -ExpectedStatus 202 -Headers $userHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Phase Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "tx-v1-$($state.RunId)" }; notes = "Order direct v1" } -PairKey "order-create" -PassThru
-    $state.OrderId = $orderV1.ParsedBody.orderId
+    $state.OrderId = Get-RequiredProperty -Value $orderV1.ParsedBody -PropertyName "orderId" -Context "POST http://localhost:8086/v1/orders"
     Invoke-Endpoint -Index 73 -Method POST -Url "http://localhost:8086/orders" -ExpectedStatus 202 -Headers $userHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Phase Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "tx-$($state.RunId)" }; notes = "Order direct legacy" } -PairKey "order-create"
     Invoke-Endpoint -Index 74 -Method GET -Url "http://localhost:8086/v1/orders?page=0&size=20" -ExpectedStatus 200 -Headers $userHeaders -PairKey "order-list"
     Invoke-Endpoint -Index 75 -Method GET -Url "http://localhost:8086/orders?page=0&size=20" -ExpectedStatus 200 -Headers $userHeaders -PairKey "order-list"
@@ -700,8 +736,8 @@ function Run-Validation {
 
     $staleRefreshToken = $state.RefreshToken
     $refreshV1 = Invoke-Endpoint -Index 82 -Method POST -Url "http://localhost:8081/v1/token/refresh" -ExpectedStatus 200 -Body @{ refreshToken = $staleRefreshToken } -PairKey "auth-refresh" -PassThru
-    $state.AccessToken = $refreshV1.ParsedBody.accessToken
-    $state.RefreshToken = $refreshV1.ParsedBody.refreshToken
+    $state.AccessToken = Get-RequiredProperty -Value $refreshV1.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8081/v1/token/refresh"
+    $state.RefreshToken = Get-RequiredProperty -Value $refreshV1.ParsedBody -PropertyName "refreshToken" -Context "POST http://localhost:8081/v1/token/refresh"
     $userHeaders = @{ Authorization = "Bearer $($state.AccessToken)" }
     Invoke-Endpoint -Index 83 -Method POST -Url "http://localhost:8081/token/refresh" -ExpectedStatus 401 -Body @{ refreshToken = $staleRefreshToken } -PairKey "auth-refresh-rotated"
     Invoke-Endpoint -Index 84 -Method POST -Url "http://localhost:8081/v1/password-reset/request" -ExpectedStatus 200 -Body @{ email = $state.UserEmail } -PairKey "password-reset-request"
@@ -710,16 +746,16 @@ function Run-Validation {
     Invoke-Endpoint -Index 86 -Method POST -Url "http://localhost:8081/v1/password-reset/confirm" -ExpectedStatus 200 -Body @{ token = $resetToken; newPassword = $state.NewPassword } -PairKey "password-reset-confirm"
     Invoke-Endpoint -Index 87 -Method POST -Url "http://localhost:8081/password-reset/confirm" -ExpectedStatus 422 -Body @{ token = $resetToken; newPassword = $state.NewPassword } -PairKey "password-reset-confirm-used"
     Invoke-Endpoint -Index 88 -Method POST -Url "http://localhost:8081/v1/sign-out" -ExpectedStatus 204 -Headers $userHeaders -PairKey "auth-sign-out"
-    Invoke-Endpoint -Index 89 -Method POST -Url "http://localhost:8081/sign-out" -ExpectedStatus 204 -Headers @{ Authorization = "Bearer $($refreshV1.ParsedBody.accessToken)" } -PairKey "auth-sign-out"
+    Invoke-Endpoint -Index 89 -Method POST -Url "http://localhost:8081/sign-out" -ExpectedStatus 204 -Headers @{ Authorization = "Bearer $(Get-RequiredProperty -Value $refreshV1.ParsedBody -PropertyName 'accessToken' -Context 'POST http://localhost:8081/v1/token/refresh')" } -PairKey "auth-sign-out"
 
     Invoke-Endpoint -Index 90 -Method POST -Url "http://localhost:8080/api/auth-service/v1/sign-up" -ExpectedStatus 201 -Body $gatewayUserSignUpBody -PairKey "gw-auth-sign-up" -CompareAgainstRepresentative ""
     Invoke-Endpoint -Index 91 -Method POST -Url "http://localhost:8080/api/auth-service/sign-up" -ExpectedStatus 409 -Body $gatewayUserSignUpBody -PairKey "gw-auth-sign-up-duplicate"
     $gatewaySignInV1 = Invoke-Endpoint -Index 92 -Method POST -Url "http://localhost:8080/api/auth-service/v1/sign-in" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail; password = $state.Password } -PairKey "gw-auth-sign-in" -PassThru
-    $state.GatewayAccessToken = $gatewaySignInV1.ParsedBody.accessToken
-    $state.GatewayRefreshToken = $gatewaySignInV1.ParsedBody.refreshToken
+    $state.GatewayAccessToken = Get-RequiredProperty -Value $gatewaySignInV1.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8080/api/auth-service/v1/sign-in"
+    $state.GatewayRefreshToken = Get-RequiredProperty -Value $gatewaySignInV1.ParsedBody -PropertyName "refreshToken" -Context "POST http://localhost:8080/api/auth-service/v1/sign-in"
     $gatewaySignInLegacy = Invoke-Endpoint -Index 93 -Method POST -Url "http://localhost:8080/api/auth-service/sign-in" -ExpectedStatus 200 -Body @{ email = $state.GatewayUserEmail; password = $state.Password } -PairKey "gw-auth-sign-in" -PassThru
-    $state.GatewayAccessToken = $gatewaySignInLegacy.ParsedBody.accessToken
-    $state.GatewayRefreshToken = $gatewaySignInLegacy.ParsedBody.refreshToken
+    $state.GatewayAccessToken = Get-RequiredProperty -Value $gatewaySignInLegacy.ParsedBody -PropertyName "accessToken" -Context "POST http://localhost:8080/api/auth-service/sign-in"
+    $state.GatewayRefreshToken = Get-RequiredProperty -Value $gatewaySignInLegacy.ParsedBody -PropertyName "refreshToken" -Context "POST http://localhost:8080/api/auth-service/sign-in"
     $gatewayUserHeaders = @{ Authorization = "Bearer $($state.GatewayAccessToken)" }
     Invoke-Endpoint -Index 94 -Method POST -Url "http://localhost:8080/api/auth-service/v1/token/refresh" -ExpectedStatus 200 -Body @{ refreshToken = $state.GatewayRefreshToken } -PairKey "gw-auth-refresh"
     Invoke-Endpoint -Index 95 -Method POST -Url "http://localhost:8080/api/auth-service/token/refresh" -ExpectedStatus 401 -Body @{ refreshToken = $state.GatewayRefreshToken } -PairKey "gw-auth-refresh-legacy"
@@ -732,7 +768,7 @@ function Run-Validation {
     Invoke-Endpoint -Index 101 -Method POST -Url "http://localhost:8080/api/auth-service/sign-out" -ExpectedStatus 204 -Headers $gatewayUserHeaders -PairKey "gw-auth-sign-out"
 
     $gatewayAdminSignIn = Invoke-SetupRequest -Method POST -Url "http://localhost:8080/api/auth-service/sign-in" -ExpectedStatus 200 -Body $adminLoginBody
-    $gatewayAdminHeaders = @{ Authorization = "Bearer $($gatewayAdminSignIn.ParsedBody.accessToken)" }
+    $gatewayAdminHeaders = @{ Authorization = "Bearer $(Get-RequiredProperty -Value $gatewayAdminSignIn.ParsedBody -PropertyName 'accessToken' -Context 'POST http://localhost:8080/api/auth-service/sign-in (admin)')" }
     Invoke-Endpoint -Index 102 -Method GET -Url "http://localhost:8080/api/user-service/v1/users/me" -ExpectedStatus 200 -Headers $gatewayUserHeaders -PairKey "gw-user-me" -CompareAgainstRepresentative ""
     Invoke-Endpoint -Index 103 -Method GET -Url "http://localhost:8080/api/user-service/users/me" -ExpectedStatus 200 -Headers $gatewayUserHeaders -PairKey "gw-user-me"
     Invoke-Endpoint -Index 104 -Method PUT -Url "http://localhost:8080/api/user-service/v1/users/me" -ExpectedStatus 200 -Headers $gatewayUserHeaders -Body $updateProfileBody -PairKey "gw-user-update"
@@ -757,8 +793,8 @@ function Run-Validation {
 
     Invoke-Endpoint -Index 122 -Method POST -Url "http://localhost:8080/api/product-service/v1/products" -ExpectedStatus 409 -Headers $gatewayAdminHeaders -Body $productBody -PairKey "gw-product-create"
     Invoke-Endpoint -Index 123 -Method POST -Url "http://localhost:8080/api/product-service/products" -ExpectedStatus 409 -Headers $gatewayAdminHeaders -Body $productBody -PairKey "gw-product-create"
-    Invoke-Endpoint -Index 124 -Method GET -Url "http://localhost:8080/api/product-service/v1/products?page=0&size=12&categorySlug=$($state.CategorySlug)" -ExpectedStatus 200 -PairKey "gw-product-list"
-    Invoke-Endpoint -Index 125 -Method GET -Url "http://localhost:8080/api/product-service/products?page=0&size=12&categorySlug=$($state.CategorySlug)" -ExpectedStatus 200 -PairKey "gw-product-list"
+    Invoke-Endpoint -Index 124 -Method GET -Url "http://localhost:8080/api/product-service/v1/products?page=0&size=12&categorySlug=$productCategorySlug" -ExpectedStatus 200 -PairKey "gw-product-list"
+    Invoke-Endpoint -Index 125 -Method GET -Url "http://localhost:8080/api/product-service/products?page=0&size=12&categorySlug=$productCategorySlug" -ExpectedStatus 200 -PairKey "gw-product-list"
     Invoke-Endpoint -Index 126 -Method GET -Url "http://localhost:8080/api/product-service/v1/products/search?q=Galaxy&page=0&size=12" -ExpectedStatus 200 -PairKey "gw-product-search"
     Invoke-Endpoint -Index 127 -Method GET -Url "http://localhost:8080/api/product-service/products/search?q=Galaxy&page=0&size=12" -ExpectedStatus 200 -PairKey "gw-product-search"
     Invoke-Endpoint -Index 128 -Method GET -Url "http://localhost:8080/api/product-service/v1/products/$($state.ProductSlug)" -ExpectedStatus 200 -PairKey "gw-product-get"
@@ -781,7 +817,7 @@ function Run-Validation {
 
     Invoke-SetupRequest -Method POST -Url "http://localhost:8080/api/cart-service/v1/carts/me/items" -ExpectedStatus 201 -Headers $gatewayUserHeaders -Body $addCartBody | Out-Null
     $gatewayOrderV1 = Invoke-Endpoint -Index 144 -Method POST -Url "http://localhost:8080/api/order-service/v1/orders" -ExpectedStatus 202 -Headers $gatewayUserHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Gateway Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "gw-v1-$($state.RunId)" }; notes = "Gateway order v1" } -PairKey "gw-order-create" -PassThru
-    $state.GatewayOrderId = $gatewayOrderV1.ParsedBody.orderId
+    $state.GatewayOrderId = Get-RequiredProperty -Value $gatewayOrderV1.ParsedBody -PropertyName "orderId" -Context "POST http://localhost:8080/api/order-service/v1/orders"
     Invoke-Endpoint -Index 145 -Method POST -Url "http://localhost:8080/api/order-service/orders" -ExpectedStatus 202 -Headers $gatewayUserHeaders -Body @{ deliveryAddress = @{ street = "Stefan cel Mare 1"; city = "Chisinau"; district = "Centru"; postalCode = "2001"; recipientName = "Gateway Seven"; recipientPhone = "+37360000000" }; payment = @{ method = "CARD"; transactionId = "gw-$($state.RunId)" }; notes = "Gateway order legacy" } -PairKey "gw-order-create"
     Invoke-Endpoint -Index 146 -Method GET -Url "http://localhost:8080/api/order-service/v1/orders?page=0&size=20" -ExpectedStatus 200 -Headers $gatewayUserHeaders -PairKey "gw-order-list"
     Invoke-Endpoint -Index 147 -Method GET -Url "http://localhost:8080/api/order-service/orders?page=0&size=20" -ExpectedStatus 200 -Headers $gatewayUserHeaders -PairKey "gw-order-list"
