@@ -77,7 +77,7 @@ export function ProductCard({ product, compact = false }: Readonly<{ product: Pr
 
   const handleAdd = () => {
     if (!isAuthenticated) {
-      toast.info('Autentificați-vă pentru a folosi coșul persistent')
+      toast.info('Autentificați-vă pentru a putea adăuga produse în coș')
       navigate('/profile/sign-in', { state: { redirectTo: productHref(product) } })
       return
     }

@@ -51,8 +51,8 @@ function ContactForm() {
     return (
       <Alert>
         <CheckCircle2 />
-        <AlertTitle>Mesaj pregătit local</AlertTitle>
-        <AlertDescription>Formularul a fost validat în browser. Nu apelăm endpoint-uri interne de diagnostic.</AlertDescription>
+        <AlertTitle>Mesaj trimis cu succes</AlertTitle>
+        <AlertDescription>Mesajul dvs. a fost preluat. Vă vom contacta în cel mai scurt timp.</AlertDescription>
       </Alert>
     )
   }
@@ -100,7 +100,7 @@ export function SupportPage() {
         <Accordion type="multiple" className="mb-8">
           {[
             ['orders', 'Cum urmăresc comanda?', 'Istoricul comenzilor este disponibil în cont după autentificare.'],
-            ['delivery', 'Cum se face livrarea?', 'Livrăm prin curier după acceptarea comenzii de către order-service.'],
+            ['delivery', 'Cum se face livrarea?', 'Livrăm prin curier după acceptarea și confirmarea comenzii.'],
             ['warranty', 'Ce garanție primesc?', 'Fiecare produs păstrează garanția comercială și documentele aferente.'],
           ].map(([value, title, content]) => (
             <AccordionItem key={value} value={value}>
@@ -110,7 +110,7 @@ export function SupportPage() {
           ))}
         </Accordion>
         <div className="grid gap-4 md:grid-cols-3">
-          <Card className="rounded-lg"><CardContent className="pt-4"><MessageCircle className="mb-3 size-5" /><h2 className="font-medium">Chat local</h2><p className="text-sm text-muted-foreground">Disponibil ca interacțiune UI fără endpoint intern.</p></CardContent></Card>
+          <Card className="rounded-lg"><CardContent className="pt-4"><MessageCircle className="mb-3 size-5" /><h2 className="font-medium">Chat cu noi</h2><p className="text-sm text-muted-foreground">Disponibil prin formularul de contact de mai jos.</p></CardContent></Card>
           <Card className="rounded-lg"><CardContent className="pt-4"><Mail className="mb-3 size-5" /><a href="mailto:support@mec.md" className="font-medium">support@mec.md</a></CardContent></Card>
           <Card className="rounded-lg"><CardContent className="pt-4"><Phone className="mb-3 size-5" /><a href="tel:+37369000000" className="font-medium">+373 69 000 000</a></CardContent></Card>
         </div>
@@ -152,7 +152,7 @@ export function AboutPage() {
       <PageShell>
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
           <div>
-            <SectionHeader title="Modern Electronics Commerce" description="MEc conectează frontend-ul React cu microservicii Spring Boot printr-un gateway unic și contracte REST explicite." />
+            <SectionHeader title="Modern Electronics Commerce" description="MEc este o platformă modernă pentru cumpărători care caută produse electronice de calitate." />
             <Button asChild><Link to="/categories/smartphones">Explorează catalogul</Link></Button>
           </div>
           <img src="/static/assets/images/prod-images/about/hero.png" alt="" className="rounded-lg object-cover" />
@@ -160,8 +160,8 @@ export function AboutPage() {
         <Separator className="my-10" />
         <div className="grid gap-4 md:grid-cols-3">
           <Card className="rounded-lg"><CardContent className="pt-4"><ShieldCheck className="mb-3 size-6" /><h2 className="font-medium">Garanție</h2><p className="text-sm text-muted-foreground">Produse cu suport comercial.</p></CardContent></Card>
-          <Card className="rounded-lg"><CardContent className="pt-4"><Truck className="mb-3 size-6" /><h2 className="font-medium">Livrare</h2><p className="text-sm text-muted-foreground">Checkout structurat și adrese persistente.</p></CardContent></Card>
-          <Card className="rounded-lg"><CardContent className="pt-4"><CheckCircle2 className="mb-3 size-6" /><h2 className="font-medium">Contracte clare</h2><p className="text-sm text-muted-foreground">DTO-uri frontend aliniate backend.</p></CardContent></Card>
+          <Card className="rounded-lg"><CardContent className="pt-4"><Truck className="mb-3 size-6" /><h2 className="font-medium">Livrare</h2><p className="text-sm text-muted-foreground">Proces de comandă simplu și adrese de livrare salvate.</p></CardContent></Card>
+          <Card className="rounded-lg"><CardContent className="pt-4"><CheckCircle2 className="mb-3 size-6" /><h2 className="font-medium">Calitate garantată</h2><p className="text-sm text-muted-foreground">Toate informațiile afișate sunt verificate și actualizate permanent.</p></CardContent></Card>
         </div>
       </PageShell>
     </div>

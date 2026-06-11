@@ -32,22 +32,22 @@ function buildPageRange(current: number, total: number): (number | '…start' | 
 const categoryInfo: Record<CatalogMode, { title: string; description: string; icon: typeof Smartphone }> = {
   all: {
     title: 'Categorii',
-    description: 'Catalogul complet de produse electronice disponibile prin gateway.',
+    description: 'Toate produsele electronice disponibile în magazin.',
     icon: Smartphone,
   },
   smartphones: {
     title: 'Smartphone-uri',
-    description: 'Telefoane Apple, Samsung și Huawei cu stoc sincronizat server-side.',
+    description: 'Telefoane Apple, Samsung și Huawei disponibile în stoc.',
     icon: Smartphone,
   },
   laptops: {
     title: 'Laptop-uri',
-    description: 'Laptopuri pentru lucru, studiu și mobilitate, filtrate din catalogul backend.',
+    description: 'Laptopuri pentru lucru, studiu și mobilitate.',
     icon: Laptop,
   },
   offers: {
     title: 'Oferte',
-    description: 'Produse cu preț promoțional activ, indiferent de categoria comercială.',
+    description: 'Produse cu preț promoțional activ, indiferent de categorie.',
     icon: Percent,
   },
 }

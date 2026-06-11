@@ -105,7 +105,7 @@ export function DeliveryPage() {
 
   return (
     <PageShell>
-      <SectionHeader title="Livrare" description="Adresa este transmisă către `order-service` ca snapshot de checkout." />
+      <SectionHeader title="Livrare" description="Completați adresa la care doriți să primiți comanda." />
       {profileQuery.isLoading && <LoadingRows count={2} />}
       {profileQuery.isError && <ApiErrorAlert error={profileQuery.error} onRetry={() => profileQuery.refetch()} />}
       <Card className="mx-auto max-w-2xl rounded-lg">
@@ -115,13 +115,23 @@ export function DeliveryPage() {
         <CardContent>
           <form onSubmit={submit} className="space-y-4">
             <FieldGroup>
-              {(['recipientName', 'recipientPhone', 'city', 'district', 'street', 'postalCode'] as const).map((name) => (
-                <Field key={name}>
-                  <FieldLabel htmlFor={name}>{name === 'postalCode' ? 'Cod poștal' : name}</FieldLabel>
-                  <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
-                  <FieldError>{form.formState.errors[name]?.message}</FieldError>
-                </Field>
-              ))}
+              {(['recipientName', 'recipientPhone', 'city', 'district', 'street', 'postalCode'] as const).map((name) => {
+                const etichete: Record<string, string> = {
+                  recipientName: 'Numele destinatarului',
+                  recipientPhone: 'Telefon destinatar',
+                  city: 'Oraș',
+                  district: 'Raion / Sector',
+                  street: 'Stradă și număr',
+                  postalCode: 'Cod poștal',
+                }
+                return (
+                  <Field key={name}>
+                    <FieldLabel htmlFor={name}>{etichete[name] ?? name}</FieldLabel>
+                    <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
+                    <FieldError>{form.formState.errors[name]?.message}</FieldError>
+                  </Field>
+                )
+              })}
             </FieldGroup>
             <Button type="submit" className="w-full">Continuă</Button>
           </form>
@@ -164,19 +174,22 @@ export function PersonalDataPage() {
 
   return (
     <PageShell>
-      <SectionHeader title="Date personale" description="Datele sunt precompletate din `user-service`, acolo unde există." />
+      <SectionHeader title="Date personale" description="Verificați datele dvs. de contact pentru această comandă." />
       {profileQuery.isLoading && <LoadingRows count={2} />}
       {profileQuery.isError && <ApiErrorAlert error={profileQuery.error} onRetry={() => profileQuery.refetch()} />}
       <Card className="mx-auto max-w-2xl rounded-lg">
         <CardContent className="pt-4">
           <form onSubmit={submit} className="space-y-4">
-            {(['firstName', 'lastName', 'email', 'phone'] as const).map((name) => (
-              <Field key={name}>
-                <FieldLabel htmlFor={name}>{name}</FieldLabel>
-                <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
-                <FieldError>{form.formState.errors[name]?.message}</FieldError>
-              </Field>
-            ))}
+            {(['firstName', 'lastName', 'email', 'phone'] as const).map((name) => {
+              const etichete: Record<string, string> = { firstName: 'Prenume', lastName: 'Nume de familie', email: 'Adresă de email', phone: 'Număr de telefon' }
+              return (
+                <Field key={name}>
+                  <FieldLabel htmlFor={name}>{etichete[name] ?? name}</FieldLabel>
+                  <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
+                  <FieldError>{form.formState.errors[name]?.message}</FieldError>
+                </Field>
+              )
+            })}
             <Button type="submit" className="w-full">Continuă spre plată</Button>
           </form>
         </CardContent>
@@ -228,7 +241,7 @@ export function PayPage() {
   if (cartQuery.isLoading) {
     return (
       <PageShell>
-        <SectionHeader title="Plată" description="Comanda este derivată server-side din coșul persistent." />
+        <SectionHeader title="Plată" description="Alegeți metoda de plată și finalizați comanda." />
         <LoadingRows count={3} />
       </PageShell>
     )
@@ -237,7 +250,7 @@ export function PayPage() {
   if (cartQuery.isError) {
     return (
       <PageShell>
-        <SectionHeader title="Plată" description="Comanda este derivată server-side din coșul persistent." />
+        <SectionHeader title="Plată" description="Alegeți metoda de plată și finalizați comanda." />
         <ApiErrorAlert error={cartQuery.error} onRetry={() => cartQuery.refetch()} />
       </PageShell>
     )
@@ -246,7 +259,7 @@ export function PayPage() {
   if (cartQuery.data?.items.length === 0) {
     return (
       <PageShell>
-        <SectionHeader title="Plată" description="Comanda este derivată server-side din coșul persistent." />
+        <SectionHeader title="Plată" description="Alegeți metoda de plată și finalizați comanda." />
         <EmptyState
           title="Coșul este gol"
           description="Adăugați produse înainte de plasarea unei comenzi."
@@ -270,7 +283,7 @@ export function PayPage() {
 
   return (
     <PageShell>
-      <SectionHeader title="Plată" description="Comanda este derivată server-side din coșul persistent." />
+      <SectionHeader title="Plată" description="Alegeți metoda de plată și finalizați comanda." />
       {createOrder.isError && <ApiErrorAlert error={createOrder.error} />}
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <Card className="rounded-lg">
@@ -294,7 +307,7 @@ export function PayPage() {
                 </RadioGroup>
               </Field>
               <Field>
-                <FieldLabel htmlFor="transactionId">ID tranzacție</FieldLabel>
+                <FieldLabel htmlFor="transactionId">Număr tranzacție</FieldLabel>
                 <Input id="transactionId" {...form.register('transactionId')} placeholder="Opțional" />
               </Field>
               <Field>
@@ -310,7 +323,7 @@ export function PayPage() {
           </CardContent>
         </Card>
         <aside className="h-fit rounded-lg border p-5">
-          <h2 className="font-medium">Total checkout</h2>
+          <h2 className="font-medium">Total de plată</h2>
           <p className="mt-3 text-2xl font-semibold">{formatMoney(total)}</p>
           <p className="mt-2 text-sm text-muted-foreground">{cartQuery.data?.items.length ?? 0} poziții în coș</p>
           <Button asChild variant="outline" className="mt-5 w-full">

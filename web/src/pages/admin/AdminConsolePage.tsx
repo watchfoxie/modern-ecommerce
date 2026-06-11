@@ -249,7 +249,7 @@ export default function AdminConsolePage() {
         <div className="space-y-6">
             <SectionHeader
                 title="Consolă administrare"
-                description="Operațiuni administrative protejate prin `ROLE_ADMIN` pentru catalog și comenzi."
+                description="Gestionați produsele, categoriile și comenzile platformei."
             />
 
             <Tabs defaultValue="products" className="gap-4">

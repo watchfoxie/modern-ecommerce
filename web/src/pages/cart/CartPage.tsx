@@ -18,6 +18,12 @@ function cartTotal(cart?: CartDto) {
   return cart?.items.reduce((sum, item) => sum + Number(item.priceAtAdd) * item.quantity, 0) ?? 0
 }
 
+function categoryLabel(slug: string) {
+  if (slug === 'laptops') return 'Laptop'
+  if (slug === 'smartphones') return 'Smartphone'
+  return 'Produs'
+}
+
 export default function CartPage() {
   const queryClient = useQueryClient()
   const userId = useAuthStore((state) => state.user?.userId)
@@ -67,14 +73,14 @@ export default function CartPage() {
 
   return (
     <PageShell>
-      <SectionHeader title="Coșul de cumpărături" description="Coșul persistent al utilizatorului autentificat." />
+      <SectionHeader title="Coșul de cumpărături" description="Produsele selectate pentru achiziție." />
       {cartQuery.isLoading && <LoadingRows count={4} />}
       {cartQuery.isError && <ApiErrorAlert error={cartQuery.error} onRetry={() => cartQuery.refetch()} />}
       {cartQuery.isSuccess && isEmpty && (
         <EmptyState
           icon={<PackageOpen />}
           title="Coșul este gol"
-          description="Adăugați produse din catalog înainte de checkout."
+          description="Adăugați produse din catalog pentru a finaliza o comandă."
           action={
             <Button asChild>
               <Link to="/categories/smartphones">Descoperă produse</Link>
@@ -90,7 +96,7 @@ export default function CartPage() {
                 <img src={assetUrl(item.productSnapshot.imageUrl)} alt="" className="h-24 w-24 rounded-md object-contain" />
                 <div className="min-w-0">
                   <h2 className="font-medium">{item.productSnapshot.name}</h2>
-                  <p className="text-sm text-muted-foreground">{item.productSnapshot.categorySlug}</p>
+                  <p className="text-sm text-muted-foreground">{categoryLabel(item.productSnapshot.categorySlug)}</p>
                   <p className="mt-2 font-medium">{formatMoney(item.priceAtAdd)}</p>
                 </div>
                 <div className="flex items-center gap-2 sm:flex-col sm:items-end">

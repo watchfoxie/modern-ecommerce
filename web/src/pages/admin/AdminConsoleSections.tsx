@@ -87,9 +87,27 @@ type CategoryDialogProps = {
     onSubmit: (values: CategoryFormValues) => void
 }
 
+const PRODUCT_TEXT_LABELS: Record<string, string> = {
+    name: 'Denumire',
+    brand: 'Brand',
+    model: 'Model',
+    country: 'țara de origine',
+    currency: 'Monedă',
+}
+const PRODUCT_NUMBER_LABELS: Record<string, string> = {
+    price: 'Preț',
+    promotionalPrice: 'Preț promoțional',
+    stock: 'Stoc disponibil',
+}
 const PRODUCT_TEXT_FIELDS = ['name', 'brand', 'model', 'country', 'currency'] as const
 const PRODUCT_NUMBER_FIELDS = ['price', 'promotionalPrice', 'stock'] as const
 const CATEGORY_INPUT_FIELDS = ['slug', 'name', 'imageUrl', 'displayOrder'] as const
+const CATEGORY_INPUT_LABELS: Record<string, string> = {
+    slug: 'Identificator URL',
+    name: 'Denumire',
+    imageUrl: 'Adresă imagine',
+    displayOrder: 'Ordine afișare',
+}
 
 function FormErrorBanner({ message }: Readonly<{ message?: string }>) {
     if (!message) {
@@ -176,7 +194,7 @@ export function AdminProductsSection({
                 <CardHeader className="flex-row items-center justify-between gap-4">
                     <div>
                         <CardTitle>Catalog produse</CardTitle>
-                        <p className="text-sm text-muted-foreground">CRUD complet pentru produsele expuse în storefront.</p>
+                        <p className="text-sm text-muted-foreground">Adăugați, modificați sau ștergeți produsele din magazin.</p>
                     </div>
                     <Button type="button" onClick={onCreateProduct} disabled={productCategories.length === 0}>
                         Adaugă produs
@@ -278,7 +296,7 @@ export function AdminCategoriesSection({
                 <CardHeader className="flex-row items-center justify-between gap-4">
                     <div>
                         <CardTitle>Categorii</CardTitle>
-                        <p className="text-sm text-muted-foreground">CRUD complet pentru taxonomia consumată de catalog.</p>
+                        <p className="text-sm text-muted-foreground">Adăugați, modificați sau ștergeți categoriile de produse.</p>
                     </div>
                     <Button type="button" onClick={onCreateCategory}>
                         Adaugă categorie
@@ -466,7 +484,7 @@ export function ProductDialog({
                 <DialogHeader>
                     <DialogTitle>{editingProduct ? 'Editează produsul' : 'Produs nou'}</DialogTitle>
                     <DialogDescription>
-                        Configurează datele expuse în catalog pentru produsul selectat.
+                        Completați informațiile produsului pentru a-l face disponibil în magazin.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={productForm.handleSubmit(onSubmit)} className="grid gap-4 md:grid-cols-2">
@@ -490,14 +508,14 @@ export function ProductDialog({
                     </Field>
                     {PRODUCT_TEXT_FIELDS.map((name) => (
                         <Field key={name}>
-                            <FieldLabel>{name}</FieldLabel>
+                            <FieldLabel>{PRODUCT_TEXT_LABELS[name] ?? name}</FieldLabel>
                             <Input {...productForm.register(name)} />
                             <FieldError>{productForm.formState.errors[name]?.message}</FieldError>
                         </Field>
                     ))}
                     {PRODUCT_NUMBER_FIELDS.map((name) => (
                         <Field key={name}>
-                            <FieldLabel>{name}</FieldLabel>
+                            <FieldLabel>{PRODUCT_NUMBER_LABELS[name] ?? name}</FieldLabel>
                             <Input type="number" step={name === 'stock' ? '1' : '0.01'} {...productForm.register(name)} />
                             <FieldError>{productForm.formState.errors[name]?.message}</FieldError>
                         </Field>
@@ -541,7 +559,7 @@ export function CategoryDialog({
                 <DialogHeader>
                     <DialogTitle>{editingCategory ? 'Editează categoria' : 'Categorie nouă'}</DialogTitle>
                     <DialogDescription>
-                        Actualizează taxonomia utilizată de catalog și de formularele administrative.
+                        Completați datele categoriei pentru a organiza produsele din magazin.
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={categoryForm.handleSubmit(onSubmit)} className="grid gap-4 md:grid-cols-2">
@@ -550,7 +568,7 @@ export function CategoryDialog({
                     </div>
                     {CATEGORY_INPUT_FIELDS.map((name) => (
                         <Field key={name}>
-                            <FieldLabel>{name}</FieldLabel>
+                            <FieldLabel>{CATEGORY_INPUT_LABELS[name] ?? name}</FieldLabel>
                             <Input type={name === 'displayOrder' ? 'number' : 'text'} {...categoryForm.register(name)} />
                             <FieldError>{categoryForm.formState.errors[name]?.message}</FieldError>
                         </Field>

@@ -51,7 +51,7 @@ export default function HomePage() {
                     <div className="max-w-xl">
                       <h1 className="text-4xl font-semibold tracking-tight md:text-6xl">MEc</h1>
                       <p className="mt-4 text-base text-muted-foreground-2 md:text-lg">
-                        Smartphone-uri și laptopuri premium, sincronizate direct cu catalogul backend.
+                        Smartphone-uri și laptopuri premium.
                       </p>
                       <div className="mt-6 flex flex-wrap gap-3">
                         <Button asChild size="lg">

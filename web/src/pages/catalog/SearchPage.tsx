@@ -46,7 +46,7 @@ export default function SearchPage() {
         description={query ? `Rezultate pentru "${query}"` : 'Introduceți o interogare în bara de navigare.'}
       />
       {!query && (
-        <EmptyState icon={<SearchX />} title="Căutarea începe din bara de sus" description="Nu trimitem apel REST până când există un termen de căutare valid." />
+        <EmptyState icon={<SearchX />} title="Căutarea începe din bara de sus" description="Tastați cel puțin un cuvânt în bara de căutare din partea de sus." />
       )}
       {searchQuery.isLoading && <LoadingGrid count={12} />}
       {searchQuery.isError && <ApiErrorAlert error={searchQuery.error} onRetry={() => searchQuery.refetch()} />}

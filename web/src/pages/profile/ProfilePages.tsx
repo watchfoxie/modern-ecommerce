@@ -251,20 +251,23 @@ export function PersonalPage() {
 
   return (
     <div className="space-y-6">
-      <SectionHeader title="Datele contului" description="Profil și adrese persistente în `user-service`." />
+      <SectionHeader title="Datele contului" description="Informațiile dvs. personale și adresele de livrare salvate." />
       {profileQuery.isLoading && <LoadingRows count={3} />}
       {profileQuery.isError && <ApiErrorAlert error={profileQuery.error} onRetry={() => profileQuery.refetch()} />}
       <Card className="rounded-lg">
         <CardHeader><CardTitle>Informații personale</CardTitle></CardHeader>
         <CardContent>
           <form onSubmit={profileForm.handleSubmit((values) => updateProfile.mutate(values))} className="grid gap-4 md:grid-cols-2">
-            {(['firstName', 'lastName', 'phone', 'birthDate'] as const).map((name) => (
-              <Field key={name}>
-                <FieldLabel htmlFor={name}>{name}</FieldLabel>
-                <Input id={name} type={name === 'birthDate' ? 'date' : 'text'} {...profileForm.register(name)} />
-                <FieldError>{profileForm.formState.errors[name]?.message}</FieldError>
-              </Field>
-            ))}
+            {(['firstName', 'lastName', 'phone', 'birthDate'] as const).map((name) => {
+              const etichete: Record<string, string> = { firstName: 'Prenume', lastName: 'Nume de familie', phone: 'Număr de telefon', birthDate: 'Data nașterii' }
+              return (
+                <Field key={name}>
+                  <FieldLabel htmlFor={name}>{etichete[name] ?? name}</FieldLabel>
+                  <Input id={name} type={name === 'birthDate' ? 'date' : 'text'} {...profileForm.register(name)} />
+                  <FieldError>{profileForm.formState.errors[name]?.message}</FieldError>
+                </Field>
+              )
+            })}
             <Field>
               <FieldLabel>Email</FieldLabel>
               <Input value={profileQuery.data?.email ?? ''} disabled />
@@ -292,16 +295,19 @@ export function PersonalPage() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Adresă</DialogTitle>
-                <DialogDescription>Configurează o adresă de livrare persistentă pentru checkout.</DialogDescription>
+                <DialogDescription>Completați datele adresei de livrare.</DialogDescription>
               </DialogHeader>
               <form onSubmit={addressForm.handleSubmit((values) => upsertAddress.mutate(values))} className="space-y-3">
-                {(['label', 'street', 'city', 'district', 'postalCode'] as const).map((name) => (
-                  <Field key={name}>
-                    <FieldLabel>{name}</FieldLabel>
-                    <Input {...addressForm.register(name)} />
-                    <FieldError>{addressForm.formState.errors[name]?.message}</FieldError>
-                  </Field>
-                ))}
+                {(['label', 'street', 'city', 'district', 'postalCode'] as const).map((name) => {
+                  const etichete: Record<string, string> = { label: 'Etichetă adresă', street: 'Stradă și număr', city: 'Oraș', district: 'Raion / Sector', postalCode: 'Cod poștal' }
+                  return (
+                    <Field key={name}>
+                      <FieldLabel>{etichete[name] ?? name}</FieldLabel>
+                      <Input {...addressForm.register(name)} />
+                      <FieldError>{addressForm.formState.errors[name]?.message}</FieldError>
+                    </Field>
+                  )
+                })}
                 <label className="flex items-center gap-2 text-sm">
                   <input type="checkbox" {...addressForm.register('isDefault')} />
                   <span>Adresă implicită</span>
@@ -346,7 +352,7 @@ export function OrderHistoryPage() {
 
   return (
     <div>
-      <SectionHeader title="Istoric comenzi" description="Comenzi personale returnate de `order-service`." />
+      <SectionHeader title="Istoric comenzi" description="Toate comenzile plasate din contul dvs." />
       {ordersQuery.isLoading && <LoadingRows count={4} />}
       {ordersQuery.isError && <ApiErrorAlert error={ordersQuery.error} onRetry={() => ordersQuery.refetch()} />}
       {ordersQuery.isSuccess && ordersQuery.data.data.length === 0 && (
@@ -449,7 +455,7 @@ export function ExpenseDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <SectionHeader title="Tablou cheltuieli" description="Agregări client-side din istoricul comenzilor." />
+      <SectionHeader title="Tablou cheltuieli" description="Rezumatul cheltuielilor dvs. pe baza istoricului de comenzi." />
       {ordersQuery.isLoading && <LoadingRows count={3} />}
       {ordersQuery.isError && <ApiErrorAlert error={ordersQuery.error} onRetry={() => ordersQuery.refetch()} />}
       {ordersQuery.isSuccess && orders.length === 0 && (

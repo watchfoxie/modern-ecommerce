@@ -51,7 +51,7 @@ const resetRequestSchema = z.object({
 })
 
 const resetConfirmSchema = z.object({
-  token: z.string().min(1, 'Tokenul este obligatoriu'),
+  token: z.string().min(1, 'Codul de confirmare este obligatoriu'),
   newPassword: z.string().min(8, 'Parola trebuie să aibă cel puțin 8 caractere'),
   confirmPassword: z.string().min(8),
 }).refine((value) => value.newPassword === value.confirmPassword, {
@@ -91,18 +91,21 @@ export function SignUpPage() {
       <Card className="mx-auto max-w-md rounded-lg">
         <CardHeader>
           <CardTitle>Înregistrare</CardTitle>
-          <CardDescription>Creați o identitate MEc pentru coș și comenzi.</CardDescription>
+          <CardDescription>Creați un cont nou pentru a plasa comenzi și a vă gestiona achizițiile.</CardDescription>
         </CardHeader>
         <CardContent>
           {mutation.isError && <ApiErrorAlert error={mutation.error} />}
           <form onSubmit={form.handleSubmit((values) => mutation.mutate(values))} className="mt-4 space-y-4">
-            {(['firstName', 'lastName', 'email'] as const).map((name) => (
-              <Field key={name}>
-                <FieldLabel htmlFor={name}>{name}</FieldLabel>
-                <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
-                <FieldError>{form.formState.errors[name]?.message}</FieldError>
-              </Field>
-            ))}
+            {(['firstName', 'lastName', 'email'] as const).map((name) => {
+              const etichete: Record<string, string> = { firstName: 'Prenume', lastName: 'Nume de familie', email: 'Adresă de email' }
+              return (
+                <Field key={name}>
+                  <FieldLabel htmlFor={name}>{etichete[name] ?? name}</FieldLabel>
+                  <Input id={name} {...form.register(name)} aria-invalid={Boolean(form.formState.errors[name])} />
+                  <FieldError>{form.formState.errors[name]?.message}</FieldError>
+                </Field>
+              )
+            })}
             <Field>
               <FieldLabel>Parolă</FieldLabel>
               <PasswordInput register={form.register} name="password" />
@@ -157,7 +160,7 @@ export function SignInPage() {
       <Card className="mx-auto max-w-md rounded-lg">
         <CardHeader>
           <CardTitle>Autentificare</CardTitle>
-          <CardDescription>Token-ul JWT va fi atașat centralizat de Axios.</CardDescription>
+          <CardDescription>Introduceți adresa de email și parola pentru a vă autentifica în cont.</CardDescription>
         </CardHeader>
         <CardContent>
           {mutation.isError && (
@@ -221,7 +224,7 @@ export function PasswordResetPage() {
       <Card className="mx-auto max-w-md rounded-lg">
         <CardHeader>
           <CardTitle>Resetare parolă</CardTitle>
-          <CardDescription>Fluxul nu dezvăluie dacă adresa există în sistem.</CardDescription>
+          <CardDescription>Vă trimitem instrucțiuni de resetare la adresa de email introdusă, dacă aceasta este înregistrată.</CardDescription>
         </CardHeader>
         <CardContent>
           {step === 'request' ? (
@@ -240,11 +243,11 @@ export function PasswordResetPage() {
             <form onSubmit={confirmForm.handleSubmit((values) => confirmMutation.mutate(values))} className="space-y-4">
               <Alert>
                 <AlertTitle>Verificați emailul</AlertTitle>
-                <AlertDescription>Dacă adresa există, veți primi un token de resetare.</AlertDescription>
+                <AlertDescription>Dacă adresa de email este înregistrată, veți primi un cod de confirmare prin email.</AlertDescription>
               </Alert>
               {confirmMutation.isError && <ApiErrorAlert error={confirmMutation.error} />}
               <Field>
-                <FieldLabel>Token</FieldLabel>
+                <FieldLabel>Cod de confirmare</FieldLabel>
                 <Input {...confirmForm.register('token')} />
                 <FieldError>{confirmForm.formState.errors.token?.message}</FieldError>
               </Field>
