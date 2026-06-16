@@ -108,4 +108,43 @@ describe('ProductDetailPage', () => {
 
         expect(await screen.findByText('canonical route reached')).toBeInTheDocument()
     })
+
+    it('renders natural-language labels for known product specs', async () => {
+        mockedProductService.getBySlug.mockResolvedValue({
+            id: 'product-3',
+            categoryId: 'cat-1',
+            categorySlug: 'smartphones',
+            slug: 'pixel-pro',
+            name: 'Pixel Pro',
+            brand: 'Google',
+            model: 'Pro',
+            country: 'US',
+            price: 25000,
+            promotionalPrice: null,
+            currency: 'MDL',
+            stock: 8,
+            imageUrls: [],
+            specs: {
+                screenSize: '6.8 inch',
+                batteryLife: '24 ore',
+                customKey: 'Valoare personalizată',
+            },
+            isActive: true,
+            createdAt: '2026-06-01T10:00:00Z',
+            updatedAt: '2026-06-01T10:00:00Z',
+        })
+
+        renderWithProviders(
+            <Routes>
+                <Route path="/categories/smartphones/:productId" element={<ProductDetailPage />} />
+            </Routes>,
+            { route: '/categories/smartphones/pixel-pro' },
+        )
+
+        expect(await screen.findByText('Dimensiune ecran')).toBeInTheDocument()
+        expect(screen.getByText('Autonomie baterie')).toBeInTheDocument()
+        expect(screen.getByText('customKey')).toBeInTheDocument()
+        expect(screen.queryByText(/^screenSize$/)).not.toBeInTheDocument()
+        expect(screen.queryByText(/^batteryLife$/)).not.toBeInTheDocument()
+    })
 })

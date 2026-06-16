@@ -18,6 +18,18 @@ export const PRODUCT_SPEC_KEYS = [
     'batteryLife',
 ] as const
 
+export const PRODUCT_SPEC_LABELS: Record<(typeof PRODUCT_SPEC_KEYS)[number], string> = {
+    screenSize: 'Dimensiune ecran',
+    processor: 'Procesor',
+    ram: 'Memorie RAM',
+    storage: 'Stocare',
+    os: 'Sistem de operare',
+    battery: 'Baterie',
+    camera: 'Cameră',
+    gpu: 'Placă video (GPU)',
+    batteryLife: 'Autonomie baterie',
+}
+
 export const PERSISTABLE_PRODUCT_CATEGORY_SLUGS = ['smartphones', 'laptops'] as const
 
 const PRODUCT_SPEC_KEY_SET = new Set<string>(PRODUCT_SPEC_KEYS)
@@ -180,6 +192,10 @@ export function stringifySpecs(specs: Record<string, string>) {
     return Object.entries(specs)
         .map(([key, value]) => `${key}: ${value}`)
         .join('\n')
+}
+
+export function getProductSpecLabel(key: string) {
+    return PRODUCT_SPEC_LABELS[key as keyof typeof PRODUCT_SPEC_LABELS] ?? key
 }
 
 function parseLines(value: string) {

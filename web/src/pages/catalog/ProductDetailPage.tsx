@@ -18,6 +18,7 @@ import { productService } from '@/contracts/product'
 import { assetUrl } from '@/lib/assets'
 import { discountPercent, formatMoney, hasActivePromotion } from '@/lib/format'
 import { queryKeys } from '@/lib/queryKeys'
+import { getProductSpecLabel } from '@/pages/admin/productForm'
 import { useAuthStore } from '@/stores/authStore'
 import { useCartStore } from '@/stores/cartStore'
 
@@ -236,7 +237,7 @@ export default function ProductDetailPage({ promotional = false }: Readonly<{ pr
             <TableBody>
               {Object.entries(product.specs).map(([key, value]) => (
                 <TableRow key={key}>
-                  <TableCell className="w-1/3 font-medium">{key}</TableCell>
+                  <TableCell className="w-1/3 font-medium">{getProductSpecLabel(key)}</TableCell>
                   <TableCell>{value}</TableCell>
                 </TableRow>
               ))}
